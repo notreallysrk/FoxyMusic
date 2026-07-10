@@ -22,7 +22,7 @@ MONGO_DB_URI = getenv("MONGO_DB_URI")
 LOGGER_ID = int(getenv("LOGGER_ID", -1002922616309))
 
 # ── Limits (durations in min/sec; sizes in bytes) ──────────────────────────────
-DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 18000))
+DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 300))
 SONG_DOWNLOAD_DURATION = int(getenv("SONG_DOWNLOAD_DURATION", "1200"))
 SONG_DOWNLOAD_DURATION_LIMIT = int(getenv("SONG_DOWNLOAD_DURATION_LIMIT", "1800"))
 TG_AUDIO_FILESIZE_LIMIT = int(getenv("TG_AUDIO_FILESIZE_LIMIT", "157286400"))
@@ -43,26 +43,26 @@ OCR_SPACE_API_KEY = getenv("OCR_SPACE_API_KEY", "helloworld")  # optional shared
 ELITE_LLM_API_BASE = getenv("ELITE_LLM_API_BASE", "https://elite-llms.vercel.app/v1")
 ELITE_LLM_API_KEY = getenv("ELITE_LLM_API_KEY", "theelitekey")
 
-# ── Config ────────────────────────────────────────────────────────────────────
-RAILWAY_YT_API_URL  = getattr(config, "RAILWAY_YT_API_URL",  None)
-RAILWAY_YT_API_KEY  = getattr(config, "RAILWAY_YT_API_KEY",  None)
+# Vars For API End Pont.
+YTPROXY_URL = getenv("YTPROXY_URL", "https://tgapi.xbitcode.com") ## Primary xBit music endpoint.
+YT_API_KEY = getenv("YT_API_KEY" , None ) ## Your API key like: xbit_10000000xx0233 Get from  https://t.me/tgmusic_apibot
 
 # ── Hosting / deployment ───────────────────────────────────────────────────────
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 # ── Git / updates ──────────────────────────────────────────────────────────────
-UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/Yewsdhi/Queenupdate")
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/SkyBotsDeveloper/VivaanXmusic3.0")
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ll_DPZ_WORLDS_lll")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/about_Maahi_XD")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/VivaanUpdates")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/VivaanSupport")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
-AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "40000"))
+AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "604800"))
 
 # ── Debug ──────────────────────────────────────────────────────────────────────
 DEBUG_IGNORE_LOG = True
@@ -80,22 +80,18 @@ STRING5 = getenv("STRING_SESSION5")
 
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
-"https://files.catbox.moe/gmeopu.jpg",
-"https://files.catbox.moe/kmzajp.jpg",
-"https://files.catbox.moe/6ndo9l.jpg",
-"https://files.catbox.moe/3jh1cc.jpg",
-"https://files.catbox.moe/3jh1cc.jpg",
-"https://files.catbox.moe/m0a3nv.jpg",
-"https://files.catbox.moe/3dve0a.jpg",
+    "https://files.catbox.moe/1jcn1p.mp4",
+    "https://files.catbox.moe/1jcn1p.mp4",
+    "https://files.catbox.moe/1jcn1p.mp4",
 ]
 STICKERS = [
     "CAACAgUAAx0Cd6nKUAACASBl_rnalOle6g7qS-ry-aZ1ZpVEnwACgg8AAizLEFfI5wfykoCR4h4E",
     "CAACAgUAAx0Cd6nKUAACATJl_rsEJOsaaPSYGhU7bo7iEwL8AAPMDgACu2PYV8Vb8aT4_HUPHgQ",
 ]
 HELP_IMG_URL = "https://files.catbox.moe/22oahi.jpg"
-PING_VID_URL = "https://files.catbox.moe/cggw4y.mp4"
+PING_VID_URL = "https://files.catbox.moe/5z1qte.mp4"
 PLAYLIST_IMG_URL = "https://files.catbox.moe/u79q4y.jpg"
-STATS_VID_URL = "https://files.catbox.moe/cggw4y.mp4"
+STATS_VID_URL = "https://files.catbox.moe/uo4lc8.mp4"
 TELEGRAM_AUDIO_URL = "https://files.catbox.moe/eis7ei.jpg"
 TELEGRAM_VIDEO_URL = "https://files.catbox.moe/eis7ei.jpg"
 STREAM_IMG_URL = "https://files.catbox.moe/eis7ei.jpg"
@@ -112,8 +108,10 @@ DURATION_LIMIT = time_to_seconds(f"{DURATION_LIMIT_MIN}:00")
 # ───── Bot Introduction Messages ───── #
 AYU = ["💞", "🦋", "🔍", "🧪", "⚡️", "🔥", "🎩", "🌈", "🍷", "🥂", "🥃", "🕊️", "🪄", "💌", "🧨"]
 AYUV = [
-     "🌷 ʜᴇʏ {0}, ᴡᴇʟᴄᴏᴍᴇ 🌷\n\nɪ'ᴍ {1} 🎧\nᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴍᴜsɪᴄ & ᴠɪᴅᴇᴏ sᴛʀᴇᴀᴍɪɴɢ ʙᴏᴛ ғᴏʀ ᴛᴇʟᴇɢʀᴀᴍ.\n\n╭━━━━━━━━━━━━━━━━━━╮\n│ 🎶 ʜɪɢʜ ǫᴜᴀʟɪᴛʏ ᴍᴜsɪᴄ\n│ ⚡ ʟɪɢʜᴛɴɪɴɢ ғᴀsᴛ sᴛʀᴇᴀᴍɪɴɢ\n│ 🎙 24×7 ᴠᴏɪᴄᴇ ᴄʜᴀᴛ ᴘʟᴀʏᴇʀ\n│ 📡 ʟɪᴠᴇ sᴛʀᴇᴀᴍ sᴜᴘᴘᴏʀᴛ\n│ 🔄 sᴍᴀʀᴛ ᴀᴜᴛᴏᴘʟᴀʏ\n│ 🚫 ɴᴏ ʟᴀɢ • ɴᴏ ᴀᴅs\n╰━━━━━━━━━━━━━━━━━━╯\n\n✦ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ\n✦ ᴘʀᴏᴍᴏᴛᴇ ᴍᴇ ᴀs ᴀᴅᴍɪɴ\n✦ ᴜsᴇ /help ᴛᴏ ᴇxᴘʟᴏʀᴇ ᴀʟʟ ғᴇᴀᴛᴜʀᴇs\n\n💞 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➛ ˹ @ll_ROYAL_ABOUT_ll ˼"
-]    
+    "ʜᴇʟʟᴏ {0}, 🥀\n\n ɪᴛ'ꜱ ᴍᴇ {1} !\n\n┏━━━━━━━━━━━━━━━━━⧫\n┠ ◆ ꜱᴜᴘᴘᴏʀᴛɪɴɢ ᴘʟᴀᴛꜰᴏʀᴍꜱ : ʏᴏᴜᴛᴜʙᴇ, ꜱᴘᴏᴛɪꜰʏ,\n┠ ◆ ʀᴇꜱꜱᴏ, ᴀᴘᴘʟᴇᴍᴜꜱɪᴄ , ꜱᴏᴜɴᴅᴄʟᴏᴜᴅ ᴇᴛᴄ.\n┗━━━━━━━━━━━━━━━━━⧫\n┏━━━━━━━━━━━━━━━━━⧫\n┠ ➥ Uᴘᴛɪᴍᴇ : {2}\n┠ ➥ SᴇʀᴠᴇʀSᴛᴏʀᴀɢᴇ : {3}\n┠ ➥ CPU Lᴏᴀᴅ : {4}\n┠ ➥ RAM Cᴏɴsᴜᴘᴛɪᴏɴ : {5}\n┠ ➥ ᴜꜱᴇʀꜱ : {6}\n┠ ➥ ᴄʜᴀᴛꜱ : {7}\n┗━━━━━━━━━━━━━━━━━⧫\n\n🫧 ᴅᴇᴠᴇʟᴏᴩᴇʀ 🪽 ➪ [ᴠɪᴠᴀᴀɴ ᴅᴇᴠ ✔︎](https://t.me/EliteSid)",
+    "ʜɪɪ, {0} ~\n\n◆ ɪ'ᴍ ᴀ {1} ᴛᴇʟᴇɢʀᴀᴍ ꜱᴛʀᴇᴀᴍɪɴɢ ʙᴏᴛ ᴡɪᴛʜ ꜱᴏᴍᴇ ᴜꜱᴇꜰᴜʟ\n◆ ᴜʟᴛʀᴀ ғᴀsᴛ ᴠᴄ ᴘʟᴀʏᴇʀ ꜰᴇᴀᴛᴜʀᴇꜱ.\n\n✨ ꜰᴇᴀᴛᴜʀᴇꜱ ⚡️\n◆ ʙᴏᴛ ғᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘs.\n◆ Sᴜᴘᴇʀғᴀsᴛ ʟᴀɢ Fʀᴇᴇ ᴘʟᴀʏᴇʀ.\n◆ ʏᴏᴜ ᴄᴀɴ ᴘʟᴀʏ ᴍᴜꜱɪᴄ + ᴠɪᴅᴇᴏ.\n◆ ʟɪᴠᴇ ꜱᴛʀᴇᴀᴍɪɴɢ.\n◆ ɴᴏ ᴘʀᴏᴍᴏ.\n◆ ʙᴇꜱᴛ ꜱᴏᴜɴᴅ Qᴜᴀʟɪᴛʏ.\n◆ 24×7 ʏᴏᴜ ᴄᴀɴ ᴘʟᴀʏ ᴍᴜꜱɪᴄ.\n◆ ᴀᴅᴅ ᴛʜɪꜱ ʙᴏᴛ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ᴀɴᴅ ᴍᴀᴋᴇ ɪᴛ ᴀᴅᴍɪɴ ᴀɴᴅ ᴇɴᴊᴏʏ ᴍᴜꜱɪᴄ 🎵.\n\n┏━━━━━━━━━━━━━━━━━⧫\n┠ ◆ ꜱᴜᴘᴘᴏʀᴛɪɴɢ ᴘʟᴀᴛꜰᴏʀᴍꜱ : ʏᴏᴜᴛᴜʙᴇ, ꜱᴘᴏᴛɪꜰʏ,\n┠ ◆ ʀᴇꜱꜱᴏ, ᴀᴘᴘʟᴇᴍᴜꜱɪᴄ , ꜱᴏᴜɴᴅᴄʟᴏᴜᴅ ᴇᴛᴄ.\n┗━━━━━━━━━━━━━━━━━⧫\n┏━━━━━━━━━━━━━━━━━⧫\n┠ ➥ Uᴘᴛɪᴍᴇ : {2}\n┠ ➥ SᴇʀᴠᴇʀSᴛᴏʀᴀɢᴇ : {3}\n┠ ➥ CPU Lᴏᴀᴅ : {4}\n┠ ➥ RAM Cᴏɴsᴜᴘᴛɪᴏɴ : {5}\n┠ ➥ ᴜꜱᴇʀꜱ : {6}\n┠ ➥ ᴄʜᴀᴛꜱ : {7}\n┗━━━━━━━━━━━━━━━━━⧫\n\n🫧 ᴅᴇᴠᴇʟᴏᴩᴇʀ 🪽 ➪ [ᴠɪᴠᴀᴀɴ ᴅᴇᴠ ✔︎](https://t.me/EliteSid)",
+]
+
 # ── Runtime structures ─────────────────────────────────────────────────────────
 BANNED_USERS = filters.user()
 adminlist, lyrical, votemode, autoclean, confirmer = {}, {}, {}, [], {}
