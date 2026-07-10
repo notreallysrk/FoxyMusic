@@ -62,7 +62,7 @@ SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/about_Maahi_XD")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
-AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "9000"))
+AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "40000"))
 
 # ── Debug ──────────────────────────────────────────────────────────────────────
 DEBUG_IGNORE_LOG = True
