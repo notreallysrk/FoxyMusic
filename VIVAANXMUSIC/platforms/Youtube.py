@@ -12,8 +12,8 @@ from py_yt import Playlist, VideosSearch
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 
-from ishu import config, logger
-from ishu.helpers import utils
+from VIVAANXMUSIC import config, logger
+from VIVAANXMUSIC.helpers import utils
 
 # ── Config ────────────────────────────────────────────────────────────────────
 RAILWAY_YT_API_URL  = getattr(config, "RAILWAY_YT_API_URL",  None)
