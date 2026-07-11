@@ -83,14 +83,10 @@ START_VIDS = [
 "https://files.catbox.moe/wjtul7.mp4",
 "https://files.catbox.moe/gfsfy2.mp4",
 "https://files.catbox.moe/ok3qcq.mp4",
-"https://files.catbox.moe/x36bl7.mp4",
-"https://files.catbox.moe/wyt9n5.mp4",
-"https://files.catbox.moe/fdo5j5.mp4",
-"https://files.catbox.moe/meljwi.mp4",
 ]
 STICKERS = [
-    "CAACAgUAAx0Cd6nKUAACASBl_rnalOle6g7qS-ry-aZ1ZpVEnwACgg8AAizLEFfI5wfykoCR4h4E",
-    "CAACAgUAAx0Cd6nKUAACATJl_rsEJOsaaPSYGhU7bo7iEwL8AAPMDgACu2PYV8Vb8aT4_HUPHgQ",
+    "CAACAgUAAxkBAAFOuWNqUMj28Rrfpr3APoGQH5oC2qGq7wACwyAAAh7UeVa0AcYt3xU9tzwE",
+    "CAACAgUAAxkBAAFOzY5qUf7pqrHwL11t17WP478cstKPAQACOhsAAm8FeVa4Vkbih4qtXzwE",
 ]
 HELP_IMG_URL = "https://files.catbox.moe/m3fyh9.jpg"
 PING_VID_URL = "https://files.catbox.moe/p82vwn.jpg"
