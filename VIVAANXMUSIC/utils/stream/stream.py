@@ -16,58 +16,6 @@ from VIVAANXMUSIC.utils.stream.cards import schedule_stream_card
 from VIVAANXMUSIC.utils.stream.queue import put_queue, put_queue_index
 from VIVAANXMUSIC.utils.errors import capture_internal_err
 
-QUEUE_LIMIT = int(getattr(config, "QUEUE_LIMIT", os.getenv("QUEUE_LIMIT", "10")))
-PLAYLIST_FETCH_LIMIT = int(
-    getattr(
-        config,
-        "PLAYLIST_FETCH_LIMIT",
-        os.getenv("PLAYLIST_FETCH_LIMIT", str(QUEUE_LIMIT)),
-    )
-)
-
-
-async def _join_youtube_with_fallback(
-    chat_id,
-    original_chat_id,
-    vidid,
-    title,
-    mystic,
-    file_path,
-    direct,
-    is_video,
-    thumbnail,
-):
-    try:
-        await JARVIS.join_call(
-            chat_id,
-            original_chat_id,
-            file_path,
-            video=is_video,
-            image=thumbnail,
-        )
-        return file_path, direct
-    except Exception:
-        if direct:
-            raise
-
-    fallback_path, fallback_direct = await YouTube.download(
-        vidid,
-        mystic,
-        video=is_video,
-        videoid=vidid,
-        title=title,
-    )
-    if not fallback_path:
-        raise AssistantErr("Unable to prepare YouTube stream.")
-    await JARVIS.join_call(
-        chat_id,
-        original_chat_id,
-        fallback_path,
-        video=is_video,
-        image=thumbnail,
-    )
-    return fallback_path, fallback_direct
-
 
 @capture_internal_err
 async def stream(
@@ -96,13 +44,10 @@ async def stream(
         msg = f"{_['play_19']}\n\n"
         count = 0
         position = 0
-        queue_was_full = len(db.get(chat_id) or []) >= QUEUE_LIMIT
 
         for search in result:
-            if count >= PLAYLIST_FETCH_LIMIT:
-                break
-            if len(db.get(chat_id) or []) >= QUEUE_LIMIT:
-                break
+            if int(count) == config.PLAYLIST_FETCH_LIMIT:
+                continue
             try:
                 title, duration_min, duration_sec, thumbnail, vidid = await YouTube.details(
                     search, videoid=search
@@ -136,28 +81,19 @@ async def stream(
                     db[chat_id] = []
                 try:
                     file_path, direct = await YouTube.download(
-                        vidid,
-                        mystic,
-                        video=is_video,
-                        videoid=vidid,
-                        stream=True,
-                        title=title,
+                        vidid, mystic, video=is_video, videoid=vidid
                     )
                 except Exception:
                     raise AssistantErr(_["play_14"])
                 if not file_path:
                     raise AssistantErr(_["play_14"])
 
-                file_path, direct = await _join_youtube_with_fallback(
+                await JARVIS.join_call(
                     chat_id,
                     original_chat_id,
-                    vidid,
-                    title,
-                    mystic,
                     file_path,
-                    direct,
-                    is_video,
-                    thumbnail,
+                    video=is_video,
+                    image=thumbnail,
                 )
                 await put_queue(
                     chat_id,
@@ -188,10 +124,6 @@ async def stream(
                 )
 
         if count == 0:
-            if queue_was_full:
-                raise AssistantErr(
-                    f"Queue limit reached. Only {QUEUE_LIMIT} tracks are allowed per chat."
-                )
             return
         link = await VIVAANBIN(msg)
         lines = msg.count("\n")
@@ -219,11 +151,20 @@ async def stream(
         duration_min = result["duration_min"]
         thumbnail = result["thumb"]
 
+        try:
+            file_path, direct = await YouTube.download(
+                vidid, mystic, video=is_video, videoid=vidid
+            )
+        except Exception:
+            raise AssistantErr(_["play_14"])
+        if not file_path:
+            raise AssistantErr(_["play_14"])
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
                 original_chat_id,
-                f"vid_{vidid}",
+                file_path if direct else f"vid_{vidid}",
                 title,
                 duration_min,
                 user_name,
@@ -239,32 +180,14 @@ async def stream(
                 reply_markup=InlineKeyboardMarkup(button),
             )
         else:
-            try:
-                file_path, direct = await YouTube.download(
-                    vidid,
-                    mystic,
-                    video=is_video,
-                    videoid=vidid,
-                    stream=True,
-                    title=title,
-                )
-            except Exception:
-                raise AssistantErr(_["play_14"])
-            if not file_path:
-                raise AssistantErr(_["play_14"])
-
             if not forceplay:
                 db[chat_id] = []
-            file_path, direct = await _join_youtube_with_fallback(
+            await JARVIS.join_call(
                 chat_id,
                 original_chat_id,
-                vidid,
-                title,
-                mystic,
                 file_path,
-                direct,
-                is_video,
-                thumbnail,
+                video=is_video,
+                image=thumbnail,
             )
             await put_queue(
                 chat_id,
