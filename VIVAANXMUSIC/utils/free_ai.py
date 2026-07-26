@@ -21,7 +21,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto.Protocol.KDF import PBKDF2
 from gradio_client import Client as GradioClient, handle_file
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 import config as runtime_config
 from VIVAANXMUSIC.security import build_subprocess_env
@@ -47,6 +47,7 @@ CHAT_API_URL = "https://api-xqwa.onrender.com/chat/"
 ELITE_CHAT_COMPLETIONS_URL = f"{ELITE_LLM_API_BASE}/chat/completions"
 AIRFORCE_CHAT_COMPLETIONS_URL = "https://api.airforce/v1/chat/completions"
 IMAGE_GEN_URL = "https://death-image.ashlynn.workers.dev/generate"
+POLLINATIONS_IMAGE_URL = "https://image.pollinations.ai/prompt/{prompt}"
 IMAGE_ENHANCE_URL = "https://arimagex.netlify.app/api/enhance"
 IMAGE_REMOVEBG_URL = "https://arimagex.netlify.app/api/removebg"
 OCR_SPACE_API_URL = "https://api.ocr.space/parse/image"
@@ -81,7 +82,7 @@ HF_WAN22_PREVIEW2_SPACE = "r3gm/wan2-2-fp8da-aoti-preview2"
 HF_WAN22_OBSXRVER_SPACE = "obsxrver/WAN22-I2V-Demo"
 HF_WAN22_DREAM_SPACE = "dream2589632147/Dream-wan2-2-faster-Pro"
 HF_IMAGE_EDIT_SPACE = "Qwen/Qwen-Image-Edit-2511"
-HF_IMAGE_EDIT_FAST_SPACE = "Nichotin/Qwen-Image-Edit-2511-Fast-ZeroGPU"
+HF_IMAGE_EDIT_FAST_SPACE = "linoyts/Qwen-Image-Edit-2511-Fast"
 HF_IMAGE_EDIT_ALT_SPACE = "lenML/Qwen-Image-Edit-2511-Fast"
 HF_IMAGE_OBJECT_SPACE = "prithivMLmods/Qwen-Image-Edit-Object-Manipulator"
 HF_FACE_SWAP_SPACE = "V0pr0S/ComfyUI-Reactor-Fast-Face-Swap-CPU"
@@ -783,6 +784,176 @@ def _enhance_image_locally(image_bytes: bytes) -> bytes:
         buffer = BytesIO()
         converted.save(buffer, format="PNG", optimize=True)
         return buffer.getvalue()
+
+
+def _remove_background_locally(image_bytes: bytes) -> bytes:
+    try:
+        import cv2
+        import numpy as np
+
+        with Image.open(BytesIO(image_bytes)) as image:
+            image.load()
+            source = image.convert("RGB")
+
+        rgb = np.array(source)
+        bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+        height, width = bgr.shape[:2]
+        if height < 4 or width < 4:
+            raise FreeAIError("Image is too small to process.")
+
+        pad_x = max(1, int(width * 0.06))
+        pad_y = max(1, int(height * 0.06))
+        rect = (
+            pad_x,
+            pad_y,
+            max(1, width - (pad_x * 2)),
+            max(1, height - (pad_y * 2)),
+        )
+        mask = np.zeros((height, width), np.uint8)
+        bg_model = np.zeros((1, 65), np.float64)
+        fg_model = np.zeros((1, 65), np.float64)
+        cv2.grabCut(bgr, mask, rect, bg_model, fg_model, 5, cv2.GC_INIT_WITH_RECT)
+        alpha = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0).astype(
+            "uint8"
+        )
+        kernel = np.ones((3, 3), np.uint8)
+        alpha = cv2.morphologyEx(alpha, cv2.MORPH_OPEN, kernel, iterations=1)
+        alpha = cv2.morphologyEx(alpha, cv2.MORPH_CLOSE, kernel, iterations=2)
+        alpha = cv2.GaussianBlur(alpha, (5, 5), 0)
+
+        rgba = np.dstack((rgb, alpha))
+        output = Image.fromarray(rgba, "RGBA")
+        buffer = BytesIO()
+        output.save(buffer, format="PNG", optimize=True)
+        return buffer.getvalue()
+    except FreeAIError:
+        raise
+    except Exception:
+        with Image.open(BytesIO(image_bytes)) as image:
+            image.load()
+            source = image.convert("RGBA")
+            pixels = source.load()
+            width, height = source.size
+            corners = [
+                source.getpixel((0, 0))[:3],
+                source.getpixel((width - 1, 0))[:3],
+                source.getpixel((0, height - 1))[:3],
+                source.getpixel((width - 1, height - 1))[:3],
+            ]
+            bg = tuple(sum(channel) // len(corners) for channel in zip(*corners))
+            threshold = 38
+            for y in range(height):
+                for x in range(width):
+                    r, g, b, a = pixels[x, y]
+                    distance = abs(r - bg[0]) + abs(g - bg[1]) + abs(b - bg[2])
+                    if distance < threshold:
+                        pixels[x, y] = (r, g, b, 0)
+                    elif distance < threshold * 2:
+                        pixels[x, y] = (r, g, b, min(a, 150))
+            buffer = BytesIO()
+            source.save(buffer, format="PNG", optimize=True)
+            return buffer.getvalue()
+
+
+LOCAL_EDIT_COLORS = {
+    "red": (220, 38, 38),
+    "blue": (37, 99, 235),
+    "green": (22, 163, 74),
+    "yellow": (234, 179, 8),
+    "orange": (249, 115, 22),
+    "purple": (147, 51, 234),
+    "pink": (236, 72, 153),
+    "cyan": (6, 182, 212),
+    "teal": (20, 184, 166),
+    "black": (24, 24, 27),
+    "white": (245, 245, 245),
+}
+
+
+def _pick_local_edit_color(prompt: str):
+    lowered = f" {prompt.lower()} "
+    for name, rgb in LOCAL_EDIT_COLORS.items():
+        if f" {name} " in lowered or f"{name}ish" in lowered:
+            return rgb
+    return None
+
+
+def _edit_image_locally(prompt: str, image_path: str) -> bytes:
+    lowered = (prompt or "").lower()
+    with Image.open(image_path) as image:
+        image.load()
+        converted = image.convert("RGBA")
+
+    applied = False
+
+    if ("remove" in lowered and "background" in lowered) or "transparent background" in lowered:
+        buffer = BytesIO()
+        converted.save(buffer, format="PNG")
+        return _remove_background_locally(buffer.getvalue())
+
+    if any(word in lowered for word in ("grayscale", "greyscale", "black and white", "monochrome")):
+        alpha = converted.getchannel("A")
+        converted = ImageOps.grayscale(converted).convert("RGBA")
+        converted.putalpha(alpha)
+        applied = True
+
+    target_color = _pick_local_edit_color(prompt)
+    if target_color:
+        alpha = converted.getchannel("A")
+        gray = ImageOps.grayscale(converted)
+        tinted = ImageOps.colorize(gray, black=(8, 8, 12), white=target_color).convert(
+            "RGBA"
+        )
+        tinted.putalpha(alpha)
+        converted = Image.blend(converted, tinted, 0.72)
+        applied = True
+
+    if any(word in lowered for word in ("brighter", "brighten", "lighten")):
+        converted = ImageEnhance.Brightness(converted).enhance(1.28)
+        applied = True
+
+    if any(word in lowered for word in ("darker", "darken", "dim")):
+        converted = ImageEnhance.Brightness(converted).enhance(0.72)
+        applied = True
+
+    if any(word in lowered for word in ("contrast", "pop")):
+        converted = ImageEnhance.Contrast(converted).enhance(1.18)
+        applied = True
+
+    if any(word in lowered for word in ("blur", "soften")):
+        converted = converted.filter(ImageFilter.GaussianBlur(radius=2.0))
+        applied = True
+
+    if any(word in lowered for word in ("sharpen", "clearer", "enhance")):
+        converted = converted.filter(
+            ImageFilter.UnsharpMask(radius=1.4, percent=140, threshold=3)
+        )
+        applied = True
+
+    if "flip horizontal" in lowered or "mirror" in lowered:
+        converted = ImageOps.mirror(converted)
+        applied = True
+
+    if "flip vertical" in lowered:
+        converted = ImageOps.flip(converted)
+        applied = True
+
+    if "rotate left" in lowered:
+        converted = converted.rotate(90, expand=True)
+        applied = True
+    elif "rotate right" in lowered:
+        converted = converted.rotate(-90, expand=True)
+        applied = True
+    elif "upside down" in lowered or "rotate 180" in lowered:
+        converted = converted.rotate(180, expand=True)
+        applied = True
+
+    if not applied:
+        raise FreeAIError("No local fallback is available for this edit prompt.")
+
+    buffer = BytesIO()
+    converted.save(buffer, format="PNG", optimize=True)
+    return buffer.getvalue()
 
 
 def _prepare_video_reference_image(image_bytes: bytes, mime_type: str) -> str:
@@ -3503,9 +3674,18 @@ async def edit_image_bytes(
                 _set_image_edit_route_cooldown(route_key, message)
                 continue
 
-        raise FreeAIError(
-            "Image editing service is temporarily unavailable right now. Try again later."
-        )
+        try:
+            return await asyncio.to_thread(_edit_image_locally, text_prompt, image_paths[0])
+        except Exception as exc:
+            local_message = str(exc).strip()
+            if local_message:
+                raise FreeAIError(
+                    "Image editing service is temporarily unavailable right now. "
+                    f"Local fallback could not handle this prompt: {local_message}"
+                ) from exc
+            raise FreeAIError(
+                "Image editing service is temporarily unavailable right now. Try again later."
+            ) from exc
     finally:
         for path in image_paths:
             _remove_file(path)
@@ -3529,6 +3709,16 @@ async def generate_image(prompt: str) -> bytes:
         trust_env=False,
     ) as client:
         failures: list[str] = []
+
+        async def download_image(url: str, *, params: dict | None = None) -> bytes:
+            image_response = await client.get(url, params=params)
+            content_type = (image_response.headers.get("content-type") or "").lower()
+            if image_response.status_code != 200:
+                raise FreeAIError("Generated image could not be downloaded.")
+            if not content_type.startswith("image/"):
+                raise FreeAIError("Generated image download returned a non-image payload.")
+            return image_response.content
+
         for attempt in range(3):
             try:
                 response = await client.get(IMAGE_GEN_URL, params=params)
@@ -3550,14 +3740,30 @@ async def generate_image(prompt: str) -> bytes:
                         detail = "Image generation service did not return an image."
                     raise FreeAIError(detail)
 
-                image_response = await client.get(images[0])
-                if image_response.status_code != 200:
-                    raise FreeAIError("Generated image could not be downloaded.")
-                return image_response.content
+                return await download_image(images[0])
             except (httpx.HTTPError, FreeAIError) as exc:
                 failures.append(str(exc))
                 if attempt < 2:
                     await asyncio.sleep(1 + attempt)
+
+        pollinations_params = {
+            "width": 1024,
+            "height": 1024,
+            "nologo": "true",
+            "safe": "true",
+            "model": "flux",
+        }
+        pollinations_url = POLLINATIONS_IMAGE_URL.format(prompt=quote(prompt, safe=""))
+        for attempt in range(2):
+            try:
+                return await download_image(
+                    pollinations_url,
+                    params=pollinations_params,
+                )
+            except (httpx.HTTPError, FreeAIError) as exc:
+                failures.append(f"Pollinations: {exc}")
+                if attempt < 1:
+                    await asyncio.sleep(1)
 
     details = "\n".join(failures[-3:])
     raise FreeAIError(f"Image generation service is temporarily unavailable.\n{details}")
@@ -3608,6 +3814,11 @@ async def process_image_bytes(
         if mode == "enhance":
             try:
                 return await asyncio.to_thread(_enhance_image_locally, image_bytes)
+            except Exception:
+                pass
+        if mode == "removebg":
+            try:
+                return await asyncio.to_thread(_remove_background_locally, image_bytes)
             except Exception:
                 pass
         if isinstance(exc, FreeAIError):
