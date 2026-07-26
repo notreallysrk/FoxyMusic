@@ -30,6 +30,7 @@ from VIVAANXMUSIC.utils.database import (
     get_vcnotify,
     group_assistant,
     is_autoend,
+    is_music_playing,
     music_on,
     remove_active_chat,
     remove_active_video_chat,
@@ -41,17 +42,59 @@ from VIVAANXMUSIC.utils.formatters import check_duration, seconds_to_min, speed_
 from VIVAANXMUSIC.utils.inline.play import stream_markup
 from VIVAANXMUSIC.security import build_subprocess_env
 from VIVAANXMUSIC.utils.stream.autoclear import auto_clean
+from VIVAANXMUSIC.utils.stream.autodelete import (
+    delete_queue_message,
+    remember_player_message,
+)
 from VIVAANXMUSIC.utils.stream.cards import schedule_stream_card
+from VIVAANXMUSIC.utils.stream.precache import schedule_youtube_precache_for_chat
 from VIVAANXMUSIC.utils.errors import capture_internal_err, send_large_error
 
 autoend = {}
 counter = {}
+playback_watchdogs = {}
+playback_watchdog_tokens = {}
+playback_recovery_attempts = {}
 vc_join_monitors = {}
 vc_join_snapshots = {}
 vc_join_targets = {}
 vc_join_call_map = {}
 vc_join_event_cache = {}
 vc_join_notice_cache = {}
+
+PLAYBACK_WATCHDOG_GRACE_SECONDS = 20
+PLAYBACK_WATCHDOG_RECHECK_SECONDS = 30
+PLAYBACK_EARLY_END_GRACE_SECONDS = 25
+PLAYBACK_EARLY_END_MAX_RECOVERIES = 1
+
+
+def _safe_int(value, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _cancel_playback_watchdog(chat_id: int) -> None:
+    playback_watchdog_tokens[chat_id] = playback_watchdog_tokens.get(chat_id, 0) + 1
+    task = playback_watchdogs.pop(chat_id, None)
+    if not task or task.done():
+        return
+    try:
+        current = asyncio.current_task()
+    except RuntimeError:
+        current = None
+    if task is not current:
+        task.cancel()
+
+
+class _SilentMystic:
+    async def edit_text(self, *args, **kwargs):
+        return None
+
+    async def delete(self, *args, **kwargs):
+        return None
+
 
 def validate_stream_path(path: str) -> str:
     if path is None or (isinstance(path, str) and not path.strip()):
@@ -80,8 +123,13 @@ def is_too_many_open_files(err: Exception) -> bool:
 
 
 async def _clear_(chat_id: int) -> None:
+    _cancel_playback_watchdog(chat_id)
+    playback_recovery_attempts.pop(chat_id, None)
     popped = db.pop(chat_id, None)
-    if popped:
+    if isinstance(popped, list):
+        for item in popped:
+            await auto_clean(item)
+    elif popped:
         await auto_clean(popped)
     db[chat_id] = []
     for call_id, info in list(vc_join_call_map.items()):
@@ -133,6 +181,189 @@ class Call:
             lock = asyncio.Lock()
             self._stream_locks[chat_id] = lock
         return lock
+
+    @staticmethod
+    def _track_signature(track: dict) -> tuple:
+        return (
+            str(track.get("file") or ""),
+            str(track.get("vidid") or ""),
+            str(track.get("streamtype") or ""),
+            str(track.get("speed_path") or ""),
+            str(track.get("speed") or ""),
+            str(track.get("seconds") or ""),
+        )
+
+    def _watchable_track(self, chat_id: int):
+        queue = db.get(chat_id)
+        if not queue or not isinstance(queue[0], dict):
+            return None
+
+        track = queue[0]
+        seconds = _safe_int(track.get("seconds"), 0)
+        if seconds <= 0:
+            return None
+
+        queued = str(track.get("file") or "")
+        if queued.startswith("live_"):
+            return None
+
+        return track, seconds, _safe_int(track.get("played"), 0)
+
+    def _schedule_playback_watchdog(
+        self,
+        client,
+        chat_id: int,
+        *,
+        initial_delay: int = 0,
+    ) -> None:
+        _cancel_playback_watchdog(chat_id)
+        token = playback_watchdog_tokens.get(chat_id, 0) + 1
+        playback_watchdog_tokens[chat_id] = token
+
+        async def watchdog() -> None:
+            try:
+                if initial_delay > 0:
+                    await asyncio.sleep(initial_delay)
+
+                current = self._watchable_track(chat_id)
+                if not current:
+                    return
+                initial_track, _, _ = current
+                signature = self._track_signature(initial_track)
+
+                while playback_watchdog_tokens.get(chat_id) == token:
+                    current = self._watchable_track(chat_id)
+                    if not current:
+                        return
+
+                    track, seconds, played = current
+                    if self._track_signature(track) != signature:
+                        return
+                    if chat_id not in self.active_calls:
+                        return
+
+                    if not await is_music_playing(chat_id):
+                        await asyncio.sleep(PLAYBACK_WATCHDOG_RECHECK_SECONDS)
+                        continue
+
+                    remaining = max(seconds - played, 0)
+                    await asyncio.sleep(
+                        max(
+                            PLAYBACK_WATCHDOG_RECHECK_SECONDS,
+                            remaining + PLAYBACK_WATCHDOG_GRACE_SECONDS,
+                        )
+                    )
+
+                    current = self._watchable_track(chat_id)
+                    if not current:
+                        return
+                    track, seconds, played = current
+                    if self._track_signature(track) != signature:
+                        return
+                    if chat_id not in self.active_calls:
+                        return
+                    if not await is_music_playing(chat_id):
+                        continue
+                    if played < seconds:
+                        continue
+
+                    LOGGER(__name__).warning(
+                        "Playback watchdog advancing stuck stream | chat_id=%s | title=%s | played=%s | seconds=%s",
+                        chat_id,
+                        track.get("title") or "Unknown Title",
+                        played,
+                        seconds,
+                    )
+                    await self.play(client, chat_id)
+                    return
+            except asyncio.CancelledError:
+                raise
+            except Exception as err:
+                LOGGER(__name__).warning(
+                    "Playback watchdog failed | chat_id=%s | reason=%s",
+                    chat_id,
+                    err,
+                )
+            finally:
+                try:
+                    current_task = asyncio.current_task()
+                except RuntimeError:
+                    current_task = None
+                if playback_watchdogs.get(chat_id) is current_task:
+                    playback_watchdogs.pop(chat_id, None)
+
+        playback_watchdogs[chat_id] = asyncio.create_task(watchdog())
+
+    def _register_early_end_recovery(self, chat_id: int, signature: tuple) -> bool:
+        previous_signature, attempts = playback_recovery_attempts.get(
+            chat_id,
+            (None, 0),
+        )
+        if previous_signature != signature:
+            attempts = 0
+        if attempts >= PLAYBACK_EARLY_END_MAX_RECOVERIES:
+            return False
+        playback_recovery_attempts[chat_id] = (signature, attempts + 1)
+        return True
+
+    async def _recover_early_stream_end(self, client, chat_id: int) -> bool:
+        current = self._watchable_track(chat_id)
+        if not current:
+            return False
+
+        track, seconds, played = current
+        remaining = seconds - played
+        if remaining <= PLAYBACK_EARLY_END_GRACE_SECONDS:
+            return False
+
+        signature = self._track_signature(track)
+        if not self._register_early_end_recovery(chat_id, signature):
+            return False
+
+        queued = str(track.get("file") or "")
+        streamtype = track.get("streamtype") or "audio"
+        video = str(streamtype) == "video"
+        title = str(track.get("title") or "Unknown Title")
+        videoid = str(track.get("vidid") or "").strip()
+        source_path = queued
+
+        if queued.startswith("vid_"):
+            if not videoid or videoid in {"telegram", "soundcloud"}:
+                return False
+            source_path, _, _ = await self._download_youtube_queue_source(
+                videoid,
+                title,
+                _SilentMystic(),
+                streamtype,
+                modes=("local", "stream"),
+            )
+        elif queued.startswith("index_") or queued == "index_url":
+            source_path = videoid
+        elif queued.startswith("live_"):
+            return False
+
+        if not source_path:
+            return False
+
+        seek_to = max(played, 0)
+        duration = track.get("dur") or seconds_to_min(seconds)
+        stream = dynamic_media_stream(
+            path=source_path,
+            video=video,
+            ffmpeg_params=f"-ss {seconds_to_min(seek_to)} -to {duration}",
+        )
+        await self._play_stream(client, chat_id, stream)
+        if db.get(chat_id) and isinstance(db[chat_id][0], dict):
+            db[chat_id][0]["played"] = seek_to
+        self._schedule_playback_watchdog(client, chat_id)
+        LOGGER(__name__).warning(
+            "Recovered early stream end | chat_id=%s | title=%s | played=%s | seconds=%s",
+            chat_id,
+            title,
+            seek_to,
+            seconds,
+        )
+        return True
 
     async def _resolve_vc_call_id(self, chat_id: int) -> int | None:
         try:
@@ -404,11 +635,13 @@ class Call:
     async def pause_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.pause(chat_id)
+        _cancel_playback_watchdog(chat_id)
 
     @capture_internal_err
     async def resume_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.resume(chat_id)
+        self._schedule_playback_watchdog(assistant, chat_id)
 
     @capture_internal_err
     async def mute_stream(self, chat_id: int) -> None:
@@ -442,7 +675,9 @@ class Call:
         try:
             check = db.get(chat_id)
             if check:
-                check.pop(0)
+                popped = check.pop(0)
+                if popped:
+                    await auto_clean(popped)
         except (IndexError, KeyError):
             pass
         await remove_active_video_chat(chat_id)
@@ -463,6 +698,7 @@ class Call:
         assistant = await group_assistant(self, chat_id)
         stream = dynamic_media_stream(path=link, video=bool(video))
         await self._play_stream(assistant, chat_id, stream)
+        self._schedule_playback_watchdog(assistant, chat_id)
 
     @capture_internal_err
     async def vc_users(self, chat_id: int) -> list:
@@ -477,6 +713,7 @@ class Call:
         is_video = mode == "video"
         stream = dynamic_media_stream(path=file_path, video=is_video, ffmpeg_params=ffmpeg_params)
         await self._play_stream(assistant, chat_id, stream)
+        self._schedule_playback_watchdog(assistant, chat_id, initial_delay=1)
 
     @capture_internal_err
     async def speedup_stream(self, chat_id: int, file_path: str, speed: float, playing: list) -> None:
@@ -530,6 +767,7 @@ class Call:
             "old_dur": db[chat_id][0].get("dur"),
             "old_second": db[chat_id][0].get("seconds"),
         })
+        self._schedule_playback_watchdog(assistant, chat_id)
 
 
     @capture_internal_err
@@ -580,6 +818,7 @@ class Call:
         if video:
             await add_active_video_chat(chat_id)
         await self.maybe_start_vc_join_notifier(chat_id, original_chat_id)
+        self._schedule_playback_watchdog(assistant, chat_id, initial_delay=2)
 
         if await is_autoend():
             counter[chat_id] = {}
@@ -749,6 +988,7 @@ class Call:
 
     @capture_internal_err
     async def play(self, client, chat_id: int) -> None:
+        _cancel_playback_watchdog(chat_id)
         check = db.get(chat_id)
         popped = None
         loop = await get_loop(chat_id)
@@ -797,6 +1037,7 @@ class Call:
             streamtype = current.get("streamtype") or "audio"
             videoid = current.get("vidid")
             db[chat_id][0]["played"] = 0
+            await delete_queue_message(chat_id, current)
 
             exis = current.get("old_dur")
             if exis:
@@ -834,6 +1075,7 @@ class Call:
                     await self._play_stream(client, chat_id, stream)
                 except Exception:
                     return await app.send_message(original_chat_id, text=_["call_6"])
+                self._schedule_playback_watchdog(client, chat_id)
 
                 button = stream_markup(_, chat_id)
                 schedule_stream_card(
@@ -905,9 +1147,11 @@ class Call:
                         await self._play_stream(client, chat_id, stream)
                     except:
                         return await app.send_message(original_chat_id, text=_["call_6"])
+                self._schedule_playback_watchdog(client, chat_id)
 
                 button = stream_markup(_, chat_id)
                 await mystic.delete()
+                schedule_youtube_precache_for_chat(chat_id)
                 schedule_stream_card(
                     chat_id=chat_id,
                     original_chat_id=original_chat_id,
@@ -938,6 +1182,7 @@ class Call:
                     await self._play_stream(client, chat_id, stream)
                 except:
                     return await app.send_message(original_chat_id, text=_["call_6"])
+                self._schedule_playback_watchdog(client, chat_id)
 
                 button = stream_markup(_, chat_id)
                 run = await app.send_photo(
@@ -947,6 +1192,7 @@ class Call:
                     reply_markup=InlineKeyboardMarkup(button),
                 )
                 db[chat_id][0]["mystic"] = run
+                remember_player_message(chat_id, run)
                 db[chat_id][0]["markup"] = "tg"
                 return
 
@@ -956,6 +1202,7 @@ class Call:
                     await self._play_stream(client, chat_id, stream)
                 except:
                     return await app.send_message(original_chat_id, text=_["call_6"])
+                self._schedule_playback_watchdog(client, chat_id)
 
                 if videoid == "telegram":
                     button = stream_markup(_, chat_id)
@@ -972,6 +1219,7 @@ class Call:
                         reply_markup=InlineKeyboardMarkup(button),
                     )
                     db[chat_id][0]["mystic"] = run
+                    remember_player_message(chat_id, run)
                     db[chat_id][0]["markup"] = "tg"
 
                 elif videoid == "soundcloud":
@@ -985,6 +1233,7 @@ class Call:
                         reply_markup=InlineKeyboardMarkup(button),
                     )
                     db[chat_id][0]["mystic"] = run
+                    remember_player_message(chat_id, run)
                     db[chat_id][0]["markup"] = "tg"
 
                 else:
@@ -1063,6 +1312,8 @@ class Call:
                 elif isinstance(update, StreamEnded):
                     if update.stream_type == StreamEnded.Type.AUDIO:
                         assistant = await group_assistant(self, update.chat_id)
+                        if await self._recover_early_stream_end(assistant, update.chat_id):
+                            return
                         await self.play(assistant, update.chat_id)
 
             except AssistantErr as err:
