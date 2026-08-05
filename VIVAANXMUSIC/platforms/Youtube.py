@@ -8,9 +8,9 @@ import yt_dlp
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.future import VideosSearch
-from SHUKLAMUSIC.utils.database import is_on_off
-from SHUKLAMUSIC import app
-from SHUKLAMUSIC.utils.formatters import time_to_seconds
+from VIVAANXMUSIC.utils.database import is_on_off
+from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.formatters import time_to_seconds
 import os
 import glob
 import random
@@ -20,7 +20,7 @@ from pymongo import MongoClient
 import aiohttp
 import config
 import traceback
-from SHUKLAMUSIC import LOGGER
+from VIVAANXMUSIC import LOGGER
 
 API_URL = "https://teaminflex.xyz"  # Change to your API server URL
 API_KEY = "INFLEX50983128D"
