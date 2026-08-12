@@ -1,5 +1,3 @@
-from html import escape
-
 from pyrogram.enums import ParseMode
 
 from VIVAANXMUSIC import app
@@ -8,66 +6,84 @@ from config import LOGGER_ID
 
 
 async def play_logs(message, streamtype, query: str = None):
-    """Send a premium play log to LOGGER_ID."""
-    if not await is_on_off(2):
+    if await is_on_off(2):
+        if query is None:
+            try:
+                query = message.text.split(None, 1)[1]
+            except Exception:
+                query = "—"
+
+        logger_text = f"""
+<b>{app.mention} ᴘʟᴀʏ ʟᴏɢ</b>
+
+<b>ᴄʜᴀᴛ ɪᴅ :</b> <code>{message.chat.id}</code>
+<b>ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {message.chat.title}
+<b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.chat.username}
+
+<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>
+<b>ɴᴀᴍᴇ :</b> {message.from_user.mention}
+<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}
+
+<b>ǫᴜᴇʀʏ :</b> {query}
+<b>sᴛʀᴇᴀᴍᴛʏᴘᴇ :</b> {streamtype}"""
+
+        if message.chat.id != LOGGER_ID:
+            try:
+                await app.send_message(
+                    chat_id=LOGGER_ID,
+                    text=logger_text,
+                    parse_mode=ParseMode.HTML,
+                    disable_web_page_preview=True,
+                )
+            except Exception:
+                pass
         return
 
-    if query is None:
-        try:
-            query = message.text.split(None, 1)[1]
-        except Exception:
-            query = "—"
 
-    chat = getattr(message, "chat", None)
-    user = getattr(message, "from_user", None)
-
-    chat_id = getattr(chat, "id", "—")
-    chat_name = getattr(chat, "title", None) or getattr(chat, "first_name", None) or "Private Chat"
-    chat_username = getattr(chat, "username", None)
-
-    user_id = getattr(user, "id", "—")
-    user_name = getattr(user, "mention", None) or getattr(user, "first_name", None) or "Unknown"
-    user_username = getattr(user, "username", None)
-
-    chat_name = escape(str(chat_name))
-    chat_username = escape(str(chat_username)) if chat_username else "None"
-    user_name = escape(str(user_name))
-    user_username = escape(str(user_username)) if user_username else "None"
-    query = escape(str(query))
-    streamtype = escape(str(streamtype))
-
-    logger_text = f"""
-<b>╭━━━━━━━━━━━━━━━━━━╮</b>
-<b>┃ 🎧 {escape(app.mention)} ᴘʟᴀʏ ʟᴏɢ</b>
-<b>╰━━━━━━━━━━━━━━━━━━╯</b>
-
-<b>╭─「 💬 ᴄʜᴀᴛ ɪɴғᴏ 」</b>
-<b>├ 🆔 ᴄʜᴀᴛ ɪᴅ :</b> <code>{chat_id}</code>
-<b>├ 🏷 ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {chat_name}
-<b>╰ 🔗 ᴜsᴇʀɴᴀᴍᴇ :</b> @{chat_username}
-
-<b>╭─「 👤 ᴜsᴇʀ ɪɴғᴏ 」</b>
-<b>├ 🆔 ᴜsᴇʀ ɪᴅ :</b> <code>{user_id}</code>
-<b>├ 👑 ɴᴀᴍᴇ :</b> {user_name}
-<b>╰ 🔗 ᴜsᴇʀɴᴀᴍᴇ :</b> @{user_username}
-
-<b>╭─「 🎵 ᴛʀᴀᴄᴋ ɪɴғᴏ 」</b>
-<b>├ 🔎 ǫᴜᴇʀʏ :</b> {query}
-<b>╰ 🎶 sᴛʀᴇᴀᴍᴛʏᴘᴇ :</b> {streamtype}
-
-<b>╰━━━━━━━━━━━━━━━━━━╯</b>
-"""
-
-    if chat_id == LOGGER_ID:
-        return
-
+async def failure_logs(message, reason=None, area="Playback"):
+    """Log playback failures without allowing logging errors to crash the bot."""
     try:
-        await app.send_message(
-            chat_id=LOGGER_ID,
-            text=logger_text,
-            parse_mode=ParseMode.HTML,
-            disable_web_page_preview=True,
+        if not await is_on_off(2):
+            return
+
+        chat = getattr(message, "chat", None)
+        user = getattr(message, "from_user", None)
+
+        chat_id = getattr(chat, "id", "—")
+        chat_title = getattr(chat, "title", None) or "—"
+        chat_username = getattr(chat, "username", None) or "—"
+        user_id = getattr(user, "id", "—")
+        user_name = (
+            getattr(user, "mention", None)
+            or getattr(user, "first_name", None)
+            or "—"
         )
+        user_username = getattr(user, "username", None) or "—"
+
+        logger_text = f"""
+<b>{app.mention} ғᴀɪʟᴜʀᴇ ʟᴏɢ</b>
+
+<b>ᴀʀᴇᴀ :</b> {area}
+<b>ʀᴇᴀsᴏɴ :</b> {reason or 'Unknown error'}
+
+<b>ᴄʜᴀᴛ ɪᴅ :</b> <code>{chat_id}</code>
+<b>ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {chat_title}
+<b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{chat_username}
+
+<b>ᴜsᴇʀ ɪᴅ :</b> <code>{user_id}</code>
+<b>ɴᴀᴍᴇ :</b> {user_name}
+<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{user_username}"""
+
+        if chat_id != LOGGER_ID:
+            try:
+                await app.send_message(
+                    chat_id=LOGGER_ID,
+                    text=logger_text,
+                    parse_mode=ParseMode.HTML,
+                    disable_web_page_preview=True,
+                )
+            except Exception:
+                pass
     except Exception:
         pass
-        
+            
