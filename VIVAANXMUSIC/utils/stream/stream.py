@@ -155,7 +155,13 @@ async def stream(
             file_path, direct = await YouTube.download(
                 vidid, mystic, video=is_video, videoid=vidid
             )
-        except Exception:
+        except Exception as e:
+            error_text = str(e).lower()
+            if "authentication" in error_text or "cookies" in error_text or "not a bot" in error_text:
+                raise AssistantErr(
+                    "ʏᴏᴜᴛᴜʙᴇ ᴀᴜᴛʜᴇɴᴛɪᴄᴀᴛɪᴏɴ ʀᴇǫᴜɪʀᴇᴅ. "
+                    "ᴘʟᴇᴀsᴇ sᴇᴛ ʏᴏᴜᴛᴜʙᴇ_ᴄᴏᴏᴋɪᴇs ɪɴ ᴄᴏɴғɪɢ ᴠᴀʀs."
+                )
             raise AssistantErr(_["play_14"])
         if not file_path:
             raise AssistantErr(_["play_14"])
@@ -355,7 +361,16 @@ async def stream(
         else:
             if not forceplay:
                 db[chat_id] = []
-            n, file_path = await YouTube.video(link)
+            try:
+                n, file_path = await YouTube.video(link)
+            except Exception as e:
+                error_text = str(e).lower()
+                if "authentication" in error_text or "cookies" in error_text or "not a bot" in error_text:
+                    raise AssistantErr(
+                        "ʏᴏᴜᴛᴜʙᴇ ᴀᴜᴛʜᴇɴᴛɪᴄᴀᴛɪᴏɴ ʀᴇǫᴜɪʀᴇᴅ. "
+                        "ᴘʟᴇᴀsᴇ sᴇᴛ ʏᴏᴜᴛᴜʙᴇ_ᴄᴏᴏᴋɪᴇs ɪɴ ᴄᴏɴғɪɢ ᴠᴀʀs."
+                    )
+                raise AssistantErr(_["str_3"])
             if n == 0:
                 raise AssistantErr(_["str_3"])
             if not file_path:
@@ -448,3 +463,4 @@ async def stream(
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
             await mystic.delete()
+                
