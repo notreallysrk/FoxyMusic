@@ -35,7 +35,7 @@ async def stream(
         return
 
     forceplay = bool(forceplay)
-    is_video = bool(video)
+    is_video = str(video).lower() in ("true", "video", "1")
 
     if forceplay:
         await JARVIS.force_stop_stream(chat_id)
@@ -46,17 +46,19 @@ async def stream(
         position = 0
 
         for search in result:
-            if int(count) == config.PLAYLIST_FETCH_LIMIT:
-                continue
+            if count >= config.PLAYLIST_FETCH_LIMIT:
+                break
+
             try:
-                title, duration_min, duration_sec, thumbnail, vidid = await YouTube.details(
-                    search, videoid=search
+                title, duration_min, duration_sec, thumbnail, vidid = (
+                    await YouTube.details(search, videoid=search)
                 )
             except Exception:
                 continue
 
             if str(duration_min) == "None":
                 continue
+
             if duration_sec and duration_sec > config.DURATION_LIMIT:
                 continue
 
@@ -72,19 +74,27 @@ async def stream(
                     user_id,
                     "video" if is_video else "audio",
                 )
-                position = len(db.get(chat_id)) - 1
+
+                position = len(db.get(chat_id, [])) - 1
                 count += 1
+
                 msg += f"{count}. {title[:70]}\n"
                 msg += f"{_['play_20']} {position}\n\n"
+
             else:
                 if not forceplay:
                     db[chat_id] = []
+
                 try:
                     file_path, direct = await YouTube.download(
-                        vidid, mystic, video=is_video, videoid=vidid
+                        vidid,
+                        mystic,
+                        video=is_video,
+                        videoid=vidid,
                     )
                 except Exception:
                     raise AssistantErr(_["play_14"])
+
                 if not file_path:
                     raise AssistantErr(_["play_14"])
 
@@ -95,6 +105,7 @@ async def stream(
                     video=is_video,
                     image=thumbnail,
                 )
+
                 await put_queue(
                     chat_id,
                     original_chat_id,
@@ -107,7 +118,9 @@ async def stream(
                     "video" if is_video else "audio",
                     forceplay=forceplay,
                 )
+
                 button = stream_markup(_, chat_id)
+
                 schedule_stream_card(
                     chat_id=chat_id,
                     original_chat_id=original_chat_id,
@@ -125,18 +138,26 @@ async def stream(
 
         if count == 0:
             return
+
         link = await VIVAANBIN(msg)
         lines = msg.count("\n")
         car = os.linesep.join(msg.split(os.linesep)[:17]) if lines >= 17 else msg
+
         try:
-            carbon = await Carbon.generate(car, randint(100, 10000000))
+            carbon = await Carbon.generate(
+                car,
+                randint(100, 10000000),
+            )
             playlist_photo = carbon
         except Exception:
             playlist_photo = config.PLAYLIST_IMG_URL
+
         upl = close_markup(_)
         final_position = len(db.get(chat_id) or []) - 1
+
         if final_position < 0:
             final_position = 0
+
         return await app.send_photo(
             original_chat_id,
             photo=playlist_photo,
@@ -147,22 +168,33 @@ async def stream(
     elif streamtype == "youtube":
         link = result["link"]
         vidid = result["vidid"]
-        title = (result["title"]).title()
+        title = str(result["title"]).title()
         duration_min = result["duration_min"]
         thumbnail = result["thumb"]
 
         try:
             file_path, direct = await YouTube.download(
-                vidid, mystic, video=is_video, videoid=vidid
+                vidid,
+                mystic,
+                video=is_video,
+                videoid=vidid,
             )
+
         except Exception as e:
             error_text = str(e).lower()
-            if "authentication" in error_text or "cookies" in error_text or "not a bot" in error_text:
+
+            if (
+                "authentication" in error_text
+                or "cookies" in error_text
+                or "not a bot" in error_text
+            ):
                 raise AssistantErr(
                     "ʏᴏᴜᴛᴜʙᴇ ᴀᴜᴛʜᴇɴᴛɪᴄᴀᴛɪᴏɴ ʀᴇǫᴜɪʀᴇᴅ. "
                     "ᴘʟᴇᴀsᴇ sᴇᴛ ʏᴏᴜᴛᴜʙᴇ_ᴄᴏᴏᴋɪᴇs ɪɴ ᴄᴏɴғɪɢ ᴠᴀʀs."
                 )
+
             raise AssistantErr(_["play_14"])
+
         if not file_path:
             raise AssistantErr(_["play_14"])
 
@@ -178,16 +210,25 @@ async def stream(
                 user_id,
                 "video" if is_video else "audio",
             )
-            position = len(db.get(chat_id)) - 1
+
+            position = len(db.get(chat_id, [])) - 1
             button = aq_markup(_, chat_id)
+
             await app.send_message(
                 chat_id=original_chat_id,
-                text=_["queue_4"].format(position, title[:27], duration_min, user_name),
+                text=_["queue_4"].format(
+                    position,
+                    title[:27],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
         else:
             if not forceplay:
                 db[chat_id] = []
+
             await JARVIS.join_call(
                 chat_id,
                 original_chat_id,
@@ -195,6 +236,7 @@ async def stream(
                 video=is_video,
                 image=thumbnail,
             )
+
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -207,7 +249,9 @@ async def stream(
                 "video" if is_video else "audio",
                 forceplay=forceplay,
             )
+
             button = stream_markup(_, chat_id)
+
             schedule_stream_card(
                 chat_id=chat_id,
                 original_chat_id=original_chat_id,
@@ -227,6 +271,7 @@ async def stream(
         file_path = result["filepath"]
         title = result["title"]
         duration_min = result["duration_min"]
+
         if not file_path:
             raise AssistantErr(_["play_14"])
 
@@ -242,17 +287,32 @@ async def stream(
                 user_id,
                 "audio",
             )
-            position = len(db.get(chat_id)) - 1
+
+            position = len(db.get(chat_id, [])) - 1
             button = aq_markup(_, chat_id)
+
             await app.send_message(
                 chat_id=original_chat_id,
-                text=_["queue_4"].format(position, title[:27], duration_min, user_name),
+                text=_["queue_4"].format(
+                    position,
+                    title[:27],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
         else:
             if not forceplay:
                 db[chat_id] = []
-            await JARVIS.join_call(chat_id, original_chat_id, file_path, video=False)
+
+            await JARVIS.join_call(
+                chat_id,
+                original_chat_id,
+                file_path,
+                video=False,
+            )
+
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -265,23 +325,30 @@ async def stream(
                 "audio",
                 forceplay=forceplay,
             )
+
             button = stream_markup(_, chat_id)
+
             run = await app.send_photo(
                 original_chat_id,
                 photo=config.SOUNCLOUD_IMG_URL,
                 caption=_["stream_1"].format(
-                    config.SUPPORT_CHAT, title[:23], duration_min, user_name
+                    config.SUPPORT_CHAT,
+                    title[:23],
+                    duration_min,
+                    user_name,
                 ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
 
     elif streamtype == "telegram":
         file_path = result["path"]
         link = result["link"]
-        title = (result["title"]).title()
+        title = str(result["title"]).title()
         duration_min = result["dur"]
+
         if not file_path:
             raise AssistantErr(_["play_14"])
 
@@ -297,17 +364,32 @@ async def stream(
                 user_id,
                 "video" if is_video else "audio",
             )
-            position = len(db.get(chat_id)) - 1
+
+            position = len(db.get(chat_id, [])) - 1
             button = aq_markup(_, chat_id)
+
             await app.send_message(
                 chat_id=original_chat_id,
-                text=_["queue_4"].format(position, title[:27], duration_min, user_name),
+                text=_["queue_4"].format(
+                    position,
+                    title[:27],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
         else:
             if not forceplay:
                 db[chat_id] = []
-            await JARVIS.join_call(chat_id, original_chat_id, file_path, video=is_video)
+
+            await JARVIS.join_call(
+                chat_id,
+                original_chat_id,
+                file_path,
+                video=is_video,
+            )
+
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -320,22 +402,35 @@ async def stream(
                 "video" if is_video else "audio",
                 forceplay=forceplay,
             )
+
             if is_video:
                 await add_active_video_chat(chat_id)
+
             button = stream_markup(_, chat_id)
+
             run = await app.send_photo(
                 original_chat_id,
-                photo=config.TELEGRAM_VIDEO_URL if is_video else config.TELEGRAM_AUDIO_URL,
-                caption=_["stream_1"].format(link, title[:23], duration_min, user_name),
+                photo=(
+                    config.TELEGRAM_VIDEO_URL
+                    if is_video
+                    else config.TELEGRAM_AUDIO_URL
+                ),
+                caption=_["stream_1"].format(
+                    link,
+                    title[:23],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
 
     elif streamtype == "live":
         link = result["link"]
         vidid = result["vidid"]
-        title = (result["title"]).title()
+        title = str(result["title"]).title()
         thumbnail = result["thumb"]
         duration_min = "Live Track"
 
@@ -351,28 +446,46 @@ async def stream(
                 user_id,
                 "video" if is_video else "audio",
             )
-            position = len(db.get(chat_id)) - 1
+
+            position = len(db.get(chat_id, [])) - 1
             button = aq_markup(_, chat_id)
+
             await app.send_message(
                 chat_id=original_chat_id,
-                text=_["queue_4"].format(position, title[:27], duration_min, user_name),
+                text=_["queue_4"].format(
+                    position,
+                    title[:27],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
         else:
             if not forceplay:
                 db[chat_id] = []
+
             try:
                 n, file_path = await YouTube.video(link)
+
             except Exception as e:
                 error_text = str(e).lower()
-                if "authentication" in error_text or "cookies" in error_text or "not a bot" in error_text:
+
+                if (
+                    "authentication" in error_text
+                    or "cookies" in error_text
+                    or "not a bot" in error_text
+                ):
                     raise AssistantErr(
                         "ʏᴏᴜᴛᴜʙᴇ ᴀᴜᴛʜᴇɴᴛɪᴄᴀᴛɪᴏɴ ʀᴇǫᴜɪʀᴇᴅ. "
                         "ᴘʟᴇᴀsᴇ sᴇᴛ ʏᴏᴜᴛᴜʙᴇ_ᴄᴏᴏᴋɪᴇs ɪɴ ᴄᴏɴғɪɢ ᴠᴀʀs."
                     )
+
                 raise AssistantErr(_["str_3"])
+
             if n == 0:
                 raise AssistantErr(_["str_3"])
+
             if not file_path:
                 raise AssistantErr(_["play_14"])
 
@@ -383,6 +496,7 @@ async def stream(
                 video=is_video,
                 image=thumbnail or None,
             )
+
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -395,7 +509,9 @@ async def stream(
                 "video" if is_video else "audio",
                 forceplay=forceplay,
             )
+
             button = stream_markup(_, chat_id)
+
             schedule_stream_card(
                 chat_id=chat_id,
                 original_chat_id=original_chat_id,
@@ -427,21 +543,31 @@ async def stream(
                 link,
                 "video" if is_video else "audio",
             )
-            position = len(db.get(chat_id)) - 1
+
+            position = len(db.get(chat_id, [])) - 1
             button = aq_markup(_, chat_id)
+
             await mystic.edit_text(
-                text=_["queue_4"].format(position, title[:27], duration_min, user_name),
+                text=_["queue_4"].format(
+                    position,
+                    title[:27],
+                    duration_min,
+                    user_name,
+                ),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
         else:
             if not forceplay:
                 db[chat_id] = []
+
             await JARVIS.join_call(
                 chat_id,
                 original_chat_id,
                 link,
                 video=is_video,
             )
+
             await put_queue_index(
                 chat_id,
                 original_chat_id,
@@ -453,14 +579,20 @@ async def stream(
                 "video" if is_video else "audio",
                 forceplay=forceplay,
             )
+
             button = stream_markup(_, chat_id)
+
             run = await app.send_photo(
                 original_chat_id,
                 photo=config.STREAM_IMG_URL,
                 caption=_["stream_2"].format(user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
-            await mystic.delete()
-                
+
+            try:
+                await mystic.delete()
+            except Exception:
+                pass
