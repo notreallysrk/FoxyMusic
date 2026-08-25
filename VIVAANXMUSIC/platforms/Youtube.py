@@ -686,112 +686,79 @@ class YouTubeAPI:
         videoid: str,
         title: str = "",
         max_duration: Union[int, None] = None,
+        exclude_ids=None,
     ):
         """
-        Find another song for autoplay.
+        Find a different YouTube song for autoplay.
 
-        Returns a different YouTube video so
-        the current song is not repeated.
+        `exclude_ids` contains recently played video IDs so autoplay does not
+        loop back to the same songs.
         """
-
-        seed_id = str(
-            videoid or ""
-        ).strip()
-
-        query = str(
-            title or ""
-        ).strip()
-
-        if not query:
-            query = seed_id
+        seed_id = str(videoid or "").strip()
+        query = str(title or "").strip() or seed_id
 
         if not query:
             return None
+
+        excluded = {
+            str(item).strip()
+            for item in (exclude_ids or set())
+            if str(item).strip()
+        }
+        excluded.add(seed_id)
 
         def run():
             options = _ydl_opts()
             options["extract_flat"] = True
 
-            with yt_dlp.YoutubeDL(
-                options
-            ) as ydl:
-
+            with yt_dlp.YoutubeDL(options) as ydl:
                 data = ydl.extract_info(
-                    f"ytsearch10:{query}",
+                    f"ytsearch30:{query}",
                     download=False,
                 )
-
-                return (
-                    data.get("entries")
-                    or []
-                )
+                return data.get("entries") or []
 
         try:
-            entries = await asyncio.to_thread(
-                run
-            )
-
+            entries = await asyncio.to_thread(run)
         except Exception:
             return None
 
+        # Search in returned order, but never use a recently played ID.
         for entry in entries:
-
             if not entry:
                 continue
 
-            candidate = str(
-                entry.get("id")
-                or ""
-            ).strip()
-
-            # Same song repeat mat karo
-            if (
-                not candidate
-                or candidate == seed_id
-            ):
+            candidate = str(entry.get("id") or "").strip()
+            if not candidate or candidate in excluded:
                 continue
 
-            duration_sec = int(
-                entry.get("duration")
-                or 0
-            )
+            try:
+                duration_sec = int(entry.get("duration") or 0)
+            except (TypeError, ValueError):
+                duration_sec = 0
 
-            # Invalid / live stream skip
             if duration_sec <= 0:
                 continue
 
-            # Duration limit
-            if (
-                max_duration
-                and duration_sec
-                > int(max_duration)
-            ):
+            if max_duration and duration_sec > int(max_duration):
                 continue
 
-            song_title = (
-                entry.get("title")
-                or "Unknown Title"
-            )
+            song_title = str(entry.get("title") or "Unknown Title").strip()
+            if not song_title:
+                continue
 
             thumbnail = (
                 entry.get("thumbnail")
-                or (
-                    f"https://i.ytimg.com/vi/"
-                    f"{candidate}/hqdefault.jpg"
-                )
+                or f"https://i.ytimg.com/vi/{candidate}/hqdefault.jpg"
             )
 
             return {
                 "title": song_title,
-                "link": (
-                    f"https://www.youtube.com/"
-                    f"watch?v={candidate}"
-                ),
+                "link": f"https://www.youtube.com/watch?v={candidate}",
                 "vidid": candidate,
                 "duration_sec": duration_sec,
                 "duration_min": (
-                    f"{duration_sec // 60}:"
-                    f"{duration_sec % 60:02d}"
+                    f"{duration_sec // 60}:{duration_sec % 60:02d}"
                 ),
                 "thumb": thumbnail,
             }
@@ -977,4 +944,3 @@ class YouTubeAPI:
 
 
 YouTube = YouTubeAPI()
-                        
