@@ -1,5 +1,6 @@
 import asyncio
 import os
+import re
 import time
 from datetime import datetime, timedelta
 from typing import Union
@@ -61,6 +62,7 @@ vc_join_targets = {}
 vc_join_call_map = {}
 vc_join_event_cache = {}
 vc_join_notice_cache = {}
+autoplay_history = {}
 
 PLAYBACK_WATCHDOG_GRACE_SECONDS = 20
 PLAYBACK_WATCHDOG_RECHECK_SECONDS = 30
@@ -125,6 +127,7 @@ def is_too_many_open_files(err: Exception) -> bool:
 async def _clear_(chat_id: int) -> None:
     _cancel_playback_watchdog(chat_id)
     playback_recovery_attempts.pop(chat_id, None)
+    autoplay_history.pop(chat_id, None)
     popped = db.pop(chat_id, None)
     if isinstance(popped, list):
         for item in popped:
@@ -143,6 +146,24 @@ async def _clear_(chat_id: int) -> None:
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
     await set_loop(chat_id, 0)
+
+def _safe_int(value, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _normalize_autoplay_title(value: str) -> str:
+    value = str(value or "").lower()
+    value = re.sub(
+        r"\\b(official|video|audio|lyrics?|lyric|music|full|hd|4k|visualizer)\\b",
+        " ",
+        value,
+    )
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return " ".join(value.split())
+
 
 class Call:
     def __init__(self):
@@ -831,51 +852,112 @@ class Call:
             return False
 
         queued_file = str(finished_track.get("file") or "")
-        if queued_file.startswith("live_") or queued_file == "index_url":
+        if queued_file.startswith("live_") or queued_file in {"index_url", "index_"}:
             return False
 
-        videoid = str(finished_track.get("vidid") or "")
+        videoid = str(finished_track.get("vidid") or "").strip()
         if not videoid or videoid in {"telegram", "soundcloud"}:
             return False
 
-        seed_seconds = int(finished_track.get("seconds") or 0)
-        max_duration = None
-        if seed_seconds > 0:
-            max_duration = min(max(seed_seconds * 3, 240), 900)
+        seed_seconds = _safe_int(finished_track.get("seconds"), 0)
+        max_duration = min(max(seed_seconds * 3, 240), 900) if seed_seconds > 0 else None
 
+        history = autoplay_history.setdefault(chat_id, {"ids": [], "titles": []})
+        if not isinstance(history, dict):
+            history = {"ids": [], "titles": []}
+            autoplay_history[chat_id] = history
+
+        current_title = _normalize_autoplay_title(finished_track.get("title", ""))
+        if videoid and videoid not in history["ids"]:
+            history["ids"].append(videoid)
+        if current_title and current_title not in history["titles"]:
+            history["titles"].append(current_title)
+
+        history["ids"] = history["ids"][-100:]
+        history["titles"] = history["titles"][-100:]
+
+        recommendation = None
+        last_error = None
+
+        # First try the newer autoplay API with duplicate exclusion.
         try:
             recommendation = await YouTube.autoplay(
                 videoid,
                 finished_track.get("title", ""),
                 max_duration=max_duration,
+                exclude_ids=set(history["ids"]),
+                exclude_titles=set(history["titles"]),
             )
+        except TypeError:
+            # Compatibility with older YouTube.autoplay implementations.
+            try:
+                recommendation = await YouTube.autoplay(
+                    videoid,
+                    finished_track.get("title", ""),
+                    max_duration=max_duration,
+                )
+            except Exception as err:
+                last_error = err
         except Exception as err:
+            last_error = err
+
+        if not recommendation:
             LOGGER(__name__).warning(
-                "Autoplay lookup failed for chat %s on %s: %s",
+                "Autoplay produced no recommendation | chat_id=%s | seed=%s | error=%s",
                 chat_id,
                 videoid,
-                err,
+                last_error,
             )
             return False
 
-        if not recommendation:
+        rec_id = str(recommendation.get("vidid") or "").strip()
+        rec_title_raw = str(recommendation.get("title") or "").strip()
+        rec_title = _normalize_autoplay_title(rec_title_raw)
+
+        if (
+            not rec_id
+            or not rec_title
+            or rec_id in history["ids"]
+            or rec_title in history["titles"]
+        ):
+            LOGGER(__name__).warning(
+                "Autoplay rejected duplicate | chat_id=%s | id=%s | title=%s",
+                chat_id,
+                rec_id,
+                rec_title_raw,
+            )
             return False
+
+        history["ids"].append(rec_id)
+        history["titles"].append(rec_title)
+        history["ids"] = history["ids"][-100:]
+        history["titles"] = history["titles"][-100:]
+        autoplay_history[chat_id] = history
 
         db.setdefault(chat_id, []).append(
             {
-                "title": recommendation["title"].title(),
-                "dur": recommendation["duration_min"],
+                "title": rec_title_raw.title(),
+                "dur": recommendation.get("duration_min") or "00:00",
                 "streamtype": finished_track.get("streamtype", "audio"),
                 "by": "Autoplay",
                 "user_id": 0,
                 "chat_id": finished_track.get("chat_id", chat_id),
-                "file": f"vid_{recommendation['vidid']}",
-                "vidid": recommendation["vidid"],
-                "seconds": recommendation["duration_sec"],
+                "file": f"vid_{rec_id}",
+                "vidid": rec_id,
+                "seconds": _safe_int(recommendation.get("duration_sec"), 0),
                 "played": 0,
             }
         )
+
+        LOGGER(__name__).info(
+            "Autoplay queued next song | chat_id=%s | seed=%s | next=%s | title=%s",
+            chat_id,
+            videoid,
+            rec_id,
+            rec_title_raw,
+        )
         return True
+
 
     async def _stop_if_queue_empty(
         self,
@@ -1000,11 +1082,16 @@ class Call:
             await auto_clean(popped)
             if await self._stop_if_queue_empty(client, chat_id, popped):
                 return
-        except:
+        except Exception as err:
+            LOGGER(__name__).exception(
+                "Queue advance failed | chat_id=%s | error=%s",
+                chat_id,
+                err,
+            )
             try:
                 await _clear_(chat_id)
                 return await client.leave_call(chat_id)
-            except:
+            except Exception:
                 return
         while True:
             check = db.get(chat_id)
