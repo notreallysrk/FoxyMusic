@@ -845,7 +845,7 @@ class Call:
             max_duration = min(max(seed_seconds * 3, 240), 900)
 
         try:
-            remember_played(chat_id, videoid)
+            remember_played(chat_id, videoid, finished_track.get("title", ""))
             recommendation = await fetch_autoplay_track(
                 chat_id,
                 finished_track.get("title", ""),
@@ -1039,7 +1039,7 @@ class Call:
             streamtype = current.get("streamtype") or "audio"
             videoid = current.get("vidid")
             if videoid and str(videoid) not in {"telegram", "soundcloud"}:
-                remember_played(chat_id, str(videoid))
+                remember_played(chat_id, str(videoid), title)
             db[chat_id][0]["played"] = 0
             await delete_queue_message(chat_id, current)
 
@@ -1366,4 +1366,3 @@ class Call:
 
 
 JARVIS = Call()
-    
