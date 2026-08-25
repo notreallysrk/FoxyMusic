@@ -687,6 +687,7 @@ class YouTubeAPI:
         title: str = "",
         max_duration: Union[int, None] = None,
         exclude_ids=None,
+        exclude_titles=None,
     ):
         """
         Find another song for autoplay.
@@ -711,6 +712,7 @@ class YouTubeAPI:
 
         excluded = {str(x).strip() for x in (exclude_ids or set()) if str(x).strip()}
         excluded.add(seed_id)
+        excluded_titles = {re.sub(r"[^a-z0-9]+", "", str(x).lower()) for x in (exclude_titles or set()) if str(x).strip()}
 
         def run():
             options = _ydl_opts()
@@ -776,6 +778,9 @@ class YouTubeAPI:
                 entry.get("title")
                 or "Unknown Title"
             )
+            normalized_title = re.sub(r"[^a-z0-9]+", "", song_title.lower())
+            if normalized_title and normalized_title in excluded_titles:
+                continue
 
             thumbnail = (
                 entry.get("thumbnail")
@@ -981,3 +986,4 @@ class YouTubeAPI:
 
 
 YouTube = YouTubeAPI()
+    
