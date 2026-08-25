@@ -5,8 +5,7 @@ import config
 from VIVAANXMUSIC import YouTube, app
 from VIVAANXMUSIC.core.call import JARVIS
 from VIVAANXMUSIC.misc import db
-from VIVAANXMUSIC.utils.database import get_loop, get_autoplay
-from VIVAANXMUSIC.utils.Autoplay import remember_played
+from VIVAANXMUSIC.utils.database import get_loop
 from VIVAANXMUSIC.utils.decorators import AdminRightsCheck
 from VIVAANXMUSIC.utils.inline import close_markup, stream_markup
 from VIVAANXMUSIC.utils.stream.autoclear import auto_clean
@@ -73,26 +72,16 @@ async def skip(cli, message: Message, _, chat_id):
             if popped:
                 await auto_clean(popped)
             if not check:
-                # Last song was skipped: continue with a NEW autoplay song if enabled.
-                if popped and await get_autoplay(chat_id):
-                    remember_played(chat_id, str(popped.get("vidid") or ""))
-                    try:
-                        added = await JARVIS._enqueue_autoplay_track(chat_id, popped)
-                    except Exception:
-                        added = False
-                    if added:
-                        check = db.get(chat_id)
-                if not check:
-                    await message.reply_text(
-                        text=_["admin_6"].format(
-                            message.from_user.mention, message.chat.title
-                        ),
-                        reply_markup=close_markup(_),
-                    )
-                    try:
-                        return await JARVIS.stop_stream(chat_id)
-                    except:
-                        return
+                await message.reply_text(
+                    text=_["admin_6"].format(
+                        message.from_user.mention, message.chat.title
+                    ),
+                    reply_markup=close_markup(_),
+                )
+                try:
+                    return await JARVIS.stop_stream(chat_id)
+                except:
+                    return
         except:
             try:
                 await message.reply_text(
@@ -110,8 +99,6 @@ async def skip(cli, message: Message, _, chat_id):
     requester_id = check[0].get("user_id")
     streamtype = check[0]["streamtype"]
     videoid = check[0]["vidid"]
-    if videoid and str(videoid) not in {"telegram", "soundcloud"}:
-        remember_played(chat_id, str(videoid))
     status = True if str(streamtype) == "video" else None
     db[chat_id][0]["played"] = 0
     await delete_queue_message(chat_id, check[0])
@@ -274,5 +261,4 @@ async def skip(cli, message: Message, _, chat_id):
                 ),
                 button=button,
                 markup="stream",
-                                )
-            
+            )
