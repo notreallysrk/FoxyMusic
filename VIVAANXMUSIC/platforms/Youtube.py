@@ -686,6 +686,7 @@ class YouTubeAPI:
         videoid: str,
         title: str = "",
         max_duration: Union[int, None] = None,
+        exclude_ids=None,
     ):
         """
         Find another song for autoplay.
@@ -707,6 +708,9 @@ class YouTubeAPI:
 
         if not query:
             return None
+
+        excluded = {str(x).strip() for x in (exclude_ids or set()) if str(x).strip()}
+        excluded.add(seed_id)
 
         def run():
             options = _ydl_opts()
@@ -747,7 +751,7 @@ class YouTubeAPI:
             # Same song repeat mat karo
             if (
                 not candidate
-                or candidate == seed_id
+                or candidate in excluded
             ):
                 continue
 
