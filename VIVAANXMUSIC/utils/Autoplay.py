@@ -4,62 +4,43 @@ from collections import defaultdict, deque
 from VIVAANXMUSIC import YouTube
 
 
-# Har chat ke recent played songs
 _played_tracks = defaultdict(lambda: deque(maxlen=50))
 _played_titles = defaultdict(lambda: deque(maxlen=50))
 
 
 def _norm_title(value: str) -> str:
-    """Compare titles safely."""
-    value = str(value or "").lower().strip()
+    value = str(value or "").lower()
 
-    # Remove bracket content
-    value = re.sub(r"\([^)]*\)|\[[^]]*\]", " ", value)
+    value = re.sub(
+        r"\([^)]*\)|\[[^]]*\]",
+        " ",
+        value,
+    )
 
-    # Remove common YouTube suffix words
     value = re.sub(
         r"\b("
         r"official|video|audio|lyrics|lyric|full|song|music|"
-        r"hd|4k|remastered|version|visualizer|mv"
+        r"hd|4k|remastered|version|visualizer|"
+        r"status|fullvideo|lvideo"
         r")\b",
         " ",
         value,
     )
 
-    # Keep only comparable characters
-    return re.sub(r"[^a-z0-9]+", "", value)
+    return re.sub(
+        r"[^a-z0-9]+",
+        "",
+        value,
+    )
 
 
-def _track_id(track):
-    """Get YouTube video ID from different result formats."""
-    if not isinstance(track, dict):
-        return ""
-
-    return str(
-        track.get("vidid")
-        or track.get("video_id")
-        or track.get("id")
-        or track.get("videoId")
-        or ""
-    ).strip()
-
-
-def _track_title(track):
-    """Get title safely."""
-    if not isinstance(track, dict):
-        return ""
-
-    return str(
-        track.get("title")
-        or track.get("name")
-        or track.get("track")
-        or ""
-    ).strip()
-
-
-def remember_played(chat_id: int, videoid: str, title: str = ""):
-    """Remember played track and normalized title."""
+def remember_played(
+    chat_id: int,
+    videoid: str,
+    title: str = "",
+):
     chat_id = int(chat_id)
+
     videoid = str(videoid or "").strip()
 
     if videoid:
@@ -72,84 +53,112 @@ def remember_played(chat_id: int, videoid: str, title: str = ""):
 
         history.append(videoid)
 
-    norm_title = _norm_title(title)
+    normalized = _norm_title(title)
 
-    if norm_title:
+    if normalized:
         titles = _played_titles[chat_id]
 
         try:
-            titles.remove(norm_title)
+            titles.remove(normalized)
         except ValueError:
             pass
 
-        titles.append(norm_title)
+        titles.append(normalized)
 
 
 def get_played_tracks(chat_id: int):
-    return set(_played_tracks.get(int(chat_id), []))
+    return set(
+        _played_tracks.get(
+            int(chat_id),
+            [],
+        )
+    )
 
 
 def get_played_titles(chat_id: int):
-    return set(_played_titles.get(int(chat_id), []))
+    return set(
+        _played_titles.get(
+            int(chat_id),
+            [],
+        )
+    )
 
 
-def is_already_played(
-    chat_id: int,
-    videoid: str,
-    title: str = "",
-) -> bool:
-    """Check both ID and title history."""
+def clear_autoplay_history(chat_id: int):
     chat_id = int(chat_id)
 
-    videoid = str(videoid or "").strip()
-    title = _norm_title(title)
+    _played_tracks.pop(
+        chat_id,
+        None,
+    )
 
-    if videoid and videoid in _played_tracks.get(chat_id, []):
-        return True
-
-    if title and title in _played_titles.get(chat_id, []):
-        return True
-
-    return False
+    _played_titles.pop(
+        chat_id,
+        None,
+    )
 
 
-async def _get_autoplay_result(
-    seed_vidid: str,
-    query: str,
-    max_duration,
-    exclude_ids,
-    exclude_titles,
-):
+def _detect_language(title: str) -> str:
     """
-    Get autoplay result.
-    First try advanced arguments.
-    If Youtube.py does not support them, use fallback.
+    Title se language/style guess.
     """
 
-    try:
-        return await YouTube.autoplay(
-            seed_vidid,
-            query,
-            max_duration=max_duration,
-            exclude_ids=list(exclude_ids),
-            exclude_titles=list(exclude_titles),
-        )
+    text = str(title or "").lower()
 
-    except TypeError:
-        try:
-            return await YouTube.autoplay(
-                seed_vidid,
-                query,
-                max_duration=max_duration,
-            )
-        except TypeError:
-            return await YouTube.autoplay(
-                seed_vidid,
-                query,
-            )
+    bhojpuri_words = [
+        "bhojpuri",
+        "khesari",
+        "pawan singh",
+        "nirahua",
+        "dinesh lal",
+        "bhojiwood",
+    ]
 
-    except Exception:
-        return None
+    haryanvi_words = [
+        "haryanvi",
+        "haryana",
+        "sapna",
+        "masoom sharma",
+        "gulzaar chhaniwala",
+        "dada lakhmi",
+    ]
+
+    punjabi_words = [
+        "punjabi",
+        "punjabi song",
+        "diljit",
+        "sidhu moose",
+        "ap dhillon",
+        "karan aujla",
+    ]
+
+    english_words = [
+        "english",
+        "official music video",
+        "taylor swift",
+        "justin bieber",
+        "ed sheeran",
+        "the weeknd",
+        "billie eilish",
+    ]
+
+    for word in bhojpuri_words:
+        if word in text:
+            return "bhojpuri"
+
+    for word in haryanvi_words:
+        if word in text:
+            return "haryanvi"
+
+    for word in punjabi_words:
+        if word in text:
+            return "punjabi"
+
+    for word in english_words:
+        if word in text:
+            return "english"
+
+    return "hindi"
 
 
 async def fetch_autoplay_track(
@@ -159,24 +168,24 @@ async def fetch_autoplay_track(
     max_duration=None,
 ):
     """
-    Find a different song.
-
-    Important:
-    - Current song excluded
-    - Last 50 played IDs excluded
-    - Last 50 normalized titles excluded
-    - Repeated results are rejected
+    Same language ke different songs:
+    Hindi -> Hindi
+    Punjabi -> Punjabi
+    English -> English
+    Haryanvi -> Haryanvi
+    Bhojpuri -> Bhojpuri
     """
 
     chat_id = int(chat_id)
 
-    seed_vidid = str(seed_vidid or "").strip()
-    seed_title = str(seed_title or "").strip()
+    seed_vidid = str(
+        seed_vidid or ""
+    ).strip()
 
-    if not seed_title:
-        seed_title = seed_vidid
+    seed_title = str(
+        seed_title or ""
+    ).strip()
 
-    # Current song must be remembered immediately
     if seed_vidid:
         remember_played(
             chat_id,
@@ -190,93 +199,91 @@ async def fetch_autoplay_track(
     played_ids = get_played_tracks(chat_id)
     played_titles = get_played_titles(chat_id)
 
-    # Explicitly exclude seed/current song
-    if seed_vidid:
-        played_ids.add(seed_vidid)
+    seed_normalized = _norm_title(seed_title)
 
-    seed_norm = _norm_title(seed_title)
+    if seed_normalized:
+        played_titles.add(
+            seed_normalized
+        )
 
-    if seed_norm:
-        played_titles.add(seed_norm)
+    # Current song ki language/style
+    language = _detect_language(
+        seed_title
+    )
 
-    # Try related searches, but never accept same song
+    # IMPORTANT:
+    # Hindi song -> Hindi searches
+    # Bhojpuri -> Bhojpuri searches
+    # etc.
     queries = [
-        seed_title,
-        f"{seed_title} song",
-        f"{seed_title} music",
-        f"{seed_title} official audio",
-        f"{seed_title} lyrics",
+        f"latest {language} songs official audio",
+        f"popular {language} songs official audio",
+        f"trending {language} songs",
+        f"best {language} songs",
+        f"new {language} songs",
     ]
-
-    # Prevent same result from being repeatedly returned
-    attempted_ids = set()
 
     for query in queries:
 
-        for _ in range(10):
+        for _ in range(3):
 
-            track = await _get_autoplay_result(
-                seed_vidid=seed_vidid,
-                query=query,
-                max_duration=max_duration,
-                exclude_ids=played_ids | attempted_ids,
-                exclude_titles=played_titles,
-            )
+            try:
+                track = await YouTube.autoplay(
+                    seed_vidid,
+                    query,
+                    max_duration=max_duration,
+                    exclude_ids=played_ids,
+                    exclude_titles=played_titles,
+                )
+
+            except TypeError:
+                track = await YouTube.autoplay(
+                    seed_vidid,
+                    query,
+                    max_duration=max_duration,
+                )
+
+            except Exception:
+                track = None
 
             if not track:
                 break
 
-            if not isinstance(track, dict):
-                break
+            videoid = str(
+                track.get("vidid") or ""
+            ).strip()
 
-            vidid = _track_id(track)
-            title = _track_title(track)
-            norm_title = _norm_title(title)
+            title = str(
+                track.get("title") or ""
+            ).strip()
 
-            # Invalid result
-            if not vidid:
-                break
-
-            # Mark result so API cannot give it again
-            attempted_ids.add(vidid)
-
-            # Never return current/seed video
-            if seed_vidid and vidid == seed_vidid:
+            if not videoid:
                 continue
 
-            # Never return recently played ID
-            if vidid in played_ids:
+            normalized_title = _norm_title(
+                title
+            )
+
+            # Same/recent video reject
+            if videoid in played_ids:
                 continue
 
-            # Never return recent same title
-            if norm_title and norm_title in played_titles:
-                played_ids.add(vidid)
-                continue
-
-            # Extra duplicate safety
-            if is_already_played(
-                chat_id,
-                vidid,
-                title,
+            # Same/recent title reject
+            if (
+                normalized_title
+                and normalized_title
+                in played_titles
             ):
-                played_ids.add(vidid)
+                played_ids.add(videoid)
                 continue
 
-            # Valid new track
+            # Save before returning
             remember_played(
                 chat_id,
-                vidid,
+                videoid,
                 title,
             )
 
             return track
 
     return None
-
-
-def clear_autoplay_history(chat_id: int):
-    """Clear one chat's autoplay history."""
-    chat_id = int(chat_id)
-
-    _played_tracks.pop(chat_id, None)
-    _played_titles.pop(chat_id, None)
