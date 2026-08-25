@@ -968,7 +968,6 @@ class Call:
                     mystic,
                     videoid=True,
                     video=is_video,
-                    stream=use_stream_url,
                     title=title,
                 )
             except Exception as err:
