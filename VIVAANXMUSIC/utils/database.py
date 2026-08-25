@@ -1024,3 +1024,4 @@ async def remove_banned_user(user_id: int):
         return await blockeddb.delete_one(
             {"user_id": user_id}
     )
+    
