@@ -3,30 +3,18 @@ from collections import defaultdict, deque
 
 from VIVAANXMUSIC import YouTube
 
-
-# Har chat ke last played video IDs
-_played_tracks = defaultdict(lambda: deque(maxlen=30))
+_played_tracks = defaultdict(lambda: deque(maxlen=50))
 
 
 def remember_played(chat_id: int, videoid: str):
-    """Remember played track so autoplay does not repeat it."""
-
+    videoid = str(videoid or "").strip()
     if not videoid:
         return
-
-    videoid = str(videoid).strip()
-
-    if not videoid:
-        return
-
     history = _played_tracks[int(chat_id)]
-
-    # Already exists to duplicate mat rakho
     try:
         history.remove(videoid)
     except ValueError:
         pass
-
     history.append(videoid)
 
 
@@ -34,89 +22,55 @@ def get_played_tracks(chat_id: int):
     return set(_played_tracks.get(int(chat_id), []))
 
 
-async def fetch_autoplay_track(
-    chat_id: int,
-    seed_title: str,
-    seed_vidid: str = None,
-):
-    """
-    Get a NEW autoplay track.
-
-    Current song, already played songs aur invalid tracks skip karega.
-    """
-
+async def fetch_autoplay_track(chat_id: int, seed_title: str, seed_vidid: str = None, max_duration=None):
+    """Return a different, not-recently-played YouTube track."""
     chat_id = int(chat_id)
+    seed_vidid = str(seed_vidid or "").strip()
+    seed_title = str(seed_title or "").strip() or seed_vidid
 
     if seed_vidid:
         remember_played(chat_id, seed_vidid)
-
-    played = get_played_tracks(chat_id)
-
-    seed_title = str(seed_title or "").strip()
-    seed_vidid = str(seed_vidid or "").strip()
-
-    if not seed_title:
-        seed_title = seed_vidid
-
     if not seed_title:
         return None
 
-    # Multiple attempts with different queries
+    played = get_played_tracks(chat_id)
     queries = [
         seed_title,
+        f"{seed_title} song",
         f"{seed_title} official audio",
         f"{seed_title} music",
     ]
 
     for query in queries:
-        try:
-            # YouTube.autoplay currently same-song filter karta hai.
-            # Hum history bhi pass/validate karenge.
-            track = await YouTube.autoplay(
-                seed_vidid,
-                query,
-            )
+        for _ in range(3):
+            try:
+                track = await YouTube.autoplay(
+                    seed_vidid,
+                    query,
+                    max_duration=max_duration,
+                    exclude_ids=played,
+                )
+            except TypeError:
+                track = await YouTube.autoplay(seed_vidid, query, max_duration=max_duration)
+            except Exception:
+                track = None
 
-            if (
-                track
-                and track.get("vidid")
-                and track["vidid"] not in played
-                and track["vidid"] != seed_vidid
-            ):
+            if not track:
+                break
+
+            vidid = str(track.get("vidid") or "").strip()
+            if vidid and vidid != seed_vidid and vidid not in played:
+                remember_played(chat_id, vidid)
                 return track
 
-        except Exception:
-            continue
-
-    # History clear karke ek baar retry
-    # Lekin current song ko still repeat nahi karenge
-    history = _played_tracks.get(chat_id)
-
-    if history:
-        history.clear()
-
-    if seed_vidid:
-        remember_played(chat_id, seed_vidid)
-
-    try:
-        track = await YouTube.autoplay(
-            seed_vidid,
-            seed_title,
-        )
-
-        if (
-            track
-            and track.get("vidid")
-            and track["vidid"] != seed_vidid
-        ):
-            return track
-
-    except Exception:
-        pass
+            if vidid:
+                played.add(vidid)
+            else:
+                break
 
     return None
 
 
 def clear_autoplay_history(chat_id: int):
-    """Clear autoplay history when needed."""
     _played_tracks.pop(int(chat_id), None)
+    
