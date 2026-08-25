@@ -46,6 +46,7 @@ def _clean_youtube_url(link: str) -> str:
 
     link = str(link).strip()
 
+    # Video ID directly
     if re.fullmatch(r"[\w-]{6,}", link):
         return f"https://www.youtube.com/watch?v={link}"
 
@@ -92,7 +93,11 @@ def _normalize_title(value: str) -> str:
         value,
     )
 
-    return re.sub(r"[^a-z0-9]+", "", value)
+    return re.sub(
+        r"[^a-z0-9]+",
+        "",
+        value,
+    )
 
 
 def _title_words(value: str):
@@ -207,7 +212,7 @@ async def download_song(
     ):
         return cached
 
-    # SHRUTI API
+    # API downloader
     if API_URL and API_KEY:
         try:
             async with aiohttp.ClientSession() as session:
@@ -260,7 +265,7 @@ async def download_song(
         except Exception:
             pass
 
-    # YT-DLP FALLBACK
+    # yt-dlp fallback
     try:
         def run():
             base = os.path.join(
@@ -328,7 +333,7 @@ async def download_video(
         exist_ok=True,
     )
 
-    # SHRUTI API
+    # API downloader
     if API_URL and API_KEY:
         try:
             async with aiohttp.ClientSession() as session:
@@ -377,7 +382,7 @@ async def download_video(
         except Exception:
             pass
 
-    # YT-DLP FALLBACK
+    # yt-dlp fallback
     try:
         def run():
             path = os.path.join(
@@ -707,14 +712,14 @@ class YouTubeAPI:
 
         if not info:
             raise ValueError(
-                "YouTube track details could not be fetched",
+                "YouTube track details could not be fetched"
             )
 
         vidid = info.get("id")
 
         if not vidid:
             raise ValueError(
-                "YouTube video ID not found",
+                "YouTube video ID not found"
             )
 
         title = (
@@ -733,6 +738,11 @@ class YouTubeAPI:
             else "00:00"
         )
 
+        yturl = (
+            f"https://www.youtube.com/watch?v="
+            f"{vidid}"
+        )
+
         thumbnail = (
             info.get("thumbnail")
             or (
@@ -743,17 +753,14 @@ class YouTubeAPI:
 
         return {
             "title": title,
-            "link": (
-                f"https://www.youtube.com/"
-                f"watch?v={vidid}"
-            ),
+            "link": yturl,
             "vidid": vidid,
             "duration_min": duration_min,
             "thumb": thumbnail,
         }, vidid
 
     # ==========================================
-    # AUTOPLAY - DIFFERENT SONGS
+    # AUTOPLAY - ALL LANGUAGES + NO REPEAT
     # ==========================================
 
     async def autoplay(
@@ -765,21 +772,12 @@ class YouTubeAPI:
         exclude_titles=None,
     ):
         """
-        Autoplay:
-        - Current song repeat nahi.
-        - Recent video IDs repeat nahi.
-        - Recent titles repeat nahi.
-        - Sirf current song/movie search nahi.
-        - Multiple song pools se candidate.
+        Hindi + Punjabi + English + Haryanvi + Bhojpuri.
+        Current/recent songs are excluded.
         """
 
-        seed_id = str(
-            videoid or "",
-        ).strip()
-
-        query = str(
-            title or "",
-        ).strip()
+        seed_id = str(videoid or "").strip()
+        query = str(title or "").strip()
 
         if not query:
             return None
@@ -814,37 +812,36 @@ class YouTubeAPI:
                 "ignoreerrors": True,
             })
 
-            with yt_dlp.YoutubeDL(
-                options,
-            ) as ydl:
-
+            with yt_dlp.YoutubeDL(options) as ydl:
                 data = ydl.extract_info(
                     f"ytsearch20:{search_query}",
                     download=False,
                 )
 
-                return (
-                    data.get("entries")
-                    or []
-                )
+                return data.get("entries") or []
 
-        # Current title search ko priority nahi.
-        # Multiple different pools.
         search_queries = [
+            # Hindi
             "latest hindi songs official audio",
-            "popular hindi songs official audio",
-            "trending bollywood songs",
-            "best new hindi songs",
-            "top indian songs official audio",
-            "popular punjabi songs official audio",
-            "latest indian music songs",
-            "best songs official music video",
-        ]
+            "popular hindi bollywood songs",
+            "trending hindi songs",
 
-        # Current title ko optional low priority.
-        search_queries.append(
-            f"{query} related music",
-        )
+            # Punjabi
+            "latest punjabi songs official audio",
+            "popular punjabi songs",
+
+            # English
+            "latest english songs official audio",
+            "popular english songs",
+
+            # Haryanvi
+            "latest haryanvi songs official audio",
+            "popular haryanvi songs",
+
+            # Bhojpuri
+            "latest bhojpuri songs official audio",
+            "popular bhojpuri songs",
+        ]
 
         random.shuffle(search_queries)
 
@@ -867,11 +864,11 @@ class YouTubeAPI:
                     continue
 
                 candidate_id = str(
-                    entry.get("id") or "",
+                    entry.get("id") or ""
                 ).strip()
 
                 song_title = str(
-                    entry.get("title") or "",
+                    entry.get("title") or ""
                 ).strip()
 
                 if (
@@ -880,49 +877,44 @@ class YouTubeAPI:
                 ):
                     continue
 
-                # Same/recent video
+                # Current/recent song
                 if candidate_id in excluded_ids:
                     continue
 
+                # Duplicate candidate
                 if candidate_id in seen_ids:
                     continue
 
-                normalized_title = (
-                    _normalize_title(
-                        song_title,
-                    )
+                normalized_title = _normalize_title(
+                    song_title
                 )
 
                 # Same/recent title
                 if (
                     not normalized_title
-                    or normalized_title
-                    in excluded_titles
-                    or normalized_title
-                    in seen_titles
+                    or normalized_title in excluded_titles
+                    or normalized_title in seen_titles
                 ):
                     continue
 
                 duration_sec = int(
-                    entry.get("duration")
-                    or 0,
+                    entry.get("duration") or 0
                 )
 
-                # Live/invalid skip
+                # Invalid/live results
                 if duration_sec <= 0:
                     continue
 
+                # Duration limit
                 if (
                     max_duration
-                    and duration_sec
-                    > int(max_duration)
+                    and duration_sec > int(max_duration)
                 ):
                     continue
 
-                # Same movie/song title keywords
-                # zyada common overlap hone par reject.
+                # Same movie/album style filtering
                 candidate_words = _title_words(
-                    song_title,
+                    song_title
                 )
 
                 overlap = (
@@ -932,8 +924,7 @@ class YouTubeAPI:
 
                 if (
                     len(current_words) >= 2
-                    and len(overlap)
-                    >= 2
+                    and len(overlap) >= 2
                 ):
                     continue
 
@@ -956,9 +947,8 @@ class YouTubeAPI:
         if not candidates:
             return None
 
-        # Har baar random different song
         selected = random.choice(
-            candidates,
+            candidates
         )
 
         entry = selected["entry"]
@@ -1001,7 +991,9 @@ class YouTubeAPI:
         )
 
         try:
-            result = await _extract_info(url)
+            result = await _extract_info(
+                url
+            )
 
             formats_available = []
 
@@ -1021,19 +1013,19 @@ class YouTubeAPI:
 
                 formats_available.append({
                     "format": fmt.get(
-                        "format",
+                        "format"
                     ),
                     "filesize": fmt.get(
-                        "filesize",
+                        "filesize"
                     ),
                     "format_id": fmt.get(
-                        "format_id",
+                        "format_id"
                     ),
                     "ext": fmt.get(
-                        "ext",
+                        "ext"
                     ),
                     "format_note": fmt.get(
-                        "format_note",
+                        "format_note"
                     ),
                     "yturl": url,
                 })
@@ -1063,7 +1055,7 @@ class YouTubeAPI:
             opts["extract_flat"] = True
 
             with yt_dlp.YoutubeDL(
-                opts,
+                opts
             ) as ydl:
 
                 data = ydl.extract_info(
@@ -1084,13 +1076,15 @@ class YouTubeAPI:
                     query_type
                 ]
 
-        result = await asyncio.to_thread(run)
+        result = await asyncio.to_thread(
+            run
+        )
 
         vidid = result["id"]
 
         duration = int(
             result.get("duration")
-            or 0,
+            or 0
         )
 
         duration_min = (
@@ -1138,12 +1132,11 @@ class YouTubeAPI:
         try:
             if video:
                 file_path = await download_video(
-                    url,
+                    url
                 )
-
             else:
                 file_path = await download_song(
-                    url,
+                    url
                 )
 
             if file_path:
