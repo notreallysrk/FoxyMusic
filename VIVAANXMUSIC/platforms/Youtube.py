@@ -687,83 +687,82 @@ class YouTubeAPI:
         title: str = "",
         max_duration: Union[int, None] = None,
         exclude_ids=None,
+        exclude_titles=None,
     ):
-        """
-        Find a different YouTube song for autoplay.
-
-        `exclude_ids` contains recently played video IDs so autoplay does not
-        loop back to the same songs.
-        """
         seed_id = str(videoid or "").strip()
         query = str(title or "").strip() or seed_id
-
         if not query:
             return None
 
-        excluded = {
+        excluded_ids = {
             str(item).strip()
             for item in (exclude_ids or set())
             if str(item).strip()
         }
-        excluded.add(seed_id)
+        excluded_ids.add(seed_id)
 
-        def run():
-            options = _ydl_opts()
-            options["extract_flat"] = True
+        def normalize(value: str) -> str:
+            value = str(value or "").lower()
+            value = re.sub(
+                r"\\b(official|video|audio|lyrics?|lyric|music|full|hd|4k|visualizer)\\b",
+                " ",
+                value,
+            )
+            value = re.sub(r"[^a-z0-9]+", " ", value)
+            return " ".join(value.split())
 
-            with yt_dlp.YoutubeDL(options) as ydl:
-                data = ydl.extract_info(
-                    f"ytsearch30:{query}",
-                    download=False,
-                )
-                return data.get("entries") or []
+        excluded_titles = {
+            normalize(item)
+            for item in (exclude_titles or set())
+            if normalize(item)
+        }
 
         try:
-            entries = await asyncio.to_thread(run)
+            search = VideosSearch(query, limit=50)
+            results = search.result().get("result", [])
         except Exception:
             return None
 
-        # Search in returned order, but never use a recently played ID.
-        for entry in entries:
-            if not entry:
+        for item in results:
+            candidate = str(item.get("id") or "").strip()
+            candidate_title = str(item.get("title") or "").strip()
+            normalized_title = normalize(candidate_title)
+
+            if (
+                not candidate
+                or candidate in excluded_ids
+                or not candidate_title
+                or normalized_title in excluded_titles
+            ):
                 continue
 
-            candidate = str(entry.get("id") or "").strip()
-            if not candidate or candidate in excluded:
-                continue
-
+            duration = str(item.get("duration") or "0:00")
             try:
-                duration_sec = int(entry.get("duration") or 0)
-            except (TypeError, ValueError):
+                parts = [int(x) for x in duration.split(":")]
                 duration_sec = 0
+                for part in parts:
+                    duration_sec = duration_sec * 60 + part
+            except Exception:
+                continue
 
             if duration_sec <= 0:
                 continue
-
             if max_duration and duration_sec > int(max_duration):
                 continue
 
-            song_title = str(entry.get("title") or "Unknown Title").strip()
-            if not song_title:
-                continue
-
-            thumbnail = (
-                entry.get("thumbnail")
-                or f"https://i.ytimg.com/vi/{candidate}/hqdefault.jpg"
-            )
-
             return {
-                "title": song_title,
-                "link": f"https://www.youtube.com/watch?v={candidate}",
-                "vidid": candidate,
+                "title": candidate_title,
+                "duration_min": duration,
                 "duration_sec": duration_sec,
-                "duration_min": (
-                    f"{duration_sec // 60}:{duration_sec % 60:02d}"
+                "thumbnail": (
+                    (item.get("thumbnails") or [{}])[0].get("url")
+                    or f"https://i.ytimg.com/vi/{candidate}/hqdefault.jpg"
                 ),
-                "thumb": thumbnail,
+                "vidid": candidate,
             }
 
         return None
+
 
     async def formats(
         self,
@@ -944,3 +943,4 @@ class YouTubeAPI:
 
 
 YouTube = YouTubeAPI()
+        
