@@ -1,5 +1,6 @@
 import asyncio
 import os
+import re
 import time
 from datetime import datetime, timedelta
 from typing import Union
@@ -74,6 +75,13 @@ def _safe_int(value, default: int = 0) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def _normalize_autoplay_title(value: str) -> str:
+    value = str(value or "").lower()
+    value = re.sub(r"\b(official|video|audio|lyrics?|lyric|music|full|hd|4k|visualizer)\b", " ", value)
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return " ".join(value.split())
 
 
 def _cancel_playback_watchdog(chat_id: int) -> None:
@@ -836,27 +844,44 @@ class Call:
         if queued_file.startswith("live_") or queued_file == "index_url":
             return False
 
-        videoid = str(finished_track.get("vidid") or "")
+        videoid = str(finished_track.get("vidid") or "").strip()
         if not videoid or videoid in {"telegram", "soundcloud"}:
             return False
 
-        seed_seconds = int(finished_track.get("seconds") or 0)
+        seed_seconds = _safe_int(finished_track.get("seconds"), 0)
         max_duration = None
         if seed_seconds > 0:
             max_duration = min(max(seed_seconds * 3, 240), 900)
 
-        try:
-            history = autoplay_history.setdefault(chat_id, [])
-            if videoid not in history:
-                history.append(videoid)
-            history = history[-50:]
-            autoplay_history[chat_id] = history
+        history = autoplay_history.setdefault(
+            chat_id,
+            {"ids": [], "titles": []},
+        )
+        if not isinstance(history, dict):
+            history = {"ids": [], "titles": []}
 
+        current_title = _normalize_autoplay_title(
+            finished_track.get("title", "")
+        )
+
+        for item in (videoid,):
+            if item and item not in history["ids"]:
+                history["ids"].append(item)
+
+        if current_title and current_title not in history["titles"]:
+            history["titles"].append(current_title)
+
+        history["ids"] = history["ids"][-100:]
+        history["titles"] = history["titles"][-100:]
+        autoplay_history[chat_id] = history
+
+        try:
             recommendation = await YouTube.autoplay(
                 videoid,
                 finished_track.get("title", ""),
                 max_duration=max_duration,
-                exclude_ids=set(history),
+                exclude_ids=set(history["ids"]),
+                exclude_titles=set(history["titles"]),
             )
         except Exception as err:
             LOGGER(__name__).warning(
@@ -870,31 +895,42 @@ class Call:
         if not recommendation:
             return False
 
-        recommendation_id = str(recommendation.get("vidid") or "").strip()
-        history = autoplay_history.setdefault(chat_id, [])
+        rec_id = str(recommendation.get("vidid") or "").strip()
+        rec_title = _normalize_autoplay_title(
+            recommendation.get("title", "")
+        )
 
-        if not recommendation_id or recommendation_id in history:
+        if (
+            not rec_id
+            or rec_id in history["ids"]
+            or not rec_title
+            or rec_title in history["titles"]
+        ):
             LOGGER(__name__).warning(
-                "Autoplay rejected repeated recommendation | chat_id=%s | vidid=%s",
+                "Autoplay rejected repeated song | chat_id=%s | id=%s | title=%s",
                 chat_id,
-                recommendation_id,
+                rec_id,
+                recommendation.get("title"),
             )
             return False
 
-        history.append(recommendation_id)
-        autoplay_history[chat_id] = history[-50:]
+        history["ids"].append(rec_id)
+        history["titles"].append(rec_title)
+        history["ids"] = history["ids"][-100:]
+        history["titles"] = history["titles"][-100:]
+        autoplay_history[chat_id] = history
 
         db.setdefault(chat_id, []).append(
             {
-                "title": recommendation["title"].title(),
-                "dur": recommendation["duration_min"],
+                "title": str(recommendation.get("title") or "Autoplay").title(),
+                "dur": recommendation.get("duration_min"),
                 "streamtype": finished_track.get("streamtype", "audio"),
                 "by": "Autoplay",
                 "user_id": 0,
                 "chat_id": finished_track.get("chat_id", chat_id),
-                "file": f"vid_{recommendation['vidid']}",
-                "vidid": recommendation["vidid"],
-                "seconds": recommendation["duration_sec"],
+                "file": f"vid_{rec_id}",
+                "vidid": rec_id,
+                "seconds": _safe_int(recommendation.get("duration_sec"), 0),
                 "played": 0,
             }
         )
