@@ -689,80 +689,106 @@ class YouTubeAPI:
         exclude_ids=None,
         exclude_titles=None,
     ):
+        """
+        Find a different song for autoplay.
+        Uses multiple YouTube searches and skips already played tracks.
+        """
+
         seed_id = str(videoid or "").strip()
         query = str(title or "").strip() or seed_id
+
         if not query:
             return None
 
-        excluded_ids = {
+        exclude_ids = {
             str(item).strip()
             for item in (exclude_ids or set())
             if str(item).strip()
         }
-        excluded_ids.add(seed_id)
-
-        def normalize(value: str) -> str:
-            value = str(value or "").lower()
-            value = re.sub(
-                r"\\b(official|video|audio|lyrics?|lyric|music|full|hd|4k|visualizer)\\b",
-                " ",
-                value,
-            )
-            value = re.sub(r"[^a-z0-9]+", " ", value)
-            return " ".join(value.split())
-
-        excluded_titles = {
-            normalize(item)
+        exclude_titles = {
+            str(item).strip().lower()
             for item in (exclude_titles or set())
-            if normalize(item)
+            if str(item).strip()
         }
 
-        try:
-            search = VideosSearch(query, limit=50)
-            results = search.result().get("result", [])
-        except Exception:
-            return None
+        def run_search(search_query):
+            options = _ydl_opts()
+            options["extract_flat"] = True
+            options["quiet"] = True
+            options["noplaylist"] = True
 
-        for item in results:
-            candidate = str(item.get("id") or "").strip()
-            candidate_title = str(item.get("title") or "").strip()
-            normalized_title = normalize(candidate_title)
+            with yt_dlp.YoutubeDL(options) as ydl:
+                data = ydl.extract_info(
+                    f"ytsearch20:{search_query}",
+                    download=False,
+                )
+                return data.get("entries") or []
 
-            if (
-                not candidate
-                or candidate in excluded_ids
-                or not candidate_title
-                or normalized_title in excluded_titles
-            ):
+        queries = [
+            f"{query} audio song",
+            f"{query} music",
+            query,
+        ]
+
+        seen_queries = set()
+        for search_query in queries:
+            search_query = str(search_query).strip()
+            if not search_query or search_query.lower() in seen_queries:
                 continue
+            seen_queries.add(search_query.lower())
 
-            duration = str(item.get("duration") or "0:00")
             try:
-                parts = [int(x) for x in duration.split(":")]
-                duration_sec = 0
-                for part in parts:
-                    duration_sec = duration_sec * 60 + part
-            except Exception:
+                entries = await asyncio.to_thread(run_search, search_query)
+            except Exception as err:
+                try:
+                    LOGGER(__name__).warning(
+                        "Autoplay search failed | seed=%s | query=%s | error=%s",
+                        seed_id,
+                        search_query,
+                        err,
+                    )
+                except Exception:
+                    pass
                 continue
 
-            if duration_sec <= 0:
-                continue
-            if max_duration and duration_sec > int(max_duration):
-                continue
+            for entry in entries:
+                if not entry:
+                    continue
 
-            return {
-                "title": candidate_title,
-                "duration_min": duration,
-                "duration_sec": duration_sec,
-                "thumbnail": (
-                    (item.get("thumbnails") or [{}])[0].get("url")
+                candidate = str(entry.get("id") or "").strip()
+                if not candidate or candidate == seed_id or candidate in exclude_ids:
+                    continue
+
+                duration_sec = int(entry.get("duration") or 0)
+                if duration_sec <= 0:
+                    continue
+
+                if max_duration and duration_sec > int(max_duration):
+                    continue
+
+                song_title = str(entry.get("title") or "Unknown Title").strip()
+                normalized_title = " ".join(song_title.lower().split())
+
+                if normalized_title and normalized_title in exclude_titles:
+                    continue
+
+                thumbnail = (
+                    entry.get("thumbnail")
                     or f"https://i.ytimg.com/vi/{candidate}/hqdefault.jpg"
-                ),
-                "vidid": candidate,
-            }
+                )
+
+                return {
+                    "title": song_title,
+                    "link": f"https://www.youtube.com/watch?v={candidate}",
+                    "vidid": candidate,
+                    "duration_sec": duration_sec,
+                    "duration_min": (
+                        f"{duration_sec // 60}:{duration_sec % 60:02d}"
+                    ),
+                    "thumb": thumbnail,
+                }
 
         return None
-
 
     async def formats(
         self,
@@ -943,4 +969,4 @@ class YouTubeAPI:
 
 
 YouTube = YouTubeAPI()
-        
+    
