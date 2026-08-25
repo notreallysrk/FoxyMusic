@@ -17,8 +17,8 @@ from pyrogram.types import (
     Message,
 )
 
-from ShiviMusic import app
-from ShiviMusic.utils.database import autoplay_off, autoplay_on, is_autoplay_on
+from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.database import autoplay_off, autoplay_on, is_autoplay_on
 from config import BANNED_USERS
 
 
