@@ -49,6 +49,7 @@ from VIVAANXMUSIC.utils.stream.autodelete import (
 from VIVAANXMUSIC.utils.stream.cards import schedule_stream_card
 from VIVAANXMUSIC.utils.stream.precache import schedule_youtube_precache_for_chat
 from VIVAANXMUSIC.utils.errors import capture_internal_err, send_large_error
+from VIVAANXMUSIC.utils.Autoplay import fetch_autoplay_track, remember_played
 
 autoend = {}
 counter = {}
@@ -844,9 +845,11 @@ class Call:
             max_duration = min(max(seed_seconds * 3, 240), 900)
 
         try:
-            recommendation = await YouTube.autoplay(
-                videoid,
+            remember_played(chat_id, videoid)
+            recommendation = await fetch_autoplay_track(
+                chat_id,
                 finished_track.get("title", ""),
+                videoid,
                 max_duration=max_duration,
             )
         except Exception as err:
@@ -1035,6 +1038,8 @@ class Call:
             original_chat_id = current.get("chat_id", chat_id)
             streamtype = current.get("streamtype") or "audio"
             videoid = current.get("vidid")
+            if videoid and str(videoid) not in {"telegram", "soundcloud"}:
+                remember_played(chat_id, str(videoid))
             db[chat_id][0]["played"] = 0
             await delete_queue_message(chat_id, current)
 
@@ -1361,3 +1366,4 @@ class Call:
 
 
 JARVIS = Call()
+    
