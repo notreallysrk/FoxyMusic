@@ -61,6 +61,7 @@ vc_join_targets = {}
 vc_join_call_map = {}
 vc_join_event_cache = {}
 vc_join_notice_cache = {}
+autoplay_history = {}
 
 PLAYBACK_WATCHDOG_GRACE_SECONDS = 20
 PLAYBACK_WATCHDOG_RECHECK_SECONDS = 30
@@ -125,6 +126,7 @@ def is_too_many_open_files(err: Exception) -> bool:
 async def _clear_(chat_id: int) -> None:
     _cancel_playback_watchdog(chat_id)
     playback_recovery_attempts.pop(chat_id, None)
+    autoplay_history.pop(chat_id, None)
     popped = db.pop(chat_id, None)
     if isinstance(popped, list):
         for item in popped:
@@ -844,10 +846,17 @@ class Call:
             max_duration = min(max(seed_seconds * 3, 240), 900)
 
         try:
+            history = autoplay_history.setdefault(chat_id, [])
+            if videoid not in history:
+                history.append(videoid)
+            history = history[-50:]
+            autoplay_history[chat_id] = history
+
             recommendation = await YouTube.autoplay(
                 videoid,
                 finished_track.get("title", ""),
                 max_duration=max_duration,
+                exclude_ids=set(history),
             )
         except Exception as err:
             LOGGER(__name__).warning(
@@ -860,6 +869,20 @@ class Call:
 
         if not recommendation:
             return False
+
+        recommendation_id = str(recommendation.get("vidid") or "").strip()
+        history = autoplay_history.setdefault(chat_id, [])
+
+        if not recommendation_id or recommendation_id in history:
+            LOGGER(__name__).warning(
+                "Autoplay rejected repeated recommendation | chat_id=%s | vidid=%s",
+                chat_id,
+                recommendation_id,
+            )
+            return False
+
+        history.append(recommendation_id)
+        autoplay_history[chat_id] = history[-50:]
 
         db.setdefault(chat_id, []).append(
             {
@@ -1361,4 +1384,3 @@ class Call:
 
 
 JARVIS = Call()
-                         
