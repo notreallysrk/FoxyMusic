@@ -1,13 +1,15 @@
 import asyncio
 import random
 import time
+
 from pyrogram import filters
 from pyrogram.enums import ChatType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardMarkup, Message
 from youtubesearchpython.future import VideosSearch
 
 import config
 from VIVAANXMUSIC import app
+from VIVAANXMUSIC.button_styles import primary_button, success_button
 from VIVAANXMUSIC.misc import _boot_
 from VIVAANXMUSIC.plugins.sudo.sudoers import sudoers_list
 from VIVAANXMUSIC.utils import bot_sys_stats
@@ -23,10 +25,9 @@ from VIVAANXMUSIC.utils.database import (
 )
 from VIVAANXMUSIC.utils.decorators.language import LanguageStart
 from VIVAANXMUSIC.utils.formatters import get_readable_time
-from VIVAANXMUSIC.button_styles import primary_button, success_button
-from VIVAANXMUSIC.utils.inline.start import private_panel, start_panel
 from VIVAANXMUSIC.utils.inline.help import first_page
-from config import BANNED_USERS, AYUV, HELP_IMG_URL, START_VIDS, STICKERS
+from VIVAANXMUSIC.utils.inline.start import private_panel, start_panel
+from config import AYUV, BANNED_USERS, HELP_IMG_URL, START_IMGS, STICKERS
 from strings import get_string
 
 
@@ -59,13 +60,21 @@ async def start_pm(client, message: Message, _):
 
         if name.startswith("sud"):
             await sudoers_list(client=client, message=message, _=_)
+
             if await is_on_off(2):
-                username = f"@{message.from_user.username}" if message.from_user.username else "(none)"
+                username = (
+                    f"@{message.from_user.username}"
+                    if message.from_user.username
+                    else "(none)"
+                )
+
                 await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=(
-                        f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n"
-                        f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
+                        f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ "
+                        f"ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n"
+                        f"<b>ᴜsᴇʀ ɪᴅ :</b> "
+                        f"<code>{message.from_user.id}</code>\n"
                         f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> {username}"
                     ),
                 )
@@ -73,31 +82,68 @@ async def start_pm(client, message: Message, _):
 
         if name.startswith("inf"):
             m = await message.reply_text("🔎")
+
             try:
                 vid_id = str(name).replace("info_", "", 1)
                 query = f"https://www.youtube.com/watch?v={vid_id}"
+
                 results = VideosSearch(query, limit=1)
                 data = await results.next()
                 result = (data.get("result") or [None])[0]
+
                 if not result:
                     await m.edit_text("No results found.")
                     return
 
                 title = result.get("title") or "Unknown"
                 duration = result.get("duration") or "Unknown"
-                views = (result.get("viewCount") or {}).get("short") or "Unknown"
-                thumbnail = ((result.get("thumbnails") or [{}])[0].get("url") or "").split("?")[0]
-                channellink = (result.get("channel") or {}).get("link") or "https://youtube.com"
-                channel = (result.get("channel") or {}).get("name") or "Unknown"
+
+                views = (
+                    (result.get("viewCount") or {}).get("short")
+                    or "Unknown"
+                )
+
+                thumbnail = (
+                    ((result.get("thumbnails") or [{}])[0].get("url") or "")
+                    .split("?")[0]
+                )
+
+                channellink = (
+                    (result.get("channel") or {}).get("link")
+                    or "https://youtube.com"
+                )
+
+                channel = (
+                    (result.get("channel") or {}).get("name")
+                    or "Unknown"
+                )
+
                 link = result.get("link") or query
                 published = result.get("publishedTime") or "Unknown"
 
-                searched_text = _["start_6"].format(title, duration, views, published, channellink, channel, app.mention)
+                searched_text = _["start_6"].format(
+                    title,
+                    duration,
+                    views,
+                    published,
+                    channellink,
+                    channel,
+                    app.mention,
+                )
+
                 key = InlineKeyboardMarkup(
-                    [[
-                        primary_button(text=_["S_B_6"], url=link),
-                        success_button(text=_["S_B_4"], url=config.SUPPORT_CHAT),
-                    ]]
+                    [
+                        [
+                            primary_button(
+                                text=_["S_B_6"],
+                                url=link,
+                            ),
+                            success_button(
+                                text=_["S_B_4"],
+                                url=config.SUPPORT_CHAT,
+                            ),
+                        ]
+                    ]
                 )
 
                 await m.delete()
@@ -110,45 +156,86 @@ async def start_pm(client, message: Message, _):
                 )
 
                 if await is_on_off(2):
-                    username = f"@{message.from_user.username}" if message.from_user.username else "(none)"
+                    username = (
+                        f"@{message.from_user.username}"
+                        if message.from_user.username
+                        else "(none)"
+                    )
+
                     await app.send_message(
                         chat_id=config.LOGGER_ID,
                         text=(
-                            f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n"
-                            f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
+                            f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ "
+                            f"ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ "
+                            f"<b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n"
+                            f"<b>ᴜsᴇʀ ɪᴅ :</b> "
+                            f"<code>{message.from_user.id}</code>\n"
                             f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> {username}"
                         ),
                     )
+
             except Exception as e:
                 await m.edit_text(f"Error: {e}")
+
             return
 
     out = private_panel(_)
-    sticker_message = await message.reply_sticker(sticker=random.choice(STICKERS))
-    asyncio.create_task(delete_sticker_after_delay(sticker_message, 2))
+
+    # Sticker send karega
+    sticker_message = await message.reply_sticker(
+        sticker=random.choice(STICKERS)
+    )
+
+    # Sticker 2 second baad delete hoga
+    asyncio.create_task(
+        delete_sticker_after_delay(sticker_message, 2)
+    )
 
     served_chats_coro = get_served_chats()
     served_users_coro = get_served_users()
     stats_coro = bot_sys_stats()
-    served_chats, served_users, (UP, CPU, RAM, DISK) = await asyncio.gather(
-        served_chats_coro, served_users_coro, stats_coro
+
+    served_chats, served_users, (
+        UP,
+        CPU,
+        RAM,
+        DISK,
+    ) = await asyncio.gather(
+        served_chats_coro,
+        served_users_coro,
+        stats_coro,
     )
 
+    # VIDEO KI JAGAH IMAGE SEND HOGI
     await message.reply_photo(
-        random.choice(START_VIDS),
+        photo=random.choice(START_IMGS),
         caption=random.choice(AYUV).format(
-            message.from_user.mention, app.mention, UP, DISK, CPU, RAM, len(served_users), len(served_chats)
+            message.from_user.mention,
+            app.mention,
+            UP,
+            DISK,
+            CPU,
+            RAM,
+            len(served_users),
+            len(served_chats),
         ),
         reply_markup=InlineKeyboardMarkup(out),
     )
 
     if await is_on_off(2):
-        username = f"@{message.from_user.username}" if message.from_user.username else "(none)"
+        username = (
+            f"@{message.from_user.username}"
+            if message.from_user.username
+            else "(none)"
+        )
+
         await app.send_message(
             chat_id=config.LOGGER_ID,
             text=(
-                f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n"
-                f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
+                f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ "
+                f"ᴛʜᴇ ʙᴏᴛ.\n\n"
+                f"<b>ᴜsᴇʀ ɪᴅ :</b> "
+                f"<code>{message.from_user.id}</code>\n"
                 f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> {username}"
             ),
         )
@@ -159,14 +246,20 @@ async def start_pm(client, message: Message, _):
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
+
     try:
+        # VIDEO KI JAGAH IMAGE
         await message.reply_photo(
-            random.choice(START_VIDS),
-            caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
+            photo=random.choice(START_IMGS),
+            caption=_["start_1"].format(
+                app.mention,
+                get_readable_time(uptime),
+            ),
             reply_markup=InlineKeyboardMarkup(out),
         )
-    except:
-        pass
+    except Exception as ex:
+        print(ex)
+
     return await add_served_chat(message.chat.id)
 
 
@@ -197,11 +290,14 @@ async def welcome(client, message: Message):
                         ),
                         disable_web_page_preview=True,
                     )
+
                     return await app.leave_chat(message.chat.id)
 
                 out = start_panel(_)
-                await message.reply_video(
-                    random.choice(START_VIDS),
+
+                # BOT GROUP ME ADD HONE PAR VIDEO KI JAGAH IMAGE
+                await message.reply_photo(
+                    photo=random.choice(START_IMGS),
                     caption=_["start_3"].format(
                         message.from_user.mention,
                         app.mention,
@@ -210,6 +306,7 @@ async def welcome(client, message: Message):
                     ),
                     reply_markup=InlineKeyboardMarkup(out),
                 )
+
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
 
