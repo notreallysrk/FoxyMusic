@@ -49,7 +49,10 @@ from VIVAANXMUSIC.utils.stream.autodelete import (
 from VIVAANXMUSIC.utils.stream.cards import schedule_stream_card
 from VIVAANXMUSIC.utils.stream.precache import schedule_youtube_precache_for_chat
 from VIVAANXMUSIC.utils.errors import capture_internal_err, send_large_error
-from VIVAANXMUSIC.utils.Autoplay import fetch_autoplay_track, remember_played
+from VIVAANXMUSIC.utils.autoplay import (
+    fetch_autoplay_track,
+    remember_played,
+)
 
 autoend = {}
 counter = {}
