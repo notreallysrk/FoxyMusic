@@ -1,6 +1,20 @@
-# ===========================================================
-# AUTOPLAY HELPER - FIXED
-# ===========================================================
+"""
+Autoplay helper - fixed for VIVAANXMUSIC.
+
+Primary:
+    YouTube Mix / Radio playlist (RD + videoID)
+
+Fallback:
+    YouTube title search
+
+Features:
+    - Per-chat history prevents repeat songs.
+    - Mix extraction retries on temporary errors.
+    - Search fallback if Mix fails.
+    - Returns ALL candidates so call.py can try each one.
+    - History resets only when all available candidates are exhausted.
+    - No autoplay track-count limit.
+"""
 
 import asyncio
 import glob
@@ -8,11 +22,9 @@ import os
 import random
 
 import yt_dlp
+from youtubesearchpython import VideosSearch
 
-try:
-    from py_yt import VideosSearch
-except ImportError:
-    from youtubesearchpython import VideosSearch
+from VIVAANXMUSIC.logging import LOGGER
 
 
 _HISTORY_LIMIT = 50
@@ -20,11 +32,24 @@ _played_history: dict[int, list[str]] = {}
 
 
 # ===========================================================
+# LOGGER
+# ===========================================================
+
+def _logger():
+    try:
+        return LOGGER(__name__)
+    except Exception:
+        import logging
+        return logging.getLogger(__name__)
+
+
+# ===========================================================
 # HISTORY
 # ===========================================================
 
 def remember_played(chat_id: int, vidid: str):
-    """Current played song ko history mein save kare."""
+    """Save a played/autoplayed video ID in per-chat history."""
+
     if not chat_id or not vidid:
         return
 
@@ -33,22 +58,23 @@ def remember_played(chat_id: int, vidid: str):
     if not vidid:
         return
 
-    history = _played_history.setdefault(chat_id, [])
+    hist = _played_history.setdefault(chat_id, [])
 
-    if vidid in history:
-        history.remove(vidid)
+    if vidid in hist:
+        hist.remove(vidid)
 
-    history.append(vidid)
+    hist.append(vidid)
 
-    if len(history) > _HISTORY_LIMIT:
-        del history[:-_HISTORY_LIMIT]
+    if len(hist) > _HISTORY_LIMIT:
+        del hist[:-_HISTORY_LIMIT]
 
 
-def get_history(chat_id: int) -> list[str]:
+def _history(chat_id: int) -> list[str]:
     return _played_history.get(chat_id, [])
 
 
 def clear_history(chat_id: int):
+    """Clear autoplay history for a chat."""
     _played_history.pop(chat_id, None)
 
 
@@ -57,150 +83,57 @@ def clear_history(chat_id: int):
 # ===========================================================
 
 def _cookie_file():
-    possible_folders = [
+    """
+    Find cookies files.
+
+    Supports:
+        VIVAANXMUSIC/assets
+        SWAGGYMUSIC/assets
+        ShiviMusic/assets
+        assets
+    """
+
+    folders = [
         os.path.join(os.getcwd(), "VIVAANXMUSIC", "assets"),
+        os.path.join(os.getcwd(), "SWAGGYMUSIC", "assets"),
         os.path.join(os.getcwd(), "ShiviMusic", "assets"),
         os.path.join(os.getcwd(), "assets"),
     ]
 
-    for folder in possible_folders:
+    files = []
+
+    for folder in folders:
+
         if not os.path.isdir(folder):
             continue
 
-        files = []
+        files.extend(
+            glob.glob(os.path.join(folder, "*.txt"))
+        )
 
-        for pattern in ("*.txt", "*.cookies", "*.cookie"):
-            files.extend(glob.glob(os.path.join(folder, pattern)))
+        files.extend(
+            glob.glob(os.path.join(folder, "*.cookies"))
+        )
 
-        if files:
-            return random.choice(files)
+        files.extend(
+            glob.glob(os.path.join(folder, "*.cookie"))
+        )
 
-    return None
-
-
-# ===========================================================
-# VIDEO ID EXTRACTOR
-# ===========================================================
-
-def _extract_video_id(video):
-    if not isinstance(video, dict):
+    if not files:
         return None
 
-    vidid = (
-        video.get("id")
-        or video.get("videoId")
-        or video.get("video_id")
-    )
-
-    if not vidid:
-        return None
-
-    return str(vidid)
+    return random.choice(files)
 
 
 # ===========================================================
-# NORMAL SEARCH CANDIDATES
-# ===========================================================
-
-def _extract_candidates(
-    results,
-    chat_id: int,
-    skip_history: bool = False,
-):
-    candidates = []
-
-    played = set()
-
-    if not skip_history:
-        played = set(get_history(chat_id))
-
-    for video in results or []:
-
-        if not isinstance(video, dict):
-            continue
-
-        vidid = _extract_video_id(video)
-
-        title = (
-            video.get("title")
-            or video.get("name")
-        )
-
-        link = (
-            video.get("link")
-            or video.get("url")
-        )
-
-        if not link and vidid:
-            link = f"https://www.youtube.com/watch?v={vidid}"
-
-        duration = (
-            video.get("duration")
-            or video.get("duration_min")
-            or "0:00"
-        )
-
-        if not vidid or not title or not link:
-            continue
-
-        if vidid in played:
-            continue
-
-        if str(duration).lower() in (
-            "none",
-            "live",
-            "live now",
-            "upcoming",
-        ):
-            continue
-
-        thumbs = video.get("thumbnails") or []
-
-        thumb = None
-
-        if thumbs:
-
-            first_thumb = thumbs[0]
-
-            if isinstance(first_thumb, dict):
-                thumb = first_thumb.get("url")
-
-            elif isinstance(first_thumb, str):
-                thumb = first_thumb
-
-        if not thumb:
-            thumb = (
-                f"https://i.ytimg.com/vi/"
-                f"{vidid}/hqdefault.jpg"
-            )
-
-        if thumb:
-            thumb = thumb.split("?")[0]
-
-        candidates.append(
-            {
-                "vidid": vidid,
-                "id": vidid,
-                "title": str(title),
-                "link": str(link),
-                "duration_min": str(duration),
-                "duration": str(duration),
-                "thumb": thumb,
-                "thumbnail": thumb,
-            }
-        )
-
-    return candidates
-
-
-# ===========================================================
-# YOUTUBE MIX
+# MIX EXTRACTION
 # ===========================================================
 
 def _fetch_mix_sync(
     video_id: str,
     limit: int = 30,
-):
+) -> list:
+
     if not video_id:
         return []
 
@@ -211,6 +144,7 @@ def _fetch_mix_sync(
         "playlistend": limit,
         "no_warnings": True,
         "ignoreerrors": True,
+        "noplaylist": False,
     }
 
     cookiefile = _cookie_file()
@@ -219,15 +153,25 @@ def _fetch_mix_sync(
         ydl_opts["cookiefile"] = cookiefile
 
     urls = [
-        f"https://www.youtube.com/watch?v={video_id}&list=RD{video_id}",
-        f"https://www.youtube.com/playlist?list=RD{video_id}",
+        (
+            "https://www.youtube.com/"
+            f"watch?v={video_id}&list=RD{video_id}"
+        ),
+        (
+            "https://www.youtube.com/"
+            f"playlist?list=RD{video_id}"
+        ),
     ]
+
+    last_error = None
 
     for url in urls:
 
         try:
 
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(
+                ydl_opts
+            ) as ydl:
 
                 info = ydl.extract_info(
                     url,
@@ -249,10 +193,11 @@ def _fetch_mix_sync(
                 return entries
 
         except Exception as error:
-            print(
-                f"[AUTOPLAY MIX ERROR] "
-                f"{type(error).__name__}: {error}"
-            )
+
+            last_error = error
+
+    if last_error:
+        raise last_error
 
     return []
 
@@ -266,12 +211,17 @@ def _extract_mix_candidates(
     chat_id: int,
     skip_history: bool = False,
 ):
+
     candidates = []
 
     played = set()
 
     if not skip_history:
-        played = set(get_history(chat_id))
+        played = set(
+            _history(chat_id)
+        )
+
+    seen = set()
 
     for entry in entries or []:
 
@@ -281,7 +231,11 @@ def _extract_mix_candidates(
         if not isinstance(entry, dict):
             continue
 
-        vidid = _extract_video_id(entry)
+        vidid = (
+            entry.get("id")
+            or entry.get("video_id")
+            or entry.get("videoId")
+        )
 
         title = (
             entry.get("title")
@@ -291,6 +245,18 @@ def _extract_mix_candidates(
         if not vidid or not title:
             continue
 
+        vidid = str(vidid).strip()
+
+        if not vidid:
+            continue
+
+        # Duplicate Mix entries avoid karo.
+        if vidid in seen:
+            continue
+
+        seen.add(vidid)
+
+        # Current/already played song avoid karo.
         if vidid in played:
             continue
 
@@ -300,6 +266,7 @@ def _extract_mix_candidates(
             duration,
             (int, float),
         ):
+
             minutes, seconds = divmod(
                 int(duration),
                 60,
@@ -310,143 +277,336 @@ def _extract_mix_candidates(
             )
 
         elif duration:
+
             duration_min = str(duration)
 
         else:
-            # Unknown duration ko allow karo,
-            # lekin Live entries ko nahi
+
             duration_min = "0:00"
 
-        webpage_url = (
+        link = (
             entry.get("webpage_url")
             or entry.get("url")
         )
 
         if (
-            not webpage_url
-            or not str(webpage_url).startswith("http")
+            not link
+            or not str(link).startswith("http")
         ):
-            webpage_url = (
-                f"https://www.youtube.com/"
+
+            link = (
+                "https://www.youtube.com/"
                 f"watch?v={vidid}"
             )
 
         thumb = (
             entry.get("thumbnail")
             or entry.get("thumbnail_url")
-            or f"https://i.ytimg.com/vi/"
-               f"{vidid}/hqdefault.jpg"
+            or (
+                "https://i.ytimg.com/vi/"
+                f"{vidid}/hqdefault.jpg"
+            )
         )
 
+        candidate = {
+            "id": vidid,
+            "vidid": vidid,
+            "title": str(title),
+            "link": str(link),
+            "duration": duration_min,
+            "duration_min": duration_min,
+            "thumb": thumb,
+            "thumbnail": thumb,
+        }
+
         candidates.append(
-            {
-                "vidid": vidid,
-                "id": vidid,
-                "title": str(title),
-                "link": webpage_url,
-                "duration_min": duration_min,
-                "duration": duration_min,
-                "thumb": thumb,
-                "thumbnail": thumb,
-            }
+            candidate
         )
 
     return candidates
 
 
 # ===========================================================
-# FETCH MIX
+# FETCH YOUTUBE MIX
 # ===========================================================
 
 async def _fetch_mix_candidates(
     chat_id: int,
     seed_vidid: str,
-):
+) -> list:
+
     if not seed_vidid:
         return []
 
+    logger = _logger()
+
     loop = asyncio.get_running_loop()
 
-    try:
+    last_error = None
+    last_entries = []
 
-        entries = await loop.run_in_executor(
-            None,
-            _fetch_mix_sync,
-            seed_vidid,
-            30,
+    for attempt in range(2):
+
+        try:
+
+            entries = await loop.run_in_executor(
+                None,
+                _fetch_mix_sync,
+                seed_vidid,
+                30,
+            )
+
+            last_entries = entries or []
+
+            candidates = (
+                _extract_mix_candidates(
+                    last_entries,
+                    chat_id,
+                    skip_history=False,
+                )
+            )
+
+            if candidates:
+                return candidates
+
+            # Mix mila, lekin sab songs history mein hain.
+            # History reset karke same Mix ko dobara use karo.
+            if last_entries:
+
+                logger.info(
+                    f"[AUTOPLAY MIX] "
+                    f"history exhausted for chat {chat_id}, "
+                    f"resetting history"
+                )
+
+                clear_history(chat_id)
+
+                candidates = (
+                    _extract_mix_candidates(
+                        last_entries,
+                        chat_id,
+                        skip_history=True,
+                    )
+                )
+
+                if candidates:
+                    return candidates
+
+            # Empty Mix par retry.
+            if attempt == 0:
+
+                logger.warning(
+                    f"[AUTOPLAY MIX] empty Mix for "
+                    f"{seed_vidid}, retrying"
+                )
+
+                await asyncio.sleep(1)
+
+                continue
+
+            return []
+
+        except Exception as error:
+
+            last_error = error
+
+            logger.warning(
+                f"[AUTOPLAY MIX] attempt "
+                f"{attempt + 1}/2 failed for "
+                f"{seed_vidid}: "
+                f"{type(error).__name__}: {error}"
+            )
+
+            if attempt == 0:
+                await asyncio.sleep(1)
+
+    if last_error:
+
+        logger.warning(
+            f"[AUTOPLAY MIX] giving up for "
+            f"{seed_vidid}: "
+            f"{type(last_error).__name__}"
         )
 
-    except Exception as error:
+    return []
 
-        print(
-            f"[AUTOPLAY MIX ERROR] "
-            f"{type(error).__name__}: {error}"
+
+# ===========================================================
+# NORMAL SEARCH CANDIDATES
+# ===========================================================
+
+def _extract_candidates(
+    results,
+    chat_id: int,
+    skip_history: bool = False,
+):
+
+    candidates = []
+
+    played = set()
+
+    if not skip_history:
+        played = set(
+            _history(chat_id)
         )
 
-        return []
+    seen = set()
 
-    candidates = _extract_mix_candidates(
-        entries,
-        chat_id,
-        skip_history=False,
-    )
+    for video in results or []:
 
-    if candidates:
-        return candidates
+        if not isinstance(video, dict):
+            continue
 
-    # History ki wajah se sab songs skip hue hon
-    # to history reset karke dobara candidates lo.
-    if entries:
+        vidid = (
+            video.get("id")
+            or video.get("videoId")
+            or video.get("video_id")
+        )
 
-        clear_history(chat_id)
+        title = (
+            video.get("title")
+            or video.get("name")
+        )
 
-        candidates = _extract_mix_candidates(
-            entries,
-            chat_id,
-            skip_history=True,
+        link = (
+            video.get("link")
+            or video.get("url")
+        )
+
+        duration = (
+            video.get("duration")
+            or video.get("duration_min")
+        )
+
+        if not vidid or not title:
+            continue
+
+        vidid = str(vidid).strip()
+
+        if not vidid:
+            continue
+
+        if vidid in seen:
+            continue
+
+        seen.add(vidid)
+
+        if vidid in played:
+            continue
+
+        # Live/upcoming autoplay mein avoid.
+        if isinstance(duration, str):
+
+            if duration.lower() in {
+                "live",
+                "live now",
+                "upcoming",
+            }:
+                continue
+
+        if not duration:
+            duration = "0:00"
+
+        if not link:
+
+            link = (
+                "https://www.youtube.com/"
+                f"watch?v={vidid}"
+            )
+
+        thumbs = (
+            video.get("thumbnails")
+            or []
+        )
+
+        thumb = None
+
+        if thumbs:
+
+            first_thumb = thumbs[0]
+
+            if isinstance(
+                first_thumb,
+                dict,
+            ):
+
+                thumb = (
+                    first_thumb.get("url")
+                )
+
+            elif isinstance(
+                first_thumb,
+                str,
+            ):
+
+                thumb = first_thumb
+
+        if not thumb:
+
+            thumb = (
+                "https://i.ytimg.com/vi/"
+                f"{vidid}/hqdefault.jpg"
+            )
+
+        if thumb:
+            thumb = thumb.split("?")[0]
+
+        candidate = {
+            "id": vidid,
+            "vidid": vidid,
+            "title": str(title),
+            "link": str(link),
+            "duration": str(duration),
+            "duration_min": str(duration),
+            "thumb": thumb,
+            "thumbnail": thumb,
+        }
+
+        candidates.append(
+            candidate
         )
 
     return candidates
 
 
 # ===========================================================
-# TEXT SEARCH FALLBACK
+# SEARCH FALLBACK
 # ===========================================================
 
-async def _search_fallback(
+async def _fetch_search_candidates(
     chat_id: int,
     seed_title: str,
-):
+) -> list:
+
     if not seed_title:
-        return None
+        return []
 
-    query = str(seed_title).strip()
-
-    if not query:
-        return None
+    logger = _logger()
 
     try:
 
         search = VideosSearch(
-            query,
+            str(seed_title),
             limit=30,
         )
 
         data = await search.next()
 
-        if isinstance(data, dict):
-            results = data.get("result") or []
-        else:
-            results = []
+        results = (
+            data.get("result", [])
+            if isinstance(data, dict)
+            else []
+        )
 
     except Exception as error:
 
-        print(
-            f"[AUTOPLAY SEARCH ERROR] "
+        logger.warning(
+            f"[AUTOPLAY SEARCH] failed for "
+            f"'{seed_title}': "
             f"{type(error).__name__}: {error}"
         )
 
-        return None
+        return []
 
     candidates = _extract_candidates(
         results,
@@ -454,7 +614,11 @@ async def _search_fallback(
         skip_history=False,
     )
 
-    if not candidates and results:
+    if candidates:
+        return candidates
+
+    # Search results hain, lekin history mein sab aa chuke hain.
+    if results:
 
         clear_history(chat_id)
 
@@ -464,10 +628,7 @@ async def _search_fallback(
             skip_history=True,
         )
 
-    if not candidates:
-        return None
-
-    return random.choice(candidates)
+    return candidates
 
 
 # ===========================================================
@@ -478,51 +639,114 @@ async def fetch_autoplay_track(
     chat_id: int,
     seed_title: str,
     seed_vidid: str = None,
-):
+) -> list:
     """
-    1. YouTube Mix / Radio try karta hai.
-    2. Current song jaisi category ke songs leta hai.
-    3. Played songs repeat nahi karta.
-    4. Mix fail ho to title search fallback.
-    5. History exhaust hone par reset karke autoplay continue karta hai.
+    Return ALL available autoplay candidates.
+
+    Primary:
+        YouTube Mix / Radio
+
+    Fallback:
+        YouTube title search
+
+    call.py ko returned list ke har candidate ko try karna
+    chahiye. Download fail ho to next candidate try karo.
     """
 
-    # -------------------------------
-    # FIRST: YouTube Mix
-    # -------------------------------
+    logger = _logger()
+
+    # -------------------------------------------------------
+    # PRIMARY: YouTube Mix
+    # -------------------------------------------------------
 
     if seed_vidid:
 
-        mix_candidates = (
+        candidates = (
             await _fetch_mix_candidates(
                 chat_id,
                 str(seed_vidid),
             )
         )
 
-        if mix_candidates:
+        if candidates:
 
-            track = random.choice(
-                mix_candidates
+            random.shuffle(
+                candidates
             )
 
-            return track
+            return candidates
 
-    # -------------------------------
-    # SECOND: Title Search Fallback
-    # -------------------------------
+        logger.info(
+            f"[AUTOPLAY] Mix empty for "
+            f"{seed_vidid}; using search fallback"
+        )
 
-    return await _search_fallback(
-        chat_id,
-        seed_title,
+    # -------------------------------------------------------
+    # FALLBACK: Title Search
+    # -------------------------------------------------------
+
+    if not seed_title:
+        return []
+
+    candidates = (
+        await _fetch_search_candidates(
+            chat_id,
+            seed_title,
+        )
     )
 
+    if candidates:
+
+        random.shuffle(
+            candidates
+        )
+
+    return candidates
+
 
 # ===========================================================
-# COMPATIBILITY ALIASES
+# BACKWARD COMPATIBILITY
 # ===========================================================
 
-get_autoplay_track = fetch_autoplay_track
+async def fetch_autoplay_track_one(
+    chat_id: int,
+    seed_title: str,
+    seed_vidid: str = None,
+):
+    """
+    Old code compatibility.
+
+    Returns:
+        dict -> one track
+        None -> no candidate
+    """
+
+    candidates = await fetch_autoplay_track(
+        chat_id,
+        seed_title,
+        seed_vidid,
+    )
+
+    if not candidates:
+        return None
+
+    return candidates[0]
+
+
+async def get_autoplay_track(
+    chat_id: int,
+    seed_title: str,
+    seed_vidid: str = None,
+):
+    """
+    Alias for old call.py versions.
+    """
+
+    return await fetch_autoplay_track_one(
+        chat_id,
+        seed_title,
+        seed_vidid,
+    )
 
 
 def clear_autoplay_history(
