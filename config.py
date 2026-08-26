@@ -78,18 +78,18 @@ STRING5 = getenv("STRING_SESSION5")
 
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
-"https://files.catbox.moe/5ryuf0.mp4",
-"https://files.catbox.moe/gl181q.mp4",
-"https://files.catbox.moe/wjtul7.mp4",
-"https://files.catbox.moe/gfsfy2.mp4",
-"https://files.catbox.moe/ok3qcq.mp4",
+"https://files.catbox.moe/5dc4r1.jpg",
+"https://files.catbox.moe/8dx37s.jpg",
+"https://files.catbox.moe/9jfiap.jpg",
+"https://files.catbox.moe/csdelk.jpg",
+"https://files.catbox.moe/ma73xg.jpg",
 ]
 STICKERS = [
     "CAACAgUAAxkBAAFOuWNqUMj28Rrfpr3APoGQH5oC2qGq7wACwyAAAh7UeVa0AcYt3xU9tzwE",
     "CAACAgUAAxkBAAFOzY5qUf7pqrHwL11t17WP478cstKPAQACOhsAAm8FeVa4Vkbih4qtXzwE",
 ]
 HELP_IMG_URL = "https://files.catbox.moe/m3fyh9.jpg"
-PING_VID_URL = "https://files.catbox.moe/p82vwn.jpg"
+PING_VID_URL = "https://files.catbox.moe/qyoe2w.jpg"
 PLAYLIST_IMG_URL = "https://files.catbox.moe/9m0pys.jpg"
 STATS_VID_URL = "https://files.catbox.moe/gq4hkk.jpg"
 TELEGRAM_AUDIO_URL = "https://files.catbox.moe/p82vwn.jpg"
