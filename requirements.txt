@@ -41,5 +41,5 @@ telegraph
 TgCrypto
 Unidecode
 wget
-yt-dlp==2025.10.14
+yt-dlp>=2026.1.0
 py-yt-search
