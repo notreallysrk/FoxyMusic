@@ -58,10 +58,7 @@ def generate_progress_bar(played_sec, duration_sec):
     filled = int(round(bar_length * percentage / 100))
     filled = max(0, min(filled, bar_length))
 
-    return (
-        "▰" * filled
-        + "▱" * (bar_length - filled)
-    )
+    return "▰" * filled + "▱" * (bar_length - filled)
 
 
 def control_buttons(_, chat_id):
@@ -91,7 +88,7 @@ def control_buttons(_, chat_id):
         [
             danger_button(
                 text="🔴 ᴀᴜᴛᴏᴘʟᴀʏ ᴏғғ",
-                callback_data=f"ADMIN AutoplayOff|{chat_id}",
+                callback_data=f"autoplay_toggle_{chat_id}",
             ),
         ],
     ]
@@ -104,10 +101,7 @@ def stream_markup_timer(_, chat_id, played, dur):
     played_sec = time_to_seconds(played)
     duration_sec = time_to_seconds(dur)
 
-    bar = generate_progress_bar(
-        played_sec,
-        duration_sec,
-    )
+    bar = generate_progress_bar(played_sec, duration_sec)
 
     return (
         [
@@ -115,8 +109,8 @@ def stream_markup_timer(_, chat_id, played, dur):
                 InlineKeyboardButton(
                     text=f"{played} {bar} {dur}",
                     callback_data="GetTimer",
-                ),
-            ],
+                )
+            ]
         ]
         + control_buttons(_, chat_id)
         + [
@@ -124,8 +118,8 @@ def stream_markup_timer(_, chat_id, played, dur):
                 danger_button(
                     text=_["CLOSE_BUTTON"],
                     callback_data="close",
-                ),
-            ],
+                )
+            ]
         ]
     )
 
@@ -138,8 +132,8 @@ def stream_markup(_, chat_id):
                 danger_button(
                     text=_["CLOSE_BUTTON"],
                     callback_data="close",
-                ),
-            ],
+                )
+            ]
         ]
     )
 
@@ -171,14 +165,7 @@ def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
     ]
 
 
-def livestream_markup(
-    _,
-    videoid,
-    user_id,
-    mode,
-    channel,
-    fplay,
-):
+def livestream_markup(_, videoid, user_id, mode, channel, fplay):
     return [
         [
             success_button(
@@ -198,15 +185,7 @@ def livestream_markup(
     ]
 
 
-def slider_markup(
-    _,
-    videoid,
-    user_id,
-    query,
-    query_type,
-    channel,
-    fplay,
-):
+def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
     short_query = query[:20]
 
     return [
