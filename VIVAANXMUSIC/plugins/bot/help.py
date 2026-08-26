@@ -1,8 +1,8 @@
 import re
 from typing import Union
 
-from pyrogram import Client, filters
-from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message
+from pyrogram import Client, filters, types
+from pyrogram.types import InlineKeyboardMarkup, Message
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.utils.database import (
@@ -26,6 +26,46 @@ from config import BANNED_USERS, HELP_IMG_URL, SUPPORT_CHAT
 from strings import get_string, helpers
 
 
+async def edit_help_message(
+    callback_query: types.CallbackQuery,
+    caption: str,
+    keyboard,
+):
+    """
+    Help message photo ho to caption edit kare.
+    Text message ho to text edit kare.
+    """
+
+    message = callback_query.message
+
+    try:
+        if message.photo or message.video or message.document:
+            await message.edit_caption(
+                caption=caption,
+                reply_markup=keyboard,
+            )
+        else:
+            await message.edit_text(
+                text=caption,
+                reply_markup=keyboard,
+                disable_web_page_preview=True,
+            )
+
+    except Exception as error:
+        print(f"HELP MESSAGE EDIT ERROR: {error}")
+
+        # Agar same caption/text already hai,
+        # sirf keyboard update karne ki koshish karo.
+        try:
+            await message.edit_reply_markup(
+                reply_markup=keyboard,
+            )
+        except Exception as markup_error:
+            print(
+                f"HELP MARKUP EDIT ERROR: {markup_error}"
+            )
+
+
 @app.on_message(
     filters.command(["help"])
     & filters.private
@@ -38,39 +78,42 @@ from strings import get_string, helpers
 @LanguageStart
 async def helper_private(
     client: Client,
-    update: Union[Message, CallbackQuery],
+    update: Union[Message, types.CallbackQuery],
     _,
 ):
-    is_callback = isinstance(update, CallbackQuery)
+    is_callback = isinstance(
+        update,
+        types.CallbackQuery,
+    )
 
-    # FIX: CallbackQuery me .chat nahi hota
-    if is_callback:
-        chat_id = update.message.chat.id
-        user_id = update.from_user.id
-    else:
-        chat_id = update.chat.id
-        user_id = update.from_user.id
-
-    language = await get_lang(user_id)
+    language = await get_lang(
+        update.from_user.id
+    )
     _ = get_string(language)
 
-    keyboard = await first_page(_, chat_id)
-    caption = _["help_1"].format(SUPPORT_CHAT)
+    # CallbackQuery aur Message dono ka chat ID
+    if is_callback:
+        chat_id = update.message.chat.id
+    else:
+        chat_id = update.chat.id
+
+    keyboard = await first_page(
+        _,
+        chat_id,
+    )
+
+    caption = _["help_1"].format(
+        SUPPORT_CHAT
+    )
 
     if is_callback:
         await update.answer()
 
-        try:
-            await update.message.edit_caption(
-                caption=caption,
-                reply_markup=keyboard,
-            )
-        except Exception:
-            await update.message.edit_text(
-                text=caption,
-                reply_markup=keyboard,
-                disable_web_page_preview=True,
-            )
+        await edit_help_message(
+            update,
+            caption,
+            keyboard,
+        )
         return
 
     try:
@@ -100,19 +143,23 @@ async def help_com_group(
 
     await message.reply_text(
         _["help_2"],
-        reply_markup=InlineKeyboardMarkup(keyboard),
+        reply_markup=InlineKeyboardMarkup(
+            keyboard
+        ),
         disable_web_page_preview=True,
     )
 
 
 @app.on_callback_query(
-    filters.regex(r"^help_callback hb(\d+)_p(\d+)$")
+    filters.regex(
+        r"^help_callback hb(\d+)_p(\d+)$"
+    )
     & ~BANNED_USERS
 )
 @languageCB
 async def helper_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
     match = re.match(
@@ -132,8 +179,11 @@ async def helper_cb(
 
     if number == 1:
         await callback_query.edit_message_text(
-            text=_["S_B_M"],
-            reply_markup=action_sub_menu(_, current_page),
+            _["S_B_M"],
+            reply_markup=action_sub_menu(
+                _,
+                current_page,
+            ),
             disable_web_page_preview=True,
         )
         return
@@ -152,7 +202,7 @@ async def helper_cb(
         return
 
     await callback_query.edit_message_text(
-        text=help_text,
+        help_text,
         reply_markup=help_back_markup(
             _,
             current_page,
@@ -162,8 +212,9 @@ async def helper_cb(
 
 
 # =====================================================
-# ACTUAL AUTOPLAY ON / OFF TOGGLE BUTTON
+# ACTUAL AUTOPLAY ON / OFF
 # =====================================================
+
 @app.on_callback_query(
     filters.regex(r"^toggle_autoplay$")
     & ~BANNED_USERS
@@ -171,18 +222,30 @@ async def helper_cb(
 @languageCB
 async def toggle_autoplay_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
     chat_id = callback_query.message.chat.id
 
     try:
-        current_status = await get_autoplay(chat_id)
-        new_status = not bool(current_status)
+        current_status = bool(
+            await get_autoplay(chat_id)
+        )
+
+        new_status = not current_status
 
         await set_autoplay(
             chat_id,
             new_status,
+        )
+
+        keyboard = await second_page(
+            _,
+            chat_id,
+        )
+
+        await callback_query.message.edit_reply_markup(
+            reply_markup=keyboard,
         )
 
         status = (
@@ -196,21 +259,9 @@ async def toggle_autoplay_cb(
             show_alert=False,
         )
 
-        keyboard = await second_page(
-            _,
-            chat_id,
-        )
-
-        try:
-            await callback_query.message.edit_reply_markup(
-                reply_markup=keyboard,
-            )
-        except Exception:
-            pass
-
-    except Exception as e:
+    except Exception as error:
         print(
-            f"Autoplay Toggle Error: {e}"
+            f"AUTOPLAY BUTTON ERROR: {error}"
         )
 
         await callback_query.answer(
@@ -220,84 +271,105 @@ async def toggle_autoplay_cb(
 
 
 # =====================================================
-# NEXT HELP PAGE
+# NEXT PAGE
 # =====================================================
+
 @app.on_callback_query(
-    filters.regex(r"^help_next_(\d+)$")
+    filters.regex(r"^help_next_2$")
     & ~BANNED_USERS
 )
 @languageCB
 async def help_next_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
-    page = int(
-        callback_query.data.split("_")[-1]
-    )
+    try:
+        chat_id = callback_query.message.chat.id
 
-    if page != 2:
-        await callback_query.answer(
-            "No more pages.",
-            show_alert=True,
+        keyboard = await second_page(
+            _,
+            chat_id,
         )
-        return
 
-    chat_id = callback_query.message.chat.id
+        caption = _["help_1"].format(
+            SUPPORT_CHAT
+        )
 
-    keyboard = await second_page(
-        _,
-        chat_id,
-    )
+        await edit_help_message(
+            callback_query,
+            caption,
+            keyboard,
+        )
 
-    await callback_query.edit_message_text(
-        text=_["help_1"].format(SUPPORT_CHAT),
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-    )
+        await callback_query.answer()
+
+    except Exception as error:
+        print(
+            f"HELP NEXT ERROR: {error}"
+        )
+
+        try:
+            await callback_query.answer(
+                "Failed to open next menu.",
+                show_alert=True,
+            )
+        except Exception:
+            pass
 
 
 # =====================================================
-# PREVIOUS HELP PAGE
+# PREVIOUS PAGE
 # =====================================================
+
 @app.on_callback_query(
-    filters.regex(r"^help_prev_(\d+)$")
+    filters.regex(r"^help_prev_1$")
     & ~BANNED_USERS
 )
 @languageCB
 async def help_prev_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
-    page = int(
-        callback_query.data.split("_")[-1]
-    )
+    try:
+        chat_id = callback_query.message.chat.id
 
-    if page != 1:
-        await callback_query.answer(
-            "No previous page.",
-            show_alert=True,
+        keyboard = await first_page(
+            _,
+            chat_id,
         )
-        return
 
-    chat_id = callback_query.message.chat.id
+        caption = _["help_1"].format(
+            SUPPORT_CHAT
+        )
 
-    keyboard = await first_page(
-        _,
-        chat_id,
-    )
+        await edit_help_message(
+            callback_query,
+            caption,
+            keyboard,
+        )
 
-    await callback_query.edit_message_text(
-        text=_["help_1"].format(SUPPORT_CHAT),
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-    )
+        await callback_query.answer()
+
+    except Exception as error:
+        print(
+            f"HELP PREVIOUS ERROR: {error}"
+        )
+
+        try:
+            await callback_query.answer(
+                "Failed to open previous menu.",
+                show_alert=True,
+            )
+        except Exception:
+            pass
 
 
 # =====================================================
-# BACK FROM HELP SECTION
+# BACK FROM HELP TOPIC
 # =====================================================
+
 @app.on_callback_query(
     filters.regex(r"^help_back_(\d+)$")
     & ~BANNED_USERS
@@ -305,7 +377,7 @@ async def help_prev_cb(
 @languageCB
 async def help_back_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
     page = int(
@@ -333,16 +405,19 @@ async def help_back_cb(
         )
         return
 
-    await callback_query.edit_message_text(
-        text=_["help_1"].format(SUPPORT_CHAT),
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
+    caption = _["help_1"].format(
+        SUPPORT_CHAT
     )
 
+    await edit_help_message(
+        callback_query,
+        caption,
+        keyboard,
+    )
 
-# =====================================================
-# ACTION SUB MENU
-# =====================================================
+    await callback_query.answer()
+
+
 @app.on_callback_query(
     filters.regex(r"^action_prom_1$")
     & ~BANNED_USERS
@@ -350,12 +425,15 @@ async def help_back_cb(
 @languageCB
 async def action_prom_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
     await callback_query.edit_message_text(
-        text=helpers.HELP_1_PROMO,
-        reply_markup=help_back_markup(_, 1),
+        helpers.HELP_1_PROMO,
+        reply_markup=help_back_markup(
+            _,
+            1,
+        ),
         disable_web_page_preview=True,
     )
 
@@ -367,19 +445,19 @@ async def action_prom_cb(
 @languageCB
 async def action_pun_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
     await callback_query.edit_message_text(
-        text=helpers.HELP_1_PUNISH,
-        reply_markup=help_back_markup(_, 1),
+        helpers.HELP_1_PUNISH,
+        reply_markup=help_back_markup(
+            _,
+            1,
+        ),
         disable_web_page_preview=True,
     )
 
 
-# =====================================================
-# BACK TO MAIN MENU
-# =====================================================
 @app.on_callback_query(
     filters.regex(r"^back_to_main$")
     & ~BANNED_USERS
@@ -387,14 +465,9 @@ async def action_pun_cb(
 @languageCB
 async def back_to_main_cb(
     client: Client,
-    callback_query: CallbackQuery,
+    callback_query: types.CallbackQuery,
     _,
 ):
-    try:
-        await callback_query.answer()
-    except Exception:
-        pass
-
     out = private_panel(_)
 
     caption = _["start_2"].format(
@@ -405,11 +478,18 @@ async def back_to_main_cb(
     try:
         await callback_query.message.edit_caption(
             caption=caption,
-            reply_markup=InlineKeyboardMarkup(out),
+            reply_markup=InlineKeyboardMarkup(
+                out
+            ),
         )
+
     except Exception:
         await callback_query.message.edit_text(
             text=caption,
-            reply_markup=InlineKeyboardMarkup(out),
+            reply_markup=InlineKeyboardMarkup(
+                out
+            ),
             disable_web_page_preview=True,
-    )
+        )
+
+    await callback_query.answer()
