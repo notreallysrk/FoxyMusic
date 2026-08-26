@@ -55,8 +55,8 @@ UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/about_Maahi_XD")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ll_DPZ_WORLDS_lll")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/hot_dpz_stor")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ll_ROYAL_ABOUT_ll")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
