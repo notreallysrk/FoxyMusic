@@ -1,4 +1,4 @@
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.button_styles import (
@@ -21,7 +21,7 @@ async def generate_help_buttons(
     start: int,
     end: int,
     current_page: int,
-    chat_id: int = None,
+    chat_id: int | None = None,
 ):
     buttons = []
     per_row = 3
@@ -30,17 +30,21 @@ async def generate_help_buttons(
         if idx % per_row == 0:
             buttons.append([])
 
-        # REPO INFO (21) → ACTUAL AUTOPLAY TOGGLE
+        # SECTION 21: REPO INFO -> ACTUAL AUTOPLAY BUTTON
         if section == 21:
-            autoplay = False
+            autoplay_enabled = False
 
-            if chat_id:
+            if chat_id is not None:
                 try:
-                    autoplay = await get_autoplay(chat_id)
-                except Exception:
-                    autoplay = False
+                    autoplay_enabled = bool(
+                        await get_autoplay(chat_id)
+                    )
+                except Exception as error:
+                    print(
+                        f"HELP AUTOPLAY STATUS ERROR: {error}"
+                    )
 
-            status = "🟢 ON" if autoplay else "🔴 OFF"
+            status = "🟢 ON" if autoplay_enabled else "🔴 OFF"
 
             button = success_button(
                 text=f"Aᴜᴛᴏᴘʟᴀʏ {status}",
@@ -48,34 +52,44 @@ async def generate_help_buttons(
             )
 
         else:
-            button_kwargs = {
-                "text": BUTTON_LABEL_OVERRIDES.get(
-                    section,
-                    _[f"H_B_{section}"],
-                ),
-                "callback_data": (
-                    f"help_callback hb{section}_p{current_page}"
-                ),
-            }
+            text = BUTTON_LABEL_OVERRIDES.get(
+                section,
+                _[f"H_B_{section}"],
+            )
 
-            # BUTTON STYLES
+            callback_data = (
+                f"help_callback hb{section}_p{current_page}"
+            )
+
             style_position = idx % 3
 
             if style_position == 0:
-                button = primary_button(**button_kwargs)
+                button = primary_button(
+                    text=text,
+                    callback_data=callback_data,
+                )
 
             elif style_position == 1:
-                button = success_button(**button_kwargs)
+                button = success_button(
+                    text=text,
+                    callback_data=callback_data,
+                )
 
             else:
-                button = danger_button(**button_kwargs)
+                button = danger_button(
+                    text=text,
+                    callback_data=callback_data,
+                )
 
         buttons[-1].append(button)
 
     return buttons
 
 
-async def first_page(_, chat_id: int = None):
+async def first_page(
+    _,
+    chat_id: int | None = None,
+):
     buttons = await generate_help_buttons(
         _,
         1,
@@ -100,7 +114,10 @@ async def first_page(_, chat_id: int = None):
     return InlineKeyboardMarkup(buttons)
 
 
-async def second_page(_, chat_id: int = None):
+async def second_page(
+    _,
+    chat_id: int | None = None,
+):
     buttons = await generate_help_buttons(
         _,
         16,
@@ -111,16 +128,14 @@ async def second_page(_, chat_id: int = None):
 
     buttons.append(
         [
-            [
-                primary_button(
-                    text="๏ ʙᴀᴄᴋ ๏",
-                    callback_data="help_prev_1",
-                ),
-                primary_button(
-                    text="๏ ᴍᴇɴᴜ ๏",
-                    callback_data="back_to_main",
-                ),
-            ]
+            primary_button(
+                text="๏ ʙᴀᴄᴋ ๏",
+                callback_data="help_prev_1",
+            ),
+            primary_button(
+                text="๏ ᴍᴇɴᴜ ๏",
+                callback_data="back_to_main",
+            ),
         ]
     )
 
@@ -135,7 +150,7 @@ def action_sub_menu(_, current_page: int):
                     text=_["H_B_S_1"],
                     callback_data="action_prom_1",
                 ),
-                success_button(
+                primary_button(
                     text=_["H_B_S_2"],
                     callback_data="action_pun_1",
                 ),
