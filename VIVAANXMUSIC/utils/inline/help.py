@@ -1,10 +1,15 @@
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup
 
 from VIVAANXMUSIC import app
-from VIVAANXMUSIC.button_styles import danger_button, primary_button
+from VIVAANXMUSIC.button_styles import (
+    danger_button,
+    primary_button,
+    success_button,
+)
 
 
 TOTAL_SECTIONS = 33
+
 BUTTON_LABEL_OVERRIDES = {
     25: "Dᴏᴡɴʟᴏᴀᴅ",
 }
@@ -13,37 +18,86 @@ BUTTON_LABEL_OVERRIDES = {
 def generate_help_buttons(_, start: int, end: int, current_page: int):
     buttons = []
     per_row = 3
+
     for idx, section in enumerate(range(start, end + 1)):
         if idx % per_row == 0:
             buttons.append([])
-        buttons[-1].append(
-            InlineKeyboardButton(
-                text=BUTTON_LABEL_OVERRIDES.get(section, _[f"H_B_{section}"]),
-                callback_data=f"help_callback hb{section}_p{current_page}",
-            )
-        )
+
+        button_kwargs = {
+            "text": BUTTON_LABEL_OVERRIDES.get(
+                section,
+                _[f"H_B_{section}"],
+            ),
+            "callback_data": (
+                f"help_callback hb{section}_p{current_page}"
+            ),
+        }
+
+        # All menu buttons style:
+        # 1st = PRIMARY
+        # 2nd = SUCCESS
+        # 3rd = DANGER
+        style_position = idx % 3
+
+        if style_position == 0:
+            button = primary_button(**button_kwargs)
+
+        elif style_position == 1:
+            button = success_button(**button_kwargs)
+
+        else:
+            button = danger_button(**button_kwargs)
+
+        buttons[-1].append(button)
+
     return buttons
 
 
 def first_page(_):
-    buttons = generate_help_buttons(_, 1, 15, current_page=1)
+    buttons = generate_help_buttons(
+        _,
+        1,
+        15,
+        current_page=1,
+    )
+
     buttons.append(
         [
-            primary_button(text="๏ ᴍᴇɴᴜ ๏", callback_data="back_to_main"),
-            primary_button(text="๏ ɴᴇxᴛ ๏", callback_data="help_next_2"),
+            primary_button(
+                text="๏ ᴍᴇɴᴜ ๏",
+                callback_data="back_to_main",
+            ),
+            success_button(
+                text="๏ ɴᴇxᴛ ๏",
+                callback_data="help_next_2",
+            ),
         ]
     )
+
     return InlineKeyboardMarkup(buttons)
 
 
 def second_page(_):
-    buttons = generate_help_buttons(_, 16, TOTAL_SECTIONS, current_page=2)
+    buttons = generate_help_buttons(
+        _,
+        16,
+        TOTAL_SECTIONS,
+        current_page=2,
+    )
+
     buttons.append(
         [
-            primary_button(text="๏ ʙᴀᴄᴋ ๏", callback_data="help_prev_1"),
-            primary_button(text="๏ ᴍᴇɴᴜ ๏", callback_data="back_to_main"),
+            primary_button(
+                text="๏ ʙᴀᴄᴋ ๏",
+                callback_data="help_prev_1",
+            ),
+            primary_button(
+                text="๏ ᴍᴇɴᴜ ๏",
+                callback_data="back_to_main",
+            ),
         ]
     )
+
     return InlineKeyboardMarkup(buttons)
 
 
@@ -51,8 +105,14 @@ def action_sub_menu(_, current_page: int):
     return InlineKeyboardMarkup(
         [
             [
-                primary_button(text=_["H_B_S_1"], callback_data="action_prom_1"),
-                primary_button(text=_["H_B_S_2"], callback_data="action_pun_1"),
+                primary_button(
+                    text=_["H_B_S_1"],
+                    callback_data="action_prom_1",
+                ),
+                success_button(
+                    text=_["H_B_S_2"],
+                    callback_data="action_pun_1",
+                ),
             ],
             [
                 primary_button(
@@ -72,7 +132,10 @@ def help_back_markup(_, current_page: int):
                     text=_["BACK_BUTTON"],
                     callback_data=f"help_back_{current_page}",
                 ),
-                danger_button(text=_["CLOSE_BUTTON"], callback_data="close"),
+                danger_button(
+                    text=_["CLOSE_BUTTON"],
+                    callback_data="close",
+                ),
             ]
         ]
     )
