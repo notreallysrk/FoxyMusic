@@ -1,4 +1,4 @@
-from pyrogram.types import InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.button_styles import (
@@ -6,6 +6,7 @@ from VIVAANXMUSIC.button_styles import (
     primary_button,
     success_button,
 )
+from VIVAANXMUSIC.utils.database import get_autoplay
 
 
 TOTAL_SECTIONS = 33
@@ -15,7 +16,13 @@ BUTTON_LABEL_OVERRIDES = {
 }
 
 
-def generate_help_buttons(_, start: int, end: int, current_page: int):
+async def generate_help_buttons(
+    _,
+    start: int,
+    end: int,
+    current_page: int,
+    chat_id: int = None,
+):
     buttons = []
     per_row = 3
 
@@ -23,42 +30,58 @@ def generate_help_buttons(_, start: int, end: int, current_page: int):
         if idx % per_row == 0:
             buttons.append([])
 
-        button_kwargs = {
-            "text": BUTTON_LABEL_OVERRIDES.get(
-                section,
-                _[f"H_B_{section}"],
-            ),
-            "callback_data": (
-                f"help_callback hb{section}_p{current_page}"
-            ),
-        }
+        # REPO INFO (21) → ACTUAL AUTOPLAY TOGGLE
+        if section == 21:
+            autoplay = False
 
-        # All menu buttons style:
-        # 1st = PRIMARY
-        # 2nd = SUCCESS
-        # 3rd = DANGER
-        style_position = idx % 3
+            if chat_id:
+                try:
+                    autoplay = await get_autoplay(chat_id)
+                except Exception:
+                    autoplay = False
 
-        if style_position == 0:
-            button = primary_button(**button_kwargs)
+            status = "🟢 ON" if autoplay else "🔴 OFF"
 
-        elif style_position == 1:
-            button = success_button(**button_kwargs)
+            button = success_button(
+                text=f"Aᴜᴛᴏᴘʟᴀʏ {status}",
+                callback_data="toggle_autoplay",
+            )
 
         else:
-            button = danger_button(**button_kwargs)
+            button_kwargs = {
+                "text": BUTTON_LABEL_OVERRIDES.get(
+                    section,
+                    _[f"H_B_{section}"],
+                ),
+                "callback_data": (
+                    f"help_callback hb{section}_p{current_page}"
+                ),
+            }
+
+            # BUTTON STYLES
+            style_position = idx % 3
+
+            if style_position == 0:
+                button = primary_button(**button_kwargs)
+
+            elif style_position == 1:
+                button = success_button(**button_kwargs)
+
+            else:
+                button = danger_button(**button_kwargs)
 
         buttons[-1].append(button)
 
     return buttons
 
 
-def first_page(_):
-    buttons = generate_help_buttons(
+async def first_page(_, chat_id: int = None):
+    buttons = await generate_help_buttons(
         _,
         1,
         15,
         current_page=1,
+        chat_id=chat_id,
     )
 
     buttons.append(
@@ -77,24 +100,27 @@ def first_page(_):
     return InlineKeyboardMarkup(buttons)
 
 
-def second_page(_):
-    buttons = generate_help_buttons(
+async def second_page(_, chat_id: int = None):
+    buttons = await generate_help_buttons(
         _,
         16,
         TOTAL_SECTIONS,
         current_page=2,
+        chat_id=chat_id,
     )
 
     buttons.append(
         [
-            primary_button(
-                text="๏ ʙᴀᴄᴋ ๏",
-                callback_data="help_prev_1",
-            ),
-            primary_button(
-                text="๏ ᴍᴇɴᴜ ๏",
-                callback_data="back_to_main",
-            ),
+            [
+                primary_button(
+                    text="๏ ʙᴀᴄᴋ ๏",
+                    callback_data="help_prev_1",
+                ),
+                primary_button(
+                    text="๏ ᴍᴇɴᴜ ๏",
+                    callback_data="back_to_main",
+                ),
+            ]
         ]
     )
 
