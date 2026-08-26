@@ -1,5 +1,7 @@
 # ===========================================================
 # ©️ 2025-26 All Rights Reserved by Purvi Bots (Im-Notcoder) 🚀
+#
+# This source code is under MIT License 📜
 # ===========================================================
 
 import asyncio
@@ -120,89 +122,13 @@ def clear_history(chat_id: int):
 
 
 # =========================================================
-# LANGUAGE DETECTION
-# =========================================================
-
-def _detect_language(title: str) -> str:
-    text = str(title or "").lower()
-
-    bhojpuri_words = [
-        "bhojpuri",
-        "khesari",
-        "pawan singh",
-        "nirahua",
-        "dinesh lal",
-        "bhojiwood",
-        "arvind akela",
-        "neelkamal singh",
-        "shilpi raj",
-    ]
-
-    haryanvi_words = [
-        "haryanvi",
-        "haryana",
-        "sapna",
-        "masoom sharma",
-        "gulzaar chhaniwala",
-        "dada lakhmi",
-        "raju punjabi",
-        "kd desirock",
-        "amit saini",
-    ]
-
-    punjabi_words = [
-        "punjabi",
-        "diljit",
-        "sidhu moose",
-        "ap dhillon",
-        "karan aujla",
-        "gippy grewal",
-        "amrinder gill",
-        "guru randhawa",
-        "shubh",
-    ]
-
-    english_words = [
-        "english",
-        "taylor swift",
-        "justin bieber",
-        "ed sheeran",
-        "the weeknd",
-        "billie eilish",
-        "ariana grande",
-        "bruno mars",
-        "dua lipa",
-        "maroon 5",
-    ]
-
-    for word in bhojpuri_words:
-        if word in text:
-            return "bhojpuri"
-
-    for word in haryanvi_words:
-        if word in text:
-            return "haryanvi"
-
-    for word in punjabi_words:
-        if word in text:
-            return "punjabi"
-
-    for word in english_words:
-        if word in text:
-            return "english"
-
-    return "hindi"
-
-
-# =========================================================
 # NORMAL YOUTUBE SEARCH CANDIDATES
 # =========================================================
 
 def _extract_candidates(
     results,
     chat_id: int,
-    language: str,
-    skip_history: bool = False,
+    skip_history: bool,
 ):
     candidates = []
 
@@ -219,6 +145,8 @@ def _extract_candidates(
     )
 
     for video in results:
+        if not video:
+            continue
 
         vidid = str(
             video.get("id") or ""
@@ -239,41 +167,30 @@ def _extract_candidates(
         ):
             continue
 
-        normalized_title = _norm_title(title)
-
         if vidid in played:
             continue
 
+        normalized_title = _norm_title(title)
+
         if (
             normalized_title
-            and normalized_title
-            in played_titles
+            and normalized_title in played_titles
         ):
             continue
 
-        # Result title se detected language
-        # Agar obvious different language ho to reject
-        result_language = _detect_language(
-            title
+        thumbs = (
+            video.get("thumbnails")
+            or []
         )
 
-        if (
-            language != "hindi"
-            and result_language != language
-        ):
-            continue
+        thumb = None
 
-        thumbs = video.get(
-            "thumbnails"
-        ) or []
-
-        thumb = (
-            thumbs[0]
-            .get("url", "")
-            .split("?")[0]
-            if thumbs
-            else None
-        )
+        if thumbs:
+            thumb = (
+                thumbs[0]
+                .get("url", "")
+                .split("?")[0]
+            )
 
         candidates.append(
             {
@@ -309,14 +226,12 @@ def _cookie_file():
     if not txt_files:
         return None
 
-    return random.choice(
-        txt_files
-    )
+    return random.choice(txt_files)
 
 
 def _fetch_mix_sync(
     video_id: str,
-    limit: int = 30,
+    limit: int = 20,
 ) -> list:
 
     ydl_opts = {
@@ -335,8 +250,8 @@ def _fetch_mix_sync(
         ] = cookiefile
 
     url = (
-        f"https://www.youtube.com/watch"
-        f"?v={video_id}"
+        f"https://www.youtube.com/"
+        f"watch?v={video_id}"
         f"&list=RD{video_id}"
     )
 
@@ -359,8 +274,7 @@ def _fetch_mix_sync(
 def _extract_mix_candidates(
     entries,
     chat_id: int,
-    language: str,
-    skip_history: bool = False,
+    skip_history: bool,
 ):
     candidates = []
 
@@ -377,7 +291,6 @@ def _extract_mix_candidates(
     )
 
     for e in entries or []:
-
         if not e:
             continue
 
@@ -398,25 +311,12 @@ def _extract_mix_candidates(
         if vidid in played:
             continue
 
-        normalized_title = _norm_title(
-            title
-        )
+        normalized_title = _norm_title(title)
 
         if (
             normalized_title
             and normalized_title
             in played_titles
-        ):
-            continue
-
-        # Strict language filtering
-        result_language = _detect_language(
-            title
-        )
-
-        if (
-            language != "hindi"
-            and result_language != language
         ):
             continue
 
@@ -438,7 +338,6 @@ def _extract_mix_candidates(
             )
 
         else:
-
             duration_min = (
                 str(duration)
                 if duration
@@ -469,66 +368,112 @@ def _extract_mix_candidates(
 async def _fetch_mix_candidates(
     chat_id: int,
     seed_vidid: str,
-    language: str,
 ) -> list:
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
 
     try:
-
         entries = await loop.run_in_executor(
             None,
             _fetch_mix_sync,
             seed_vidid,
-            30,
+            20,
         )
 
     except Exception as e:
-
         print(
             f"[AUTOPLAY MIX ERROR] {e}"
         )
 
         return []
 
-    candidates = _extract_mix_candidates(
+    return _extract_mix_candidates(
         entries,
         chat_id,
-        language,
         skip_history=False,
     )
 
-    return candidates
-
 
 # =========================================================
-# LANGUAGE BASED YOUTUBE SEARCH
+# MAIN AUTOPLAY
 # =========================================================
 
-async def _search_language_candidates(
+async def fetch_autoplay_track(
     chat_id: int,
-    language: str,
-) -> list:
+    seed_title: str,
+    seed_vidid: str = None,
+):
+    """
+    Primary:
+        YouTube Mix / Radio playlist.
+
+    Fallback:
+        Current song title search.
+
+    Protection:
+        Same recent video aur same title repeat
+        nahi hoga.
+    """
+
+    chat_id = int(chat_id)
+
+    seed_vidid = str(
+        seed_vidid or ""
+    ).strip()
+
+    seed_title = str(
+        seed_title or ""
+    ).strip()
+
+    # Current song ko history me save karo
+    if seed_vidid:
+        remember_played(
+            chat_id,
+            seed_vidid,
+            seed_title,
+        )
+
+    # =====================================================
+    # PRIMARY: YOUTUBE MIX
+    # =====================================================
+
+    if seed_vidid:
+        mix_candidates = (
+            await _fetch_mix_candidates(
+                chat_id,
+                seed_vidid,
+            )
+        )
+
+        if mix_candidates:
+            track = random.choice(
+                mix_candidates
+            )
+
+            remember_played(
+                chat_id,
+                track.get("vidid"),
+                track.get("title"),
+            )
+
+            return track
+
+    # =====================================================
+    # FALLBACK: TITLE SEARCH
+    # =====================================================
+
+    if not seed_title:
+        return None
 
     queries = [
-
-        f"latest {language} songs official audio",
-
-        f"popular {language} songs official audio",
-
-        f"trending {language} songs",
-
-        f"new {language} songs",
-
-        f"best {language} songs",
+        seed_title,
+        f"{seed_title} official audio",
+        f"{seed_title} full song",
     ]
-
-    all_candidates = []
 
     for query in queries:
 
         try:
-
             search = VideosSearch(
                 query,
                 limit=20,
@@ -549,111 +494,24 @@ async def _search_language_candidates(
             )
 
         except Exception as e:
-
             print(
                 f"[AUTOPLAY SEARCH ERROR] {e}"
             )
 
             continue
 
+        if not results:
+            continue
+
         candidates = _extract_candidates(
             results,
             chat_id,
-            language,
             skip_history=False,
         )
 
-        all_candidates.extend(
-            candidates
-        )
-
-    # Duplicate candidates remove
-    unique = {}
-
-    for track in all_candidates:
-
-        vidid = track.get(
-            "vidid"
-        )
-
-        if vidid:
-            unique[vidid] = track
-
-    return list(
-        unique.values()
-    )
-
-
-# =========================================================
-# MAIN AUTOPLAY
-# =========================================================
-
-async def fetch_autoplay_track(
-    chat_id: int,
-    seed_title: str,
-    seed_vidid: str = None,
-    max_duration=None,
-):
-    """
-    Same language + different songs autoplay.
-
-    Hindi    -> Hindi songs
-    Bhojpuri -> Bhojpuri songs
-    Punjabi  -> Punjabi songs
-    Haryanvi -> Haryanvi songs
-    English  -> English songs
-
-    Priority:
-    1. YouTube Mix / Radio
-    2. Language based search
-    3. Never return recent duplicate song
-    """
-
-    chat_id = int(
-        chat_id
-    )
-
-    seed_vidid = str(
-        seed_vidid or ""
-    ).strip()
-
-    seed_title = str(
-        seed_title or ""
-    ).strip()
-
-    # Current playing song ko history me add karo
-    if seed_vidid:
-
-        remember_played(
-            chat_id,
-            seed_vidid,
-            seed_title,
-        )
-
-    if not seed_title:
-        return None
-
-    # Current song ki language
-    language = _detect_language(
-        seed_title
-    )
-
-    # =====================================================
-    # 1. PRIMARY: YouTube Mix / Radio
-    # =====================================================
-
-    if seed_vidid:
-
-        mix_candidates = await _fetch_mix_candidates(
-            chat_id,
-            seed_vidid,
-            language,
-        )
-
-        if mix_candidates:
-
+        if candidates:
             track = random.choice(
-                mix_candidates
+                candidates
             )
 
             remember_played(
@@ -665,47 +523,23 @@ async def fetch_autoplay_track(
             return track
 
     # =====================================================
-    # 2. FALLBACK: LANGUAGE BASED SEARCH
+    # LAST FALLBACK
     # =====================================================
 
-    search_candidates = (
-        await _search_language_candidates(
-            chat_id,
-            language,
-        )
-    )
+    # History clear karke current search se koi song lo.
+    # Isse autoplay completely stall nahi hoga.
+    clear_history(chat_id)
 
-    if search_candidates:
-
-        track = random.choice(
-            search_candidates
-        )
-
+    if seed_vidid:
         remember_played(
             chat_id,
-            track.get("vidid"),
-            track.get("title"),
+            seed_vidid,
+            seed_title,
         )
-
-        return track
-
-    # =====================================================
-    # 3. LAST FALLBACK:
-    # Clear only if everything is exhausted
-    # =====================================================
-
-    clear_history(
-        chat_id
-    )
 
     try:
-
-        query = (
-            f"latest {language} songs"
-        )
-
         search = VideosSearch(
-            query,
+            seed_title,
             limit=20,
         )
 
@@ -726,12 +560,10 @@ async def fetch_autoplay_track(
         candidates = _extract_candidates(
             results,
             chat_id,
-            language,
-            skip_history=True,
+            skip_history=False,
         )
 
         if candidates:
-
             track = random.choice(
                 candidates
             )
@@ -745,9 +577,13 @@ async def fetch_autoplay_track(
             return track
 
     except Exception as e:
-
         print(
             f"[AUTOPLAY LAST FALLBACK ERROR] {e}"
         )
 
     return None
+
+
+# ===========================================================
+# ©️ 2025-26 All Rights Reserved by Purvi Bots (Im-Notcoder) 😎
+# ===========================================================
