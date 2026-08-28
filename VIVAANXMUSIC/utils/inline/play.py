@@ -3,232 +3,226 @@ import time
 from pyrogram.types import InlineKeyboardButton
 
 from VIVAANXMUSIC.button_styles import (
-danger_button,
-primary_button,
-success_button,
+    danger_button,
+    primary_button,
+    success_button,
 )
 from VIVAANXMUSIC.utils.formatters import time_to_seconds
 
+
 LAST_UPDATE_TIME = {}
 
-def track_markup(, videoid, user_id, channel, fplay):
-return [
-[
-success_button(
-text=["P_B_1"],
-callback_data=(
-f"MusicStream {videoid}|{user_id}|a|{channel}|{fplay}"
-),
-),
-primary_button(
-text=["P_B_2"],
-callback_data=(
-f"MusicStream {videoid}|{user_id}|v|{channel}|{fplay}"
-),
-),
-],
-[
-danger_button(
-text=["CLOSE_BUTTON"],
-callback_data=f"forceclose {videoid}|{user_id}",
-),
-],
-]
 
-def should_update_progress(chat_id):
-now = time.time()
-last = LAST_UPDATE_TIME.get(chat_id, 0)
-
-if now - last >= 6:
-    LAST_UPDATE_TIME[chat_id] = now
-    return True
-
-return False
-
-def generate_progress_bar(played_sec, duration_sec):
-if not duration_sec or duration_sec <= 0:
-percentage = 0
-else:
-percentage = min(
-max((played_sec / duration_sec) * 100, 0),
-100,
-)
-
-bar_length = 8
-filled = int(round(bar_length * percentage / 100))
-filled = max(0, min(filled, bar_length))
-
-return "▰" * filled + "▱" * (bar_length - filled)
-
-COMPACT CONTROL PANEL
-
-def control_buttons(_, chat_id):
-return [
-[
-success_button(
-text="▷",
-callback_data=f"ADMIN Resume|{chat_id}",
-),
-primary_button(
-text="Ⅱ",
-callback_data=f"ADMIN Pause|{chat_id}",
-),
-InlineKeyboardButton(
-text="↻",
-callback_data=f"ADMIN Replay|{chat_id}",
-),
-],
-[
-primary_button(
-text="▶",
-callback_data=f"ADMIN Skip|{chat_id}",
-),
-danger_button(
-text="■",
-callback_data=f"ADMIN Stop|{chat_id}",
-),
-],
-[
-primary_button(
-text="☰ MORE",
-callback_data=f"ADMIN More|{chat_id}",
-),
-danger_button(
-text="✕",
-callback_data="close",
-),
-],
-]
-
-COMPACT MORE PANEL
-
-def more_buttons(, chat_id):
-return [
-[
-success_button(
-text="🟢 ON",
-callback_data=f"autoplay_on{chat_id}",
-),
-danger_button(
-text="🔴 OFF",
-callback_data=f"autoplay_off_{chat_id}",
-),
-],
-[
-primary_button(
-text="‹ BACK",
-callback_data=f"ADMIN Back|{chat_id}",
-),
-],
-]
-
-def stream_markup_timer(_, chat_id, played, dur):
-if not should_update_progress(chat_id):
-return None
-
-played_sec = time_to_seconds(played)
-duration_sec = time_to_seconds(dur)
-
-bar = generate_progress_bar(played_sec, duration_sec)
-
-return (
-    [
+def track_markup(_, videoid, user_id, channel, fplay):
+    return [
         [
-            InlineKeyboardButton(
-                text=f"{played} {bar} {dur}",
-                callback_data="GetTimer",
+            success_button(
+                text=_["P_B_1"],
+                callback_data=f"MusicStream {videoid}|{user_id}|a|{channel}|{fplay}",
+            ),
+            primary_button(
+                text=_["P_B_2"],
+                callback_data=f"MusicStream {videoid}|{user_id}|v|{channel}|{fplay}",
+            ),
+        ],
+        [
+            danger_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data=f"forceclose {videoid}|{user_id}",
             ),
         ],
     ]
-    + control_buttons(_, chat_id)
-)
 
-def stream_markup(, chat_id):
-return control_buttons(, chat_id)
 
-def playlist_markup(, videoid, user_id, ptype, channel, fplay):
-return [
-[
-success_button(
-text=["P_B_1"],
-callback_data=(
-f"VivaanPlaylists "
-f"{videoid}|{user_id}|{ptype}|a|{channel}|{fplay}"
-),
-),
-primary_button(
-text=["P_B_2"],
-callback_data=(
-f"VivaanPlaylists "
-f"{videoid}|{user_id}|{ptype}|v|{channel}|{fplay}"
-),
-),
-],
-[
-danger_button(
-text=["CLOSE_BUTTON"],
-callback_data=f"forceclose {videoid}|{user_id}",
-),
-],
-]
+def should_update_progress(chat_id):
+    now = time.time()
+    last = LAST_UPDATE_TIME.get(chat_id, 0)
 
-def livestream_markup(, videoid, user_id, mode, channel, fplay):
-return [
-[
-success_button(
-text=["P_B_3"],
-callback_data=(
-f"LiveStream "
-f"{videoid}|{user_id}|{mode}|{channel}|{fplay}"
-),
-),
-],
-[
-danger_button(
-text=_["CLOSE_BUTTON"],
-callback_data=f"forceclose {videoid}|{user_id}",
-),
-],
-]
+    if now - last >= 6:
+        LAST_UPDATE_TIME[chat_id] = now
+        return True
+
+    return False
+
+
+def generate_progress_bar(played_sec, duration_sec):
+    if not duration_sec or duration_sec <= 0:
+        percentage = 0
+    else:
+        percentage = min(
+            max((played_sec / duration_sec) * 100, 0),
+            100,
+        )
+
+    bar_length = 8
+    filled = int(round(bar_length * percentage / 100))
+    filled = max(0, min(filled, bar_length))
+
+    return "▰" * filled + "▱" * (bar_length - filled)
+
+
+def control_buttons(_, chat_id):
+    return [
+        [
+            success_button(
+                text="▷",
+                callback_data=f"ADMIN Resume|{chat_id}",
+            ),
+            primary_button(
+                text="II",
+                callback_data=f"ADMIN Pause|{chat_id}",
+            ),
+            InlineKeyboardButton(
+                text="↻",
+                callback_data=f"ADMIN Replay|{chat_id}",
+            ),
+            primary_button(
+                text="‣‣I",
+                callback_data=f"ADMIN Skip|{chat_id}",
+            ),
+            danger_button(
+                text="▢",
+                callback_data=f"ADMIN Stop|{chat_id}",
+            ),
+        ],
+        [
+            danger_button(
+                text="🔴 ᴀᴜᴛᴏᴘʟᴀʏ ᴏғғ",
+                callback_data=f"autoplay_toggle_{chat_id}",
+            ),
+        ],
+    ]
+
+
+def stream_markup_timer(_, chat_id, played, dur):
+    if not should_update_progress(chat_id):
+        return None
+
+    played_sec = time_to_seconds(played)
+    duration_sec = time_to_seconds(dur)
+
+    bar = generate_progress_bar(played_sec, duration_sec)
+
+    return (
+        [
+            [
+                InlineKeyboardButton(
+                    text=f"{played} {bar} {dur}",
+                    callback_data="GetTimer",
+                )
+            ]
+        ]
+        + control_buttons(_, chat_id)
+        + [
+            [
+                danger_button(
+                    text=_["CLOSE_BUTTON"],
+                    callback_data="close",
+                )
+            ]
+        ]
+    )
+
+
+def stream_markup(_, chat_id):
+    return (
+        control_buttons(_, chat_id)
+        + [
+            [
+                danger_button(
+                    text=_["CLOSE_BUTTON"],
+                    callback_data="close",
+                )
+            ]
+        ]
+    )
+
+
+def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
+    return [
+        [
+            success_button(
+                text=_["P_B_1"],
+                callback_data=(
+                    f"VivaanPlaylists "
+                    f"{videoid}|{user_id}|{ptype}|a|{channel}|{fplay}"
+                ),
+            ),
+            primary_button(
+                text=_["P_B_2"],
+                callback_data=(
+                    f"VivaanPlaylists "
+                    f"{videoid}|{user_id}|{ptype}|v|{channel}|{fplay}"
+                ),
+            ),
+        ],
+        [
+            danger_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data=f"forceclose {videoid}|{user_id}",
+            ),
+        ],
+    ]
+
+
+def livestream_markup(_, videoid, user_id, mode, channel, fplay):
+    return [
+        [
+            success_button(
+                text=_["P_B_3"],
+                callback_data=(
+                    f"LiveStream "
+                    f"{videoid}|{user_id}|{mode}|{channel}|{fplay}"
+                ),
+            ),
+        ],
+        [
+            danger_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data=f"forceclose {videoid}|{user_id}",
+            ),
+        ],
+    ]
+
 
 def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
-short_query = query[:20]
+    short_query = query[:20]
 
-return [
-    [
-        success_button(
-            text=_["P_B_1"],
-            callback_data=(
-                f"MusicStream "
-                f"{videoid}|{user_id}|a|{channel}|{fplay}"
+    return [
+        [
+            success_button(
+                text=_["P_B_1"],
+                callback_data=(
+                    f"MusicStream "
+                    f"{videoid}|{user_id}|a|{channel}|{fplay}"
+                ),
             ),
-        ),
-        primary_button(
-            text=_["P_B_2"],
-            callback_data=(
-                f"MusicStream "
-                f"{videoid}|{user_id}|v|{channel}|{fplay}"
+            primary_button(
+                text=_["P_B_2"],
+                callback_data=(
+                    f"MusicStream "
+                    f"{videoid}|{user_id}|v|{channel}|{fplay}"
+                ),
             ),
-        ),
-    ],
-    [
-        InlineKeyboardButton(
-            text="◀",
-            callback_data=(
-                f"slider B|{query_type}|{short_query}|"
-                f"{user_id}|{channel}|{fplay}"
+        ],
+        [
+            InlineKeyboardButton(
+                text="◁",
+                callback_data=(
+                    f"slider B|{query_type}|{short_query}|"
+                    f"{user_id}|{channel}|{fplay}"
+                ),
             ),
-        ),
-        danger_button(
-            text="✕",
-            callback_data=f"forceclose {short_query}|{user_id}",
-        ),
-        InlineKeyboardButton(
-            text="▶",
-            callback_data=(
-                f"slider F|{query_type}|{short_query}|"
-                f"{user_id}|{channel}|{fplay}"
+            danger_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data=f"forceclose {short_query}|{user_id}",
             ),
-        ),
-    ],
-]
+            primary_button(
+                text="▷",
+                callback_data=(
+                    f"slider F|{query_type}|{short_query}|"
+                    f"{user_id}|{channel}|{fplay}"
+                ),
+            ),
+        ],
+    ]
