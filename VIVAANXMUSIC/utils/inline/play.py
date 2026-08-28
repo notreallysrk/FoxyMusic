@@ -77,7 +77,7 @@ def control_buttons(_, chat_id):
                 callback_data=f"ADMIN Replay|{chat_id}",
             ),
             primary_button(
-                text="▶▶Ⅰ",
+                text="▶▶",
                 callback_data=f"ADMIN Skip|{chat_id}",
             ),
             danger_button(
@@ -95,6 +95,25 @@ def control_buttons(_, chat_id):
                 callback_data="close",
             ),
         ],
+    ]
+
+
+def more_buttons(_, chat_id):
+    return [
+        [
+            success_button(
+                text="🟢 ON",
+                callback_data=f"autoplay_on_{chat_id}",
+            ),
+            danger_button(
+                text="🔴 OFF",
+                callback_data=f"autoplay_off_{chat_id}",
+            ),
+            primary_button(
+                text="« BACK",
+                callback_data=f"ADMIN Back|{chat_id}",
+            ),
+        ]
     ]
 
 
@@ -211,4 +230,4 @@ def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
                 ),
             ),
         ],
-    ]
+                ]
