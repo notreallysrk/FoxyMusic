@@ -14,12 +14,12 @@ from py_yt import Playlist
 
 API_URL = os.environ.get(
     "SHRUTI_API_URL",
-    "https://api.shrutibots.site",
+    "https://friendmiss.herokuapp.com",
 ).rstrip("/")
 
 API_KEY = os.environ.get(
     "SHRUTI_API_KEY",
-    "ShrutiBotsAlSpfeG7JItQmuoxCqKd",
+    "AAdZQFGOg6T1BaLZuUXzFFirWtG8NASJy2M_Zk0IsEWQ_____wPQHDjJ6oSK",
 )
 
 DOWNLOAD_DIR = "downloads"
