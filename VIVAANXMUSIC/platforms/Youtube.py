@@ -14,12 +14,12 @@ from py_yt import Playlist
 
 API_URL = os.environ.get(
     "SHRUTI_API_URL",
-    "https://friendmiss.herokuapp.com",
+    "https://api.shrutibots.site",
 ).rstrip("/")
 
 API_KEY = os.environ.get(
     "SHRUTI_API_KEY",
-    "AAdZQFGOg6T1BaLZuUXzFFirWtG8NASJy2M_Zk0IsEWQ_____wPQHDjJ6oSK",
+    "ShrutiBotsAlSpfeG7JItQmuoxCqKd",
 )
 
 DOWNLOAD_DIR = "downloads"
@@ -656,35 +656,54 @@ class YouTubeAPI:
         url: str,
         search_query: str = None,
     ):
-        info = None
+        # Normal song-name queries should search first.
+        if search_query:
+            try:
+                info = await _search_youtube(
+                    str(search_query).strip()
+                )
+                if info:
+                    return info
+            except Exception:
+                pass
 
+        # Direct YouTube URL / video ID.
         try:
             info = await _extract_info(url)
+            if info and not info.get("entries"):
+                return info
         except Exception:
             pass
-
-        if info:
-            return info
 
         video_id = _video_id(url)
 
         if video_id:
-            info = await _search_youtube(
-                video_id
+            canonical = (
+                "https://www.youtube.com/watch?v="
+                f"{video_id}"
             )
 
-            if (
-                info
-                and str(
-                    info.get("id") or ""
-                ) == video_id
-            ):
-                return info
+            # Retry canonical URL.
+            if canonical != url:
+                try:
+                    info = await _extract_info(canonical)
+                    if info and not info.get("entries"):
+                        return info
+                except Exception:
+                    pass
 
-        if search_query:
-            return await _search_youtube(
-                search_query
-            )
+            # Exact video-ID search fallback.
+            try:
+                info = await _search_youtube(video_id)
+                if info:
+                    found_id = str(
+                        info.get("id") or ""
+                    ).strip()
+
+                    if found_id == video_id:
+                        return info
+            except Exception:
+                pass
 
         return None
 
@@ -701,9 +720,14 @@ class YouTubeAPI:
 
         direct_id = _video_id(url)
 
+        is_direct = bool(
+            videoid
+            or _video_id(link)
+        )
+
         info = await self._get_info(
             url,
-            None if direct_id else link,
+            None if is_direct else str(link),
         )
 
         if not info:
@@ -857,9 +881,14 @@ class YouTubeAPI:
 
         direct_id = _video_id(url)
 
+        is_direct = bool(
+            videoid
+            or _video_id(link)
+        )
+
         info = await self._get_info(
             url,
-            None if direct_id else link,
+            None if is_direct else str(link),
         )
 
         if not info:
@@ -1116,6 +1145,30 @@ class YouTubeAPI:
             "thumb": thumbnail,
         }
 
+
+    async def get_related_videos(
+        self,
+        videoid: str,
+        title: str = "",
+        max_duration: Union[int, None] = None,
+        exclude_ids=None,
+        exclude_titles=None,
+    ):
+        return await self.autoplay(
+            videoid=videoid,
+            title=title,
+            max_duration=max_duration,
+            exclude_ids=exclude_ids,
+            exclude_titles=exclude_titles,
+        )
+
+    async def search(
+        self,
+        query: str,
+    ):
+        return await self.track(query)
+
+
     async def formats(
         self,
         link: str,
@@ -1289,3 +1342,4 @@ class YouTubeAPI:
 
 
 YouTube = YouTubeAPI()
+        
