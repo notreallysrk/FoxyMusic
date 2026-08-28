@@ -33,7 +33,7 @@ pyshorteners
 python-dotenv
 python-whois
 
-git+https://github.com/SkyBotsDeveloper/youtube-search-python.git@<trusted-commit>
+git+https://github.com/SkyBotsDeveloper/youtube-search-python.git
 py-yt-search
 yt-dlp
 
