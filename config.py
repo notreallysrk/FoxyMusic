@@ -45,6 +45,9 @@ OCR_SPACE_API_KEY = getenv("OCR_SPACE_API_KEY", "helloworld")  # optional shared
 # Vars For API End Pont.
 YTPROXY_URL = getenv("YTPROXY_URL", 'https://tgapi.xbitcode.com') ## xBit Music Endpoint.
 YT_API_KEY = getenv("YT_API_KEY" , 'xbit_gzlb5IbFpZZ_nIFsU7kDuM0-IokPM6Db') ## Your API key like: xbit_10000000xx0233 Get from  https://t.me/tgmusic_apibot
+
+SHRUTI_API_URL = "https://friendmiss-5d49e780ee8d.herokuapp.com"
+SHRUTI_API_KEY = "fK8qR2mX9vL4aT7zN1cB6wY3eH5jP0sD8uG2kQ7xV4rL9mC1"
 # ── Hosting / deployment ───────────────────────────────────────────────────────
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
