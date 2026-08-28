@@ -69,7 +69,7 @@ def control_buttons(_, chat_id):
                 callback_data=f"ADMIN Resume|{chat_id}",
             ),
             primary_button(
-                text="II",
+                text="Ⅱ",
                 callback_data=f"ADMIN Pause|{chat_id}",
             ),
             InlineKeyboardButton(
@@ -77,7 +77,7 @@ def control_buttons(_, chat_id):
                 callback_data=f"ADMIN Replay|{chat_id}",
             ),
             primary_button(
-                text="‣‣I",
+                text="▶▶Ⅰ",
                 callback_data=f"ADMIN Skip|{chat_id}",
             ),
             danger_button(
@@ -86,9 +86,13 @@ def control_buttons(_, chat_id):
             ),
         ],
         [
+            primary_button(
+                text="☰ MORE",
+                callback_data=f"ADMIN More|{chat_id}",
+            ),
             danger_button(
-                text="🔴 ᴀᴜᴛᴏᴘʟᴀʏ ᴏғғ",
-                callback_data=f"autoplay_toggle_{chat_id}",
+                text="🗑",
+                callback_data="close",
             ),
         ],
     ]
@@ -113,29 +117,11 @@ def stream_markup_timer(_, chat_id, played, dur):
             ]
         ]
         + control_buttons(_, chat_id)
-        + [
-            [
-                danger_button(
-                    text=_["CLOSE_BUTTON"],
-                    callback_data="close",
-                )
-            ]
-        ]
     )
 
 
 def stream_markup(_, chat_id):
-    return (
-        control_buttons(_, chat_id)
-        + [
-            [
-                danger_button(
-                    text=_["CLOSE_BUTTON"],
-                    callback_data="close",
-                )
-            ]
-        ]
-    )
+    return control_buttons(_, chat_id)
 
 
 def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
