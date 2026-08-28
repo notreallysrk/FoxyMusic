@@ -25,6 +25,8 @@ from VIVAANXMUSIC.utils.database import (
     get_assistant,
     get_lang,
     get_upvote_count,
+    get_autoplay,
+    set_autoplay,
     is_active_chat,
     is_music_playing,
     is_muted,
@@ -142,6 +144,151 @@ async def unban_assistant(_, callback: CallbackQuery):
             "Fᴀɪʟᴇᴅ ᴛᴏ ᴜɴʙᴀɴ ᴍʏ ᴀssɪsᴛᴀɴᴛ ʙᴇᴄᴀᴜsᴇ ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ʙᴀɴ ᴘᴏᴡᴇʀ\n\n➻ Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴍᴇ ʙᴀɴ ᴘᴏᴡᴇʀ sᴏ ᴛʜᴀᴛ ɪ ᴄᴀɴ ᴜɴʙᴀɴ ᴍʏ ᴀssɪsᴛᴀɴᴛ ɪᴅ",
             show_alert=True,
         )
+
+
+@app.on_callback_query(filters.regex(r"^player_more\|(-?\d+)$") & ~BANNED_USERS)
+@languageCB
+async def player_more_callback(client, callback: CallbackQuery, _):
+    try:
+        chat_id = int(callback.data.split("|", 1)[1])
+    except (ValueError, IndexError):
+        return await callback.answer("❌ Invalid chat id.", show_alert=True)
+
+    if not await is_active_chat(chat_id):
+        return await callback.answer(_["general_5"], show_alert=True)
+
+    if not await is_nonadmin_chat(callback.message.chat.id) and callback.from_user.id not in SUDOERS:
+        admins = adminlist.get(callback.message.chat.id)
+        if not admins or callback.from_user.id not in admins:
+            return await callback.answer(_["admin_14"], show_alert=True)
+
+    enabled = await get_autoplay(chat_id)
+    status = "🟢 ON" if enabled else "🔴 OFF"
+
+    markup = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                text=f"▶️ AUTO PLAY  {status}",
+                callback_data=f"player_autoplay_toggle|{chat_id}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="🟢 ON",
+                callback_data=f"player_autoplay_on|{chat_id}",
+            ),
+            InlineKeyboardButton(
+                text="🔴 OFF",
+                callback_data=f"player_autoplay_off|{chat_id}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="🔙 BACK",
+                callback_data=f"player_back|{chat_id}",
+            ),
+        ],
+    ])
+
+    await callback.answer()
+    try:
+        await callback.message.edit_reply_markup(reply_markup=markup)
+    except Exception:
+        pass
+
+
+async def _set_player_autoplay(callback: CallbackQuery, _, chat_id: int, enabled: bool):
+    if not await is_active_chat(chat_id):
+        return await callback.answer(_["general_5"], show_alert=True)
+
+    if not await is_nonadmin_chat(callback.message.chat.id) and callback.from_user.id not in SUDOERS:
+        admins = adminlist.get(callback.message.chat.id)
+        if not admins or callback.from_user.id not in admins:
+            return await callback.answer(_["admin_14"], show_alert=True)
+
+    await set_autoplay(chat_id, enabled)
+    await callback.answer(
+        "🟢 AutoPlay Enabled" if enabled else "🔴 AutoPlay Disabled",
+        show_alert=False,
+    )
+
+    current = await get_autoplay(chat_id)
+    status = "🟢 ON" if current else "🔴 OFF"
+    markup = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                text=f"▶️ AUTO PLAY  {status}",
+                callback_data=f"player_autoplay_toggle|{chat_id}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="🟢 ON",
+                callback_data=f"player_autoplay_on|{chat_id}",
+            ),
+            InlineKeyboardButton(
+                text="🔴 OFF",
+                callback_data=f"player_autoplay_off|{chat_id}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="🔙 BACK",
+                callback_data=f"player_back|{chat_id}",
+            ),
+        ],
+    ])
+    try:
+        await callback.message.edit_reply_markup(reply_markup=markup)
+    except Exception:
+        pass
+
+
+@app.on_callback_query(filters.regex(r"^player_autoplay_on\|(-?\d+)$") & ~BANNED_USERS)
+@languageCB
+async def player_autoplay_on_callback(client, callback: CallbackQuery, _):
+    chat_id = int(callback.data.split("|", 1)[1])
+    await _set_player_autoplay(callback, _, chat_id, True)
+
+
+@app.on_callback_query(filters.regex(r"^player_autoplay_off\|(-?\d+)$") & ~BANNED_USERS)
+@languageCB
+async def player_autoplay_off_callback(client, callback: CallbackQuery, _):
+    chat_id = int(callback.data.split("|", 1)[1])
+    await _set_player_autoplay(callback, _, chat_id, False)
+
+
+@app.on_callback_query(filters.regex(r"^player_autoplay_toggle\|(-?\d+)$") & ~BANNED_USERS)
+@languageCB
+async def player_autoplay_toggle_callback(client, callback: CallbackQuery, _):
+    chat_id = int(callback.data.split("|", 1)[1])
+    current = await get_autoplay(chat_id)
+    await _set_player_autoplay(callback, _, chat_id, not current)
+
+
+@app.on_callback_query(filters.regex(r"^player_back\|(-?\d+)$") & ~BANNED_USERS)
+@languageCB
+async def player_back_callback(client, callback: CallbackQuery, _):
+    try:
+        chat_id = int(callback.data.split("|", 1)[1])
+    except (ValueError, IndexError):
+        return await callback.answer("❌ Invalid chat id.", show_alert=True)
+
+    if not await is_active_chat(chat_id):
+        return await callback.answer(_["general_5"], show_alert=True)
+
+    if not await is_nonadmin_chat(callback.message.chat.id) and callback.from_user.id not in SUDOERS:
+        admins = adminlist.get(callback.message.chat.id)
+        if not admins or callback.from_user.id not in admins:
+            return await callback.answer(_["admin_14"], show_alert=True)
+
+    await callback.answer()
+    try:
+        await callback.message.edit_reply_markup(
+            reply_markup=InlineKeyboardMarkup(stream_markup(_, chat_id))
+        )
+    except Exception:
+        pass
 
 
 @app.on_callback_query(filters.regex("ADMIN") & ~BANNED_USERS)
@@ -585,3 +732,4 @@ async def stop_download(_, query: CallbackQuery, _lang):
         return await query.edit_message_text(_lang["tg_7"].format(query.from_user.mention))
     except:
         return await query.answer(_lang["tg_8"], show_alert=True)
+        
