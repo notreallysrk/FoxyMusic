@@ -187,7 +187,7 @@ async def _player_is_admin(callback: CallbackQuery, chat_id: int) -> bool:
 
 
 @app.on_callback_query(
-    filters.regex(r"^player_more\|(-?\d+)$") & ~BANNED_USERS
+    filters.regex(r"^(?:player_more\||ADMIN More\|)(-?\d+)$") & ~BANNED_USERS
 )
 async def player_more_callback(client, callback: CallbackQuery):
     chat_id = int(callback.matches[0].group(1))
