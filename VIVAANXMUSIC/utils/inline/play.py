@@ -155,7 +155,7 @@ def control_buttons(_, chat_id):
             primary_button(
                 text="☰ MORE",
                 callback_data=(
-                    f"ADMIN More|{chat_id}"
+                    f"player_more|{chat_id}"
                 ),
             ),
 
@@ -418,3 +418,4 @@ def slider_markup(
 
 def reset_progress(chat_id):
     LAST_UPDATE_TIME.pop(chat_id, None)
+    
