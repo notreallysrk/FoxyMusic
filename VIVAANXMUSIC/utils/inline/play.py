@@ -5,13 +5,17 @@
 # Released under GNU v3.0 License Agreement.
 #
 
-import math
 import time
 from typing import Union
 
 from pyrogram.types import InlineKeyboardButton
 
 from VIVAANXMUSIC import app
+from VIVAANXMUSIC.button_styles import (
+    danger_button,
+    primary_button,
+    success_button,
+)
 from VIVAANXMUSIC.utils.formatters import time_to_seconds
 
 
@@ -34,16 +38,16 @@ def track_markup(
     fplay,
     thumb: Union[bool, str] = None,
 ):
-    buttons = [
+    return [
         [
-            InlineKeyboardButton(
+            success_button(
                 text="🎵",
                 callback_data=(
                     f"MusicStream "
                     f"{videoid}|{user_id}|a|{channel}|{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+            primary_button(
                 text="🎥",
                 callback_data=(
                     f"MusicStream "
@@ -52,7 +56,7 @@ def track_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"MusicThumb "
@@ -60,7 +64,7 @@ def track_markup(
                     f"{channel}|{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+            danger_button(
                 text="⌯✖",
                 callback_data=(
                     f"forceclose {videoid}|{user_id}"
@@ -69,18 +73,12 @@ def track_markup(
         ],
     ]
 
-    return buttons
-
 
 # ==========================================================
 # PROGRESS CACHE CHECK
 # ==========================================================
 
 def should_update_progress(chat_id):
-    """
-    Prevents Telegram message from being edited too frequently.
-    """
-
     now = time.time()
     last = LAST_UPDATE_TIME.get(chat_id, 0)
 
@@ -161,43 +159,37 @@ def control_buttons(
     # ======================================================
 
     if not more:
-
-        buttons = [
+        return [
             [
-                # RESUME
-                InlineKeyboardButton(
+                success_button(
                     text="▷",
                     callback_data=(
                         f"ADMIN Resume|{chat_id}"
                     ),
                 ),
 
-                # PAUSE
-                InlineKeyboardButton(
+                primary_button(
                     text="II",
                     callback_data=(
                         f"ADMIN Pause|{chat_id}"
                     ),
                 ),
 
-                # SKIP
-                InlineKeyboardButton(
+                primary_button(
                     text="‣‣I",
                     callback_data=(
                         f"ADMIN Skip|{chat_id}"
                     ),
                 ),
 
-                # REPLAY
-                InlineKeyboardButton(
+                primary_button(
                     text="↻",
                     callback_data=(
                         f"ADMIN Replay|{chat_id}"
                     ),
                 ),
 
-                # STOP
-                InlineKeyboardButton(
+                danger_button(
                     text="▢",
                     callback_data=(
                         f"ADMIN Stop|{chat_id}"
@@ -205,41 +197,35 @@ def control_buttons(
                 ),
             ],
             [
-                # MORE
-                InlineKeyboardButton(
+                primary_button(
                     text="☰",
                     callback_data=(
                         f"ADMIN More|{chat_id}"
                     ),
                 ),
 
-                # CLOSE
-                InlineKeyboardButton(
+                danger_button(
                     text="🗑",
                     callback_data="close",
                 ),
             ],
         ]
 
-        return buttons
-
     # ======================================================
     # MORE MENU
     # FILTER REMOVED
     # ======================================================
 
-    buttons = [
+    return [
         [
-            # AUTOPLAY
-            InlineKeyboardButton(
+            success_button(
                 text="♫",
                 callback_data=(
                     f"ADMIN Autoplay|{chat_id}"
                 ),
             ),
 
-            # THUMB
-            InlineKeyboardButton(
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"ADMIN Thumb|{chat_id}"
@@ -247,23 +233,19 @@ def control_buttons(
             ),
         ],
         [
-            # BACK
-            InlineKeyboardButton(
+            primary_button(
                 text="⟵",
                 callback_data=(
                     f"ADMIN Back|{chat_id}"
                 ),
             ),
 
-            # CLOSE
-            InlineKeyboardButton(
+            danger_button(
                 text="🗑",
                 callback_data="close",
             ),
         ],
     ]
-
-    return buttons
 
 
 # ==========================================================
@@ -297,25 +279,31 @@ def more_markup_compact(
 ):
     return [
         [
-            InlineKeyboardButton(
-                text="🟢 AUTO",
+            success_button(
+                text="♫ AUTO",
                 callback_data=(
                     f"ADMIN Autoplay|{chat_id}"
                 ),
             ),
-            InlineKeyboardButton(
-                text="🖼️ THUMB",
+
+            primary_button(
+                text="⎘ THUMB",
                 callback_data=(
                     f"ADMIN Thumb|{chat_id}"
                 ),
             ),
         ],
         [
-            InlineKeyboardButton(
-                text="🔙 BACK",
+            primary_button(
+                text="⟵ BACK",
                 callback_data=(
                     f"ADMIN Back|{chat_id}"
                 ),
+            ),
+
+            danger_button(
+                text="🗑",
+                callback_data="close",
             ),
         ],
     ]
@@ -347,32 +335,20 @@ def stream_markup_timer(
     # TIME
     # ======================================================
 
-    played_sec = time_to_seconds(
-        played
-    )
-
-    duration_sec = time_to_seconds(
-        dur
-    )
+    played_sec = time_to_seconds(played)
+    duration_sec = time_to_seconds(dur)
 
     # ======================================================
     # REMAINING TIME
     # ======================================================
 
-    remaining_sec = (
-        duration_sec - played_sec
-    )
+    remaining_sec = duration_sec - played_sec
 
     if remaining_sec < 0:
         remaining_sec = 0
 
-    rem_min = (
-        remaining_sec // 60
-    )
-
-    rem_sec = (
-        remaining_sec % 60
-    )
+    rem_min = remaining_sec // 60
+    rem_sec = remaining_sec % 60
 
     remaining = (
         f"{rem_min:02d}:"
@@ -410,7 +386,7 @@ def stream_markup_timer(
     ]
 
     # ======================================================
-    # NORMAL MENU
+    # NORMAL PLAYER
     # ======================================================
 
     if not more:
@@ -418,31 +394,35 @@ def stream_markup_timer(
         buttons.extend(
             [
                 [
-                    InlineKeyboardButton(
+                    success_button(
                         text="▷",
                         callback_data=(
                             f"ADMIN Resume|{chat_id}"
                         ),
                     ),
-                    InlineKeyboardButton(
+
+                    primary_button(
                         text="II",
                         callback_data=(
                             f"ADMIN Pause|{chat_id}"
                         ),
                     ),
-                    InlineKeyboardButton(
+
+                    primary_button(
                         text="‣‣I",
                         callback_data=(
                             f"ADMIN Skip|{chat_id}"
                         ),
                     ),
-                    InlineKeyboardButton(
+
+                    primary_button(
                         text="↻",
                         callback_data=(
                             f"ADMIN Replay|{chat_id}"
                         ),
                     ),
-                    InlineKeyboardButton(
+
+                    danger_button(
                         text="▢",
                         callback_data=(
                             f"ADMIN Stop|{chat_id}"
@@ -450,27 +430,14 @@ def stream_markup_timer(
                     ),
                 ],
                 [
-                    InlineKeyboardButton(
-                        text="<-𝟤𝟢 s",
-                        callback_data=(
-                            "seek_backward_20"
-                        ),
-                    ),
-                    InlineKeyboardButton(
+                    primary_button(
                         text="☰",
                         callback_data=(
                             f"ADMIN More|{chat_id}"
                         ),
                     ),
-                    InlineKeyboardButton(
-                        text="𝟤𝟢s+ >",
-                        callback_data=(
-                            "seek_forward_20"
-                        ),
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
+
+                    danger_button(
                         text="🗑",
                         callback_data="close",
                     ),
@@ -488,13 +455,14 @@ def stream_markup_timer(
     buttons.extend(
         [
             [
-                InlineKeyboardButton(
+                success_button(
                     text="♫",
                     callback_data=(
                         f"ADMIN Autoplay|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                primary_button(
                     text="⎘",
                     callback_data=(
                         f"ADMIN Thumb|{chat_id}"
@@ -502,13 +470,14 @@ def stream_markup_timer(
                 ),
             ],
             [
-                InlineKeyboardButton(
+                primary_button(
                     text="⟵",
                     callback_data=(
                         f"ADMIN Back|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                danger_button(
                     text="🗑",
                     callback_data="close",
                 ),
@@ -540,31 +509,35 @@ def stream_markup(
 
         return [
             [
-                InlineKeyboardButton(
+                success_button(
                     text="▷",
                     callback_data=(
                         f"ADMIN Resume|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                primary_button(
                     text="II",
                     callback_data=(
                         f"ADMIN Pause|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                primary_button(
                     text="‣‣I",
                     callback_data=(
                         f"ADMIN Skip|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                primary_button(
                     text="↻",
                     callback_data=(
                         f"ADMIN Replay|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                danger_button(
                     text="▢",
                     callback_data=(
                         f"ADMIN Stop|{chat_id}"
@@ -572,13 +545,14 @@ def stream_markup(
                 ),
             ],
             [
-                InlineKeyboardButton(
+                primary_button(
                     text="☰",
                     callback_data=(
                         f"ADMIN More|{chat_id}"
                     ),
                 ),
-                InlineKeyboardButton(
+
+                danger_button(
                     text="🗑",
                     callback_data="close",
                 ),
@@ -591,13 +565,14 @@ def stream_markup(
 
     return [
         [
-            InlineKeyboardButton(
+            success_button(
                 text="♫",
                 callback_data=(
                     f"ADMIN Autoplay|{chat_id}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"ADMIN Thumb|{chat_id}"
@@ -605,13 +580,14 @@ def stream_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            primary_button(
                 text="⟵",
                 callback_data=(
                     f"ADMIN Back|{chat_id}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            danger_button(
                 text="🗑",
                 callback_data="close",
             ),
@@ -632,10 +608,9 @@ def playlist_markup(
     fplay,
     thumb: Union[bool, str] = None,
 ):
-
-    buttons = [
+    return [
         [
-            InlineKeyboardButton(
+            success_button(
                 text="🎵",
                 callback_data=(
                     f"AlonePlaylists "
@@ -646,7 +621,8 @@ def playlist_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            primary_button(
                 text="🎥",
                 callback_data=(
                     f"AlonePlaylists "
@@ -659,7 +635,7 @@ def playlist_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"PlaylistThumb "
@@ -670,7 +646,8 @@ def playlist_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            danger_button(
                 text="✖",
                 callback_data=(
                     f"forceclose "
@@ -679,8 +656,6 @@ def playlist_markup(
             ),
         ],
     ]
-
-    return buttons
 
 
 # ==========================================================
@@ -696,10 +671,9 @@ def livestream_markup(
     fplay,
     thumb: Union[bool, str] = None,
 ):
-
-    buttons = [
+    return [
         [
-            InlineKeyboardButton(
+            success_button(
                 text="🎬",
                 callback_data=(
                     f"LiveStream "
@@ -712,7 +686,7 @@ def livestream_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"LiveThumb "
@@ -723,7 +697,8 @@ def livestream_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            danger_button(
                 text="✖",
                 callback_data=(
                     f"forceclose "
@@ -732,8 +707,6 @@ def livestream_markup(
             ),
         ],
     ]
-
-    return buttons
 
 
 # ==========================================================
@@ -750,12 +723,11 @@ def slider_markup(
     fplay,
     thumb: Union[bool, str] = None,
 ):
-
     query = str(query)[:20]
 
-    buttons = [
+    return [
         [
-            InlineKeyboardButton(
+            success_button(
                 text="🎵",
                 callback_data=(
                     f"MusicStream "
@@ -765,7 +737,8 @@ def slider_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            primary_button(
                 text="🎥",
                 callback_data=(
                     f"MusicStream "
@@ -777,7 +750,7 @@ def slider_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            primary_button(
                 text="◁",
                 callback_data=(
                     f"slider B|"
@@ -788,7 +761,8 @@ def slider_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            primary_button(
                 text="⎘",
                 callback_data=(
                     f"SliderThumb "
@@ -800,7 +774,8 @@ def slider_markup(
                     f"{fplay}"
                 ),
             ),
-            InlineKeyboardButton(
+
+            primary_button(
                 text="▷",
                 callback_data=(
                     f"slider F|"
@@ -813,7 +788,7 @@ def slider_markup(
             ),
         ],
         [
-            InlineKeyboardButton(
+            danger_button(
                 text="✖",
                 callback_data=(
                     f"forceclose "
@@ -821,6 +796,4 @@ def slider_markup(
                 ),
             ),
         ],
-    ]
-
-    return buttons
+                    ]
