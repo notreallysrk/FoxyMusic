@@ -11,8 +11,8 @@ from typing import Union
 
 from pyrogram.types import InlineKeyboardButton
 
-from AloneMusic import app
-from AloneMusic.utils.formatters import time_to_seconds
+from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.formatters import time_to_seconds
 
 
 # ==========================================================
