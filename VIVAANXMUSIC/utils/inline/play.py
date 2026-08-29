@@ -1,4 +1,5 @@
 import time
+from typing import Union
 
 from pyrogram.types import InlineKeyboardButton
 
@@ -81,7 +82,7 @@ def generate_progress_bar(played_sec, duration_sec):
             100,
         )
 
-    bar_length = 8
+    bar_length = 9
 
     filled = int(
         round(
@@ -98,8 +99,9 @@ def generate_progress_bar(played_sec, duration_sec):
     )
 
     return (
-        "▰" * filled
-        + "▱" * (bar_length - filled)
+        "—" * filled
+        + "♬"
+        + "—" * (bar_length - filled)
     )
 
 
@@ -107,61 +109,115 @@ def generate_progress_bar(played_sec, duration_sec):
 # MAIN PLAYER BUTTONS
 # ==========================================================
 
-def control_buttons(_, chat_id):
+def control_buttons(
+    _,
+    chat_id,
+    autoplay: Union[bool, str] = False,
+    thumb: Union[bool, str] = False,
+    more: bool = False,
+):
+
+    # ======================================================
+    # NORMAL PLAYER MENU
+    # ======================================================
+
+    if not more:
+        return [
+            [
+                # RESUME
+                success_button(
+                    text="▷",
+                    callback_data=(
+                        f"ADMIN Resume|{chat_id}"
+                    ),
+                ),
+
+                # PAUSE
+                primary_button(
+                    text="II",
+                    callback_data=(
+                        f"ADMIN Pause|{chat_id}"
+                    ),
+                ),
+
+                # SKIP
+                primary_button(
+                    text="‣‣I",
+                    callback_data=(
+                        f"ADMIN Skip|{chat_id}"
+                    ),
+                ),
+
+                # REPLAY
+                primary_button(
+                    text="↻",
+                    callback_data=(
+                        f"ADMIN Replay|{chat_id}"
+                    ),
+                ),
+
+                # STOP
+                danger_button(
+                    text="▢",
+                    callback_data=(
+                        f"ADMIN Stop|{chat_id}"
+                    ),
+                ),
+            ],
+            [
+                # MORE
+                primary_button(
+                    text="☰",
+                    callback_data=(
+                        f"ADMIN More|{chat_id}"
+                    ),
+                ),
+
+                # DELETE
+                danger_button(
+                    text="🗑",
+                    callback_data="close",
+                ),
+            ],
+        ]
+
+    # ======================================================
+    # MORE MENU
+    # FILTER REMOVED
+    # ======================================================
+
+    autoplay_text = "♫" if autoplay else "♫"
+
     return [
         [
-            # PLAY
+            # AUTOPLAY
             success_button(
-                text="▷",
+                text=autoplay_text,
                 callback_data=(
-                    f"ADMIN Resume|{chat_id}"
+                    f"ADMIN Autoplay|{chat_id}"
                 ),
             ),
 
-            # PAUSE
+            # THUMBNAIL
             primary_button(
-                text="Ⅱ",
+                text="⎘",
                 callback_data=(
-                    f"ADMIN Pause|{chat_id}"
-                ),
-            ),
-
-            # SKIP
-            primary_button(
-                text="‣‣I",
-                callback_data=(
-                    f"ADMIN Skip|{chat_id}"
-                ),
-            ),
-
-            # REPLAY
-            InlineKeyboardButton(
-                text="↻",
-                callback_data=(
-                    f"ADMIN Replay|{chat_id}"
-                ),
-            ),
-
-            # STOP
-            danger_button(
-                text="▢",
-                callback_data=(
-                    f"ADMIN Stop|{chat_id}"
+                    f"ADMIN Thumb|{chat_id}"
                 ),
             ),
         ],
         [
-            # MORE
+            # BACK
             primary_button(
-                text="☰ MORE",
+                text="⟵",
                 callback_data=(
-                    f"player_more|{chat_id}"
+                    f"ADMIN Back|{chat_id}"
                 ),
             ),
 
             # DELETE
             danger_button(
-                text="🗑️",
+                text="🗑",
                 callback_data="close",
             ),
         ],
@@ -169,63 +225,47 @@ def control_buttons(_, chat_id):
 
 
 # ==========================================================
-# MORE MENU
+# MORE MARKUP
 # ==========================================================
 
-def more_markup(_, chat_id):
+def more_markup(
+    _,
+    chat_id,
+    autoplay=False,
+    thumb=False,
+):
+    return control_buttons(
+        _,
+        chat_id,
+        autoplay=autoplay,
+        thumb=thumb,
+        more=True,
+    )
+
+
+# ==========================================================
+# COMPACT MORE MENU
+# ==========================================================
+
+def more_markup_compact(
+    _,
+    chat_id,
+    autoplay=False,
+):
     return [
         [
             success_button(
-                text="🔵 AUTO PLAY ON",
+                text="♫ AUTO PLAY",
                 callback_data=(
-                    f"autoplay_on_{chat_id}"
-                ),
-            ),
-            danger_button(
-                text="🔴 AUTO PLAY OFF",
-                callback_data=(
-                    f"autoplay_off_{chat_id}"
+                    f"ADMIN Autoplay|{chat_id}"
                 ),
             ),
         ],
         [
             primary_button(
-                text="🔙 BACK",
+                text="⟵ BACK",
                 callback_data=(
-                    f"player_back_{chat_id}"
-                ),
-            ),
-        ],
-    ]
-
-
-# ==========================================================
-# MORE MENU - COMPACT VERSION
-# ==========================================================
-
-def more_markup_compact(_, chat_id):
-    return [
-        [
-            success_button(
-                text="▶️ AUTO PLAY ON",
-                callback_data=(
-                    f"autoplay_on_{chat_id}"
-                ),
-            ),
-        ],
-        [
-            danger_button(
-                text="⛔ AUTO PLAY OFF",
-                callback_data=(
-                    f"autoplay_off_{chat_id}"
-                ),
-            ),
-        ],
-        [
-            primary_button(
-                text="🔙 BACK",
-                callback_data=(
-                    f"player_back_{chat_id}"
+                    f"ADMIN Back|{chat_id}"
                 ),
             ),
         ],
@@ -236,34 +276,89 @@ def more_markup_compact(_, chat_id):
 # STREAM TIMER MARKUP
 # ==========================================================
 
-def stream_markup_timer(_, chat_id, played, dur):
+def stream_markup_timer(
+    _,
+    chat_id,
+    played,
+    dur,
+    autoplay: Union[bool, str] = False,
+    thumb: Union[bool, str] = False,
+    more: bool = False,
+):
     if not should_update_progress(chat_id):
         return None
 
     played_sec = time_to_seconds(played)
     duration_sec = time_to_seconds(dur)
 
+    remaining_sec = max(
+        duration_sec - played_sec,
+        0,
+    )
+
+    remaining_min = remaining_sec // 60
+    remaining_seconds = remaining_sec % 60
+
+    remaining = (
+        f"{remaining_min:02d}:"
+        f"{remaining_seconds:02d}"
+    )
+
     bar = generate_progress_bar(
         played_sec,
         duration_sec,
     )
 
-    return [
+    # ======================================================
+    # TIMER BUTTON
+    # ======================================================
+
+    buttons = [
         [
             InlineKeyboardButton(
-                text=f"{played} {bar} {dur}",
+                text=(
+                    f"{played} "
+                    f"{bar} "
+                    f"{remaining}"
+                ),
                 callback_data="GetTimer",
             )
         ]
-    ] + control_buttons(_, chat_id)
+    ]
+
+    # ======================================================
+    # PLAYER BUTTONS
+    # ======================================================
+
+    buttons += control_buttons(
+        _,
+        chat_id,
+        autoplay=autoplay,
+        thumb=thumb,
+        more=more,
+    )
+
+    return buttons
 
 
 # ==========================================================
 # NORMAL STREAM MARKUP
 # ==========================================================
 
-def stream_markup(_, chat_id):
-    return control_buttons(_, chat_id)
+def stream_markup(
+    _,
+    chat_id,
+    autoplay: Union[bool, str] = False,
+    thumb: Union[bool, str] = False,
+    more: bool = False,
+):
+    return control_buttons(
+        _,
+        chat_id,
+        autoplay=autoplay,
+        thumb=thumb,
+        more=more,
+    )
 
 
 # ==========================================================
@@ -277,6 +372,7 @@ def playlist_markup(
     ptype,
     channel,
     fplay,
+    thumb=None,
 ):
     return [
         [
@@ -284,20 +380,37 @@ def playlist_markup(
                 text=_["P_B_1"],
                 callback_data=(
                     f"VivaanPlaylists "
-                    f"{videoid}|{user_id}|"
-                    f"{ptype}|a|{channel}|{fplay}"
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{ptype}|a|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
             primary_button(
                 text=_["P_B_2"],
                 callback_data=(
                     f"VivaanPlaylists "
-                    f"{videoid}|{user_id}|"
-                    f"{ptype}|v|{channel}|{fplay}"
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{ptype}|v|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
         ],
         [
+            primary_button(
+                text="⎘",
+                callback_data=(
+                    f"PlaylistThumb "
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{ptype}|"
+                    f"{channel}|"
+                    f"{fplay}"
+                ),
+            ),
             danger_button(
                 text=_["CLOSE_BUTTON"],
                 callback_data=(
@@ -320,6 +433,7 @@ def livestream_markup(
     mode,
     channel,
     fplay,
+    thumb=None,
 ):
     return [
         [
@@ -327,12 +441,26 @@ def livestream_markup(
                 text=_["P_B_3"],
                 callback_data=(
                     f"LiveStream "
-                    f"{videoid}|{user_id}|"
-                    f"{mode}|{channel}|{fplay}"
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{mode}|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
         ],
         [
+            primary_button(
+                text="⎘",
+                callback_data=(
+                    f"LiveThumb "
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{mode}|"
+                    f"{channel}|"
+                    f"{fplay}"
+                ),
+            ),
             danger_button(
                 text=_["CLOSE_BUTTON"],
                 callback_data=(
@@ -356,8 +484,9 @@ def slider_markup(
     query_type,
     channel,
     fplay,
+    thumb=None,
 ):
-    short_query = query[:20]
+    short_query = str(query)[:20]
 
     return [
         [
@@ -365,16 +494,20 @@ def slider_markup(
                 text=_["P_B_1"],
                 callback_data=(
                     f"MusicStream "
-                    f"{videoid}|{user_id}|a|"
-                    f"{channel}|{fplay}"
+                    f"{videoid}|"
+                    f"{user_id}|a|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
             primary_button(
                 text=_["P_B_2"],
                 callback_data=(
                     f"MusicStream "
-                    f"{videoid}|{user_id}|v|"
-                    f"{channel}|{fplay}"
+                    f"{videoid}|"
+                    f"{user_id}|v|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
         ],
@@ -390,14 +523,19 @@ def slider_markup(
                     f"{fplay}"
                 ),
             ),
-            danger_button(
-                text=_["CLOSE_BUTTON"],
+            primary_button(
+                text="⎘",
                 callback_data=(
-                    f"forceclose "
-                    f"{short_query}|{user_id}"
+                    f"SliderThumb "
+                    f"{videoid}|"
+                    f"{user_id}|"
+                    f"{short_query}|"
+                    f"{query_type}|"
+                    f"{channel}|"
+                    f"{fplay}"
                 ),
             ),
-            primary_button(
+            InlineKeyboardButton(
                 text="▷",
                 callback_data=(
                     f"slider F|"
@@ -409,6 +547,15 @@ def slider_markup(
                 ),
             ),
         ],
+        [
+            danger_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data=(
+                    f"forceclose "
+                    f"{short_query}|{user_id}"
+                ),
+            ),
+        ],
     ]
 
 
@@ -417,5 +564,7 @@ def slider_markup(
 # ==========================================================
 
 def reset_progress(chat_id):
-    LAST_UPDATE_TIME.pop(chat_id, None)
-    
+    LAST_UPDATE_TIME.pop(
+        chat_id,
+        None,
+    )
