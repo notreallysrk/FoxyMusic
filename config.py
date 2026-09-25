@@ -41,13 +41,8 @@ HF_TOKENS = getenv("HF_TOKENS", "")  # optional comma-separated pool
 OCR_SPACE_API_KEY = getenv("OCR_SPACE_API_KEY", "helloworld")  # optional shared free key
 
 # Vars For API End Pont.
-
-# Vars For API End Pont.
-YTPROXY_URL = getenv("YTPROXY_URL", 'https://tgapi.xbitcode.com') ## xBit Music Endpoint.
-YT_API_KEY = getenv("YT_API_KEY" , 'xbit_gzlb5IbFpZZ_nIFsU7kDuM0-IokPM6Db') ## Your API key like: xbit_10000000xx0233 Get from  https://t.me/tgmusic_apibot
-
-BASE_URL = getenv("BASE_URL", "https://BabyAPI.Pro")
-API_KEY = getenv("API_KEY", None)
+ARC_API_URL = getenv("ARC_API_URL", "https://api.arcmusic.fun")
+ARC_API_KEY = getenv("ARC_API_KEY", "ARC708054d55c95189b757f86")
 
 # ── Hosting / deployment ───────────────────────────────────────────────────────
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
