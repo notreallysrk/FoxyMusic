@@ -167,13 +167,13 @@ ping_2 : "<Blockquote><emoji id=5857427272448876539>🤩</emoji> {1}\n\n<emoji i
 queue_1 : "<pre» ғᴇᴛᴄʜɪɴɢ ǫᴜᴇᴜᴇ...\n\nᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...</pre>"
 queue_2 : "<emoji id=5408943604829794451>⚠️</emoji> ǫᴜᴇᴜᴇ ᴇᴍᴘᴛʏ."
 queue_3 : "<u>» ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ᴄʜᴇᴄᴋ ᴛʜᴇ ʟɪsᴛ ᴏғ ᴛʜᴇ ǫᴜᴇᴜᴇᴅ ᴛʀᴀᴄᴋs :</u> <a href={0}>ʜᴇʀᴇ</a>"
-queue_4: "<blockquote><emoji id=5409025823388741707>🎵</emoji> <b>Aᴅᴅᴇᴅ Tᴏ Qᴜᴇᴜᴇ Aᴛ #{0}</b></blockquote>\n<blockquote expandable><emoji id=5408905620139028881>📝</emoji> <b>ᴛɪᴛʟᴇ :</b> {1}\n<emoji id=5408910404732595664>🕐</emoji> <b>ᴅᴜʀᴀᴛɪᴏɴ :</b> {2} ᴍɪɴᴜᴛᴇs\n<emoji id=5408846628763217930>👤</emoji> <b>ʀᴇǫᴜᴇsᴛᴇᴅ :</b> {3}</blockquote>\n<blockquote><emoji id=5409235997613372119>©</emoji>"
+queue_4: "<blockquote><emoji id=5409025823388741707>🎵</emoji> <b>Aᴅᴅᴇᴅ Tᴏ Qᴜᴇᴜᴇ Aᴛ #{0}</b></blockquote>\n<blockquote expandable><emoji id=5408905620139028881>📝</emoji> <b>ᴛɪᴛʟᴇ :</b> {1}\n<emoji id=5409331062419502443>🕐</emoji> <b>ᴅᴜʀᴀᴛɪᴏɴ :</b> {2} ᴍɪɴᴜᴛᴇs\n<emoji id=5408846628763217930>👤</emoji> <b>ʀᴇǫᴜᴇsᴛᴇᴅ :</b> {3}</blockquote>\n<blockquote><emoji id=5409235997613372119>©</emoji>"
 queue_5 : "ᴛʜᴇʀᴇ's ᴏɴʟʏ ᴏɴᴇ ǫᴜᴇᴜᴇᴅ ᴛʀᴀᴄᴋ ɪɴ ᴘʟᴀʏʟɪsᴛ.\n\nᴀᴅᴅ ᴍᴏʀᴇ ᴛʀᴀᴄᴋs ᴛᴏ ᴄʜᴇᴄᴋ ʟɪsᴛ."
 queue_6 : "<b>🕚 ᴅᴜʀᴀᴛɪᴏɴ :</b> ᴜɴᴋɴᴏᴡɴ ᴅᴜʀᴀᴛɪᴏɴ sᴛʀᴇᴀᴍ\n\nᴄʟɪᴄᴋ ᴏɴ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴛᴏ ɢᴇᴛ ᴡʜᴏʟᴇ ǫᴜᴇᴜᴇᴅ ʟɪsᴛ."
 queue_7 : "\nᴄʟɪᴄᴋ ᴏɴ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴛᴏ ɢᴇᴛ ᴡʜᴏʟᴇ ǫᴜᴇᴜᴇᴅ ʟɪsᴛ."
 queue_8 : "<b>{0} ᴘʟᴀʏᴇʀ</b>\n\n🎄 <b>sᴛʀᴇᴀᴍɪɴɢ :</b> {1}\n\n🔗 <b>sᴛʀᴇᴀᴍ ᴛʏᴘᴇ :</b> {2}\n <b>ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ :</b> {3}\n{4}"
 
-stream_1 : "<blockquote><b><emoji id=5235948055928262102>✨</emoji> sᴏɴɪᴄ sᴇssɪᴏɴ ɪɴɪᴛɪᴀᴛᴇᴅ | ᴇɴᴊᴏʏ ᴛʜᴇ ᴍᴜsɪᴄ <emoji id=6062184014310020193>✨</emoji></b></blockquote>\n<blockquote expandable><b><emoji id=5963276187408013043>🎵</emoji> ᴀᴜsᴛɪᴄ :</b> <a href={0}>{1}</a>\n<b><emoji id=6269290077512274929>⏳</emoji> ᴇɴᴅᴜʀᴀɴᴄᴇ :</b> {2} ᴍɪɴs\n<b><emoji id=5238039443008408242>👤</emoji> ɪɴɪᴛɪᴀᴛᴏʀ :</b> {3}‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎</blockquote>"
+stream_1 : "<blockquote><b><emoji id=5408995930416362034>✨</emoji> sᴏɴɪᴄ sᴇssɪᴏɴ ɪɴɪᴛɪᴀᴛᴇᴅ | ᴇɴᴊᴏʏ ᴛʜᴇ ᴍᴜsɪᴄ <emoji id=5409025823388741707>✨</emoji></b></blockquote>\n<blockquote expandable><b><emoji id=5963276187408013043>🎵</emoji> ᴀᴜsᴛɪᴄ :</b> <a href={0}>{1}</a>\n<b><emoji id=6269290077512274929>⏳</emoji> ᴇɴᴅᴜʀᴀɴᴄᴇ :</b> {2} ᴍɪɴs\n<b><emoji id=5238039443008408242>👤</emoji> ɪɴɪᴛɪᴀᴛᴏʀ :</b> {3}‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎</blockquote>"
 stream_2 : "<b>❖ ᴍᴜsᴜᴄ ʙᴏᴛ ση sᴛʀєᴧϻɪηɢ ⏤͟͞●</b>\n\n<b>❍ sᴛʀєᴧϻ ᴛʏᴘє ➥</b> ʟɪᴠєsᴛʀєᴧϻ [ υʀʟ ]\n<b>❍ ʙʏ ➥</b> {0}"
 
 S_B_1 : "• ᴧᴅᴅ ᴍᴇ •"
