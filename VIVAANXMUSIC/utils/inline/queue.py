@@ -1,9 +1,44 @@
 from typing import Union
+import random
+
 from pyrogram.enums import ButtonStyle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from VIVAANXMUSIC.button_styles import danger_button, primary_button, success_button
+from VIVAANXMUSIC.button_styles import (
+    danger_button,
+    primary_button,
+    success_button,
+)
 
+
+# ==========================================================
+# RANDOM BUTTON STYLE
+# Blue / Green / Red
+# ==========================================================
+
+BUTTON_STYLES = [
+    ButtonStyle.PRIMARY,
+    ButtonStyle.SUCCESS,
+    ButtonStyle.DANGER,
+]
+
+
+def random_button(
+    text,
+    callback_data=None,
+    url=None,
+):
+    return InlineKeyboardButton(
+        text=text,
+        callback_data=callback_data,
+        url=url,
+        style=random.choice(BUTTON_STYLES),
+    )
+
+
+# ==========================================================
+# QUEUE MARKUP
+# ==========================================================
 
 def queue_markup(
     _,
@@ -25,9 +60,10 @@ def queue_markup(
             ),
         ]
     ]
+
     dur = [
         [
-            InlineKeyboardButton(
+            random_button(
                 text=_["QU_B_2"].format(played, dur),
                 callback_data="GetTimer",
             )
@@ -43,9 +79,17 @@ def queue_markup(
             ),
         ],
     ]
-    upl = InlineKeyboardMarkup(not_dur if DURATION == "Unknown" else dur)
+
+    upl = InlineKeyboardMarkup(
+        not_dur if DURATION == "Unknown" else dur
+    )
+
     return upl
 
+
+# ==========================================================
+# QUEUE BACK
+# ==========================================================
 
 def queue_back_markup(_, CPLAY):
     upl = InlineKeyboardMarkup(
@@ -62,17 +106,40 @@ def queue_back_markup(_, CPLAY):
             ]
         ]
     )
+
     return upl
 
+
+# ==========================================================
+# ADMIN QUEUE CONTROLS
+# ==========================================================
 
 def aq_markup(_, chat_id):
     buttons = [
         [
-            random_button(text="▷", callback_data=f"ADMIN Resume|{chat_id}"),
-            random_button(text="II", callback_data=f"ADMIN Pause|{chat_id}"),
-            random_button(text="‣‣I", callback_data=f"ADMIN Skip|{chat_id}"),
-            random_button(text="▢", callback_data=f"ADMIN Stop|{chat_id}"),
+            random_button(
+                text="▷",
+                callback_data=f"ADMIN Resume|{chat_id}",
+            ),
+            random_button(
+                text="II",
+                callback_data=f"ADMIN Pause|{chat_id}",
+            ),
+            random_button(
+                text="‣‣I",
+                callback_data=f"ADMIN Skip|{chat_id}",
+            ),
+            random_button(
+                text="▢",
+                callback_data=f"ADMIN Stop|{chat_id}",
+            ),
         ],
-        [random_button(text=_["CLOSE_BUTTON"], callback_data="close")],
+        [
+            random_button(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+            )
+        ],
     ]
+
     return buttons
