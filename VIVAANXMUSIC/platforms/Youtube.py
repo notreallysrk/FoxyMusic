@@ -353,6 +353,17 @@ async def download_song(
     url = _clean_youtube_url(link)
     vid = _video_id(url)
 
+    # If a plain search query reaches the downloader, resolve it first.
+    if not vid and str(link or "").strip():
+        info = await _search_youtube(str(link).strip())
+        if info:
+            vid = str(info.get("id") or "").strip()
+            if vid:
+                url = (
+                    "https://www.youtube.com/watch?v="
+                    f"{vid}"
+                )
+
     if not vid:
         return None
 
@@ -656,35 +667,43 @@ class YouTubeAPI:
         url: str,
         search_query: str = None,
     ):
-        info = None
+        """Resolve a YouTube URL/ID or a plain search query safely."""
+        url = str(url or "").strip()
+        search_query = str(search_query or "").strip()
 
-        try:
-            info = await _extract_info(url)
-        except Exception:
-            pass
-
-        if info:
-            return info
-
+        # Never pass plain text such as "chupa na bhi" directly to
+        # yt-dlp's normal URL extractor.
         video_id = _video_id(url)
 
         if video_id:
-            info = await _search_youtube(
-                video_id
+            canonical_url = (
+                "https://www.youtube.com/watch?v="
+                f"{video_id}"
             )
+
+            try:
+                info = await _extract_info(canonical_url)
+            except Exception:
+                info = None
+
+            if info:
+                return info
+
+            info = await _search_youtube(video_id)
 
             if (
                 info
-                and str(
-                    info.get("id") or ""
-                ) == video_id
+                and str(info.get("id") or "") == video_id
             ):
                 return info
 
-        if search_query:
-            return await _search_youtube(
-                search_query
-            )
+            return None
+
+        # Plain text is a search query.
+        query = search_query or url
+
+        if query:
+            return await _search_youtube(query)
 
         return None
 
