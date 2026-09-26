@@ -13,6 +13,31 @@ from VIVAANXMUSIC import app
 from config import ARC_API_URL, ARC_API_KEY
  
  
+
+
+def _youtube_video_id(value: str) -> str | None:
+    """Extract a YouTube video id from common URL forms or a raw id."""
+    if not value:
+        return None
+    value = str(value).strip()
+    patterns = (
+        r"(?:v=)([A-Za-z0-9_-]{11})",
+        r"(?:youtu\.be/)([A-Za-z0-9_-]{11})",
+        r"(?:youtube\.com/(?:shorts|embed|live)/)([A-Za-z0-9_-]{11})",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, value)
+        if match:
+            return match.group(1)
+    if re.fullmatch(r"[A-Za-z0-9_-]{11}", value):
+        return value
+    return None
+
+
+def _canonical_youtube_url(value: str) -> str:
+    video_id = _youtube_video_id(value)
+    return f"https://www.youtube.com/watch?v={video_id}" if video_id else value
+
 def time_to_seconds(time):
     stringt = str(time)
     return sum(int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(":"))))
@@ -142,68 +167,44 @@ async def download_video(link: str) -> str:
  
  
 async def _yt_direct_audio_url(link: str) -> str | None:
-    """Resolve a playable YouTube audio URL quickly.
-
-    YouTube may reject one extractor client with an anti-bot response, so
-    try a few public player clients. All extractor diagnostics are muted;
-    download_song() remains the final fallback when no direct URL is exposed.
+    """Resolve a playable YouTube audio URL without downloading the song.
+    This is the fast path used for normal play/autoplay. A downloaded file
+    remains the fallback when YouTube does not expose a usable stream.
     """
     def _resolve():
-        clients = [
-            ["android_vr"],
-            ["tv_embedded"],
-            ["ios"],
-            ["mweb"],
-            ["web_safari"],
-        ]
-        for client in clients:
-            opts = {
-                "format": "bestaudio[acodec!=opus]/bestaudio/best",
-                "noplaylist": True,
-                "quiet": True,
-                "no_warnings": True,
-                "skip_download": True,
-                "socket_timeout": 3,
-                "retries": 0,
-                "fragment_retries": 0,
-                "extractor_retries": 1,
-                "skip_unavailable_fragments": True,
-                "ignoreerrors": True,
-                "logger": _SilentYTDLPLogger(),
-                "extractor_args": {"youtube": {"player_client": client}},
-            }
-            try:
-                with yt_dlp.YoutubeDL(opts) as ydl:
-                    info = ydl.extract_info(link, download=False)
-                    if not info:
-                        continue
-                    url = info.get("url")
-                    if url:
-                        return url
-                    for fmt in reversed(info.get("formats") or []):
-                        url = fmt.get("url")
-                        acodec = fmt.get("acodec")
-                        if url and acodec and acodec != "none":
-                            return url
-            except Exception:
-                continue
+        opts = {
+            "format": "bestaudio[acodec!=opus]/bestaudio/best",
+            "noplaylist": True,
+            "quiet": True,
+            "no_warnings": True,
+            "skip_download": True,
+            "socket_timeout": 4,
+            "retries": 0,
+            "fragment_retries": 0,
+            "extractor_retries": 1,
+            "skip_unavailable_fragments": True,
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["web_safari", "mweb", "android"],
+                }
+            },
+        }
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(link, download=False)
+            if info and info.get("url"):
+                return info["url"]
+            formats = info.get("formats") or [] if info else []
+            for fmt in reversed(formats):
+                url = fmt.get("url")
+                acodec = fmt.get("acodec")
+                if url and acodec and acodec != "none":
+                    return url
         return None
 
     try:
         return await asyncio.to_thread(_resolve)
     except Exception:
         return None
-
-
-class _SilentYTDLPLogger:
-    def debug(self, msg):
-        pass
-    def info(self, msg):
-        pass
-    def warning(self, msg):
-        pass
-    def error(self, msg):
-        pass
 
 
 _DIRECT_URL_CACHE = {}
@@ -376,7 +377,8 @@ class YouTubeAPI:
  
     async def stream_url(self, link: str, videoid: Union[bool, str] = None):
         if videoid:
-            link = self.base + link
+            link = self.base + str(link)
+        link = _canonical_youtube_url(link)
         if "&" in link:
             link = link.split("&")[0]
 
