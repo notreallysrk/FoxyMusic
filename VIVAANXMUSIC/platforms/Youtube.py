@@ -315,25 +315,61 @@ class YouTubeAPI:
         return ids
  
     async def track(self, link: str, videoid: Union[bool, str] = None):
-        if videoid:
-            link = self.base + link
-        if "&" in link:
-            link = link.split("&")[0]
-        results = VideosSearch(link, limit=1)
-        for result in (await results.next())["result"]:
-            title = result["title"]
-            duration_min = result["duration"]
-            vidid = result["id"]
-            yturl = result["link"]
-            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+        # Direct YouTube URLs must NOT be passed through VideosSearch.
+        # VideosSearch treats the URL as a search query and can return an
+        # empty result when YouTube search/extraction is rate limited.
+        original = str(link or "").strip()
+        direct_id = str(videoid).strip() if videoid else _youtube_video_id(original)
+
+        if direct_id:
+            yturl = f"https://www.youtube.com/watch?v={direct_id}"
+            title = None
+            thumbnail = f"https://i.ytimg.com/vi/{direct_id}/hqdefault.jpg"
+
+            # oEmbed is metadata-only and does not require yt-dlp cookies.
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        self.status + aiohttp.helpers.quote(yturl, safe=""),
+                        timeout=aiohttp.ClientTimeout(total=4),
+                    ) as resp:
+                        if resp.status == 200:
+                            data = await resp.json(content_type=None)
+                            title = data.get("title") or title
+                            thumbnail = data.get("thumbnail_url") or thumbnail
+            except Exception:
+                pass
+
+            # Title is only cosmetic; playback is driven by the video ID.
+            if not title:
+                title = f"YouTube Track {direct_id}"
+
+            return {
+                "title": title,
+                "link": yturl,
+                "vidid": direct_id,
+                # Unknown duration is handled specially by play.py for a
+                # direct YouTube URL; it must not be treated as a livestream.
+                "duration_min": "",
+                "thumb": thumbnail.split("?")[0],
+                "direct_url": True,
+            }, direct_id
+
+        if "&" in original:
+            original = original.split("&")[0]
+        results = VideosSearch(original, limit=1)
+        result_list = (await results.next()).get("result") or []
+        if not result_list:
+            raise ValueError("No YouTube search result found")
+        result = result_list[0]
         track_details = {
-            "title": title,
-            "link": yturl,
-            "vidid": vidid,
-            "duration_min": duration_min,
-            "thumb": thumbnail,
+            "title": result["title"],
+            "link": result["link"],
+            "vidid": result["id"],
+            "duration_min": result.get("duration") or "",
+            "thumb": result["thumbnails"][0]["url"].split("?")[0],
         }
-        return track_details, vidid
+        return track_details, result["id"]
  
     async def formats(self, link: str, videoid: Union[bool, str] = None):
         if videoid:
