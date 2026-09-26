@@ -1,4 +1,3 @@
-import asyncio
 import os
 from random import randint
 from typing import Union
@@ -9,14 +8,72 @@ import config
 from VIVAANXMUSIC import Carbon, YouTube, app
 from VIVAANXMUSIC.core.call import JARVIS
 from VIVAANXMUSIC.misc import db
-from VIVAANXMUSIC.utils.database import add_active_video_chat, is_active_chat, is_autoplay_on, is_thumb_on
+from VIVAANXMUSIC.utils.database import add_active_video_chat, is_active_chat
 from VIVAANXMUSIC.utils.exceptions import AssistantErr
 from VIVAANXMUSIC.utils.inline import aq_markup, close_markup, stream_markup
-from VIVAANXMUSIC.utils.pastebin import SwaggyBin
+from VIVAANXMUSIC.utils.pastebin import VIVAANBIN
+from VIVAANXMUSIC.utils.stream.autodelete import (
+    remember_player_message,
+    remember_queue_message,
+)
+from VIVAANXMUSIC.utils.stream.cards import schedule_stream_card
 from VIVAANXMUSIC.utils.stream.queue import put_queue, put_queue_index
-from VIVAANXMUSIC.utils.thumbnails import get_thumb
+from VIVAANXMUSIC.utils.errors import capture_internal_err
+
+QUEUE_LIMIT = int(getattr(config, "QUEUE_LIMIT", os.getenv("QUEUE_LIMIT", "10")))
+PLAYLIST_FETCH_LIMIT = int(
+    getattr(
+        config,
+        "PLAYLIST_FETCH_LIMIT",
+        os.getenv("PLAYLIST_FETCH_LIMIT", str(QUEUE_LIMIT)),
+    )
+)
 
 
+async def _join_youtube_with_fallback(
+    chat_id,
+    original_chat_id,
+    vidid,
+    title,
+    mystic,
+    file_path,
+    direct,
+    is_video,
+    thumbnail,
+):
+    try:
+        await JARVIS.join_call(
+            chat_id,
+            original_chat_id,
+            file_path,
+            video=is_video,
+            image=thumbnail,
+        )
+        return file_path, direct
+    except Exception:
+        if direct:
+            raise
+
+    fallback_path, fallback_direct = await YouTube.download(
+        vidid,
+        mystic,
+        video=is_video,
+        videoid=vidid,
+        title=title,
+    )
+    if not fallback_path:
+        raise AssistantErr("Unable to prepare YouTube stream.")
+    await JARVIS.join_call(
+        chat_id,
+        original_chat_id,
+        fallback_path,
+        video=is_video,
+        image=thumbnail,
+    )
+    return fallback_path, fallback_direct
+
+
+@capture_internal_err
 async def stream(
     _,
     mystic,
@@ -29,31 +86,39 @@ async def stream(
     streamtype: Union[bool, str] = None,
     spotify: Union[bool, str] = None,
     forceplay: Union[bool, str] = None,
-):
+) -> None:
     if not result:
         return
+
+    forceplay = bool(forceplay)
+    is_video = bool(video)
+
     if forceplay:
-        await Swaggy.force_stop_stream(chat_id)
+        await JARVIS.force_stop_stream(chat_id)
+
     if streamtype == "playlist":
         msg = f"{_['play_19']}\n\n"
         count = 0
+        position = 0
+        queue_was_full = len(db.get(chat_id) or []) >= QUEUE_LIMIT
+
         for search in result:
-            if int(count) == config.PLAYLIST_FETCH_LIMIT:
-                continue
+            if count >= PLAYLIST_FETCH_LIMIT:
+                break
+            if len(db.get(chat_id) or []) >= QUEUE_LIMIT:
+                break
             try:
-                (
-                    title,
-                    duration_min,
-                    duration_sec,
-                    thumbnail,
-                    vidid,
-                ) = await YouTube.details(search, False if spotify else True)
-            except:
+                title, duration_min, duration_sec, thumbnail, vidid = await YouTube.details(
+                    search, videoid=search
+                )
+            except Exception:
                 continue
+
             if str(duration_min) == "None":
                 continue
-            if duration_sec > config.DURATION_LIMIT:
+            if duration_sec and duration_sec > config.DURATION_LIMIT:
                 continue
+
             if await is_active_chat(chat_id):
                 await put_queue(
                     chat_id,
@@ -64,7 +129,7 @@ async def stream(
                     user_name,
                     vidid,
                     user_id,
-                    "video" if video else "audio",
+                    "video" if is_video else "audio",
                 )
                 position = len(db.get(chat_id)) - 1
                 count += 1
@@ -73,19 +138,30 @@ async def stream(
             else:
                 if not forceplay:
                     db[chat_id] = []
-                status = True if video else None
                 try:
                     file_path, direct = await YouTube.download(
-                        vidid, mystic, video=status, videoid=True
+                        vidid,
+                        mystic,
+                        video=is_video,
+                        videoid=vidid,
+                        stream=True,
+                        title=title,
                     )
-                except:
+                except Exception:
                     raise AssistantErr(_["play_14"])
-                await Swaggy.join_call(
+                if not file_path:
+                    raise AssistantErr(_["play_14"])
+
+                file_path, direct = await _join_youtube_with_fallback(
                     chat_id,
                     original_chat_id,
+                    vidid,
+                    title,
+                    mystic,
                     file_path,
-                    video=status,
-                    image=thumbnail,
+                    direct,
+                    is_video,
+                    thumbnail,
                 )
                 await put_queue(
                     chat_id,
@@ -96,116 +172,104 @@ async def stream(
                     user_name,
                     vidid,
                     user_id,
-                    "video" if video else "audio",
+                    "video" if is_video else "audio",
                     forceplay=forceplay,
                 )
-                img = await get_thumb(
-                    vidid,
-                    title=title,
-                    duration=duration_min,
+                button = stream_markup(_, chat_id)
+                schedule_stream_card(
+                    chat_id=chat_id,
+                    original_chat_id=original_chat_id,
+                    videoid=vidid,
+                    user_id=user_id,
+                    caption=_["stream_1"].format(
+                        f"https://t.me/{app.username}?start=info_{vidid}",
+                        title[:23],
+                        duration_min,
+                        user_name,
+                    ),
+                    button=button,
+                    markup="stream",
                 )
-                thumb_on_now = await is_thumb_on(chat_id)
-                button = stream_markup(
-                    _,
-                    chat_id,
-                    autoplay_status=await is_autoplay_on(chat_id),
-                    thumb_status=thumb_on_now,
-                )
-                caption = _["stream_1"].format(
-                    f"https://t.me/{app.username}?start=info_{vidid}",
-                    title[:23],
-                    duration_min,
-                    user_name,
-                )
-                if thumb_on_now:
-                    run = await app.send_photo(
-                        original_chat_id,
-                        photo=img,
-                        has_spoiler=True,
-                        caption=caption,
-                        reply_markup=InlineKeyboardMarkup(button),
-                    )
-                else:
-                    run = await app.send_message(
-                        original_chat_id,
-                        text=caption,
-                        disable_web_page_preview=True,
-                        reply_markup=InlineKeyboardMarkup(button),
-                    )
-                db[chat_id][0]["mystic"] = run
-                db[chat_id][0]["markup"] = "stream"
+
         if count == 0:
+            if queue_was_full:
+                raise AssistantErr(
+                    f"Queue limit reached. Only {QUEUE_LIMIT} tracks are allowed per chat."
+                )
             return
-        else:
-            link = await SwaggyBin(msg)
-            lines = msg.count("\n")
-            if lines >= 17:
-                car = os.linesep.join(msg.split(os.linesep)[:17])
-            else:
-                car = msg
+        link = await VIVAANBIN(msg)
+        lines = msg.count("\n")
+        car = os.linesep.join(msg.split(os.linesep)[:17]) if lines >= 17 else msg
+        try:
             carbon = await Carbon.generate(car, randint(100, 10000000))
-            upl = close_markup(_)
-            return await app.send_photo(
-                original_chat_id,
-                photo=carbon,
-                caption=_["play_21"].format(position, link),
-                reply_markup=upl,
-            )
+            playlist_photo = carbon
+        except Exception:
+            playlist_photo = config.PLAYLIST_IMG_URL
+        upl = close_markup(_)
+        final_position = len(db.get(chat_id) or []) - 1
+        if final_position < 0:
+            final_position = 0
+        return await app.send_photo(
+            original_chat_id,
+            photo=playlist_photo,
+            caption=_["play_21"].format(final_position, link),
+            reply_markup=upl,
+        )
+
     elif streamtype == "youtube":
         link = result["link"]
         vidid = result["vidid"]
         title = (result["title"]).title()
         duration_min = result["duration_min"]
         thumbnail = result["thumb"]
-        status = True if video else None
-        # Start thumbnail generation in parallel with download — get_thumb
-        # does its own /search + HTTP download + PIL processing (3-10s),
-        # so overlapping it with the audio download saves that entire time.
-        # We pass the title + duration the caller already has so get_thumb
-        # doesn't need to do an independent metadata lookup (root-cause fix
-        # for the 'Unknown Title / Unknown Artist / 0 views' bug — the
-        # previous implementation did a SEPARATE VideosSearch that often
-        # drifted to a different video and fell through to defaults).
-        thumb_task = asyncio.create_task(
-            get_thumb(vidid, title=title, duration=duration_min)
-        )
-        try:
-            file_path, direct = await YouTube.download(
-                vidid, mystic, videoid=True, video=status
-            )
-        except:
-            thumb_task.cancel()
-            raise AssistantErr(_["play_14"])
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
                 original_chat_id,
-                file_path if direct else f"vid_{vidid}",
+                f"vid_{vidid}",
                 title,
                 duration_min,
                 user_name,
                 vidid,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
             )
             position = len(db.get(chat_id)) - 1
             button = aq_markup(_, chat_id)
-            await app.send_message(
+            queue_notice = await app.send_message(
                 chat_id=original_chat_id,
                 text=_["queue_4"].format(position, title[:27], duration_min, user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
-            # Cancel the thumbnail task since we don't need it for queued items
-            thumb_task.cancel()
+            remember_queue_message(chat_id, queue_notice, position)
         else:
+            try:
+                file_path, direct = await YouTube.download(
+                    vidid,
+                    mystic,
+                    video=is_video,
+                    videoid=vidid,
+                    stream=True,
+                    title=title,
+                )
+            except Exception:
+                raise AssistantErr(_["play_14"])
+            if not file_path:
+                raise AssistantErr(_["play_14"])
+
             if not forceplay:
                 db[chat_id] = []
-            await Swaggy.join_call(
+            file_path, direct = await _join_youtube_with_fallback(
                 chat_id,
                 original_chat_id,
+                vidid,
+                title,
+                mystic,
                 file_path,
-                video=status,
-                image=thumbnail,
+                direct,
+                is_video,
+                thumbnail,
             )
             await put_queue(
                 chat_id,
@@ -216,49 +280,32 @@ async def stream(
                 user_name,
                 vidid,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
                 forceplay=forceplay,
             )
-            # Thumbnail should be ready by now (it was generating in parallel
-            # with the download). If not, this await waits for the remainder.
-            try:
-                img = await thumb_task
-            except Exception:
-                img = thumbnail
-            thumb_on_now = await is_thumb_on(chat_id)
-            button = stream_markup(
-                _,
-                chat_id,
-                autoplay_status=await is_autoplay_on(chat_id),
-                thumb_status=thumb_on_now,
+            button = stream_markup(_, chat_id)
+            schedule_stream_card(
+                chat_id=chat_id,
+                original_chat_id=original_chat_id,
+                videoid=vidid,
+                user_id=user_id,
+                caption=_["stream_1"].format(
+                    f"https://t.me/{app.username}?start=info_{vidid}",
+                    title[:23],
+                    duration_min,
+                    user_name,
+                ),
+                button=button,
+                markup="stream",
             )
-            caption = _["stream_1"].format(
-                f"https://t.me/{app.username}?start=info_{vidid}",
-                title[:23],
-                duration_min,
-                user_name,
-            )
-            if thumb_on_now:
-                run = await app.send_photo(
-                    original_chat_id,
-                    photo=img,
-                    has_spoiler=True,
-                    caption=caption,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            else:
-                run = await app.send_message(
-                    original_chat_id,
-                    text=caption,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            db[chat_id][0]["mystic"] = run
-            db[chat_id][0]["markup"] = "stream"
+
     elif streamtype == "soundcloud":
         file_path = result["filepath"]
         title = result["title"]
         duration_min = result["duration_min"]
+        if not file_path:
+            raise AssistantErr(_["play_14"])
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
@@ -273,15 +320,16 @@ async def stream(
             )
             position = len(db.get(chat_id)) - 1
             button = aq_markup(_, chat_id)
-            await app.send_message(
+            queue_notice = await app.send_message(
                 chat_id=original_chat_id,
                 text=_["queue_4"].format(position, title[:27], duration_min, user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+            remember_queue_message(chat_id, queue_notice, position)
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Swaggy.join_call(chat_id, original_chat_id, file_path, video=None)
+            await JARVIS.join_call(chat_id, original_chat_id, file_path, video=False)
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -294,38 +342,27 @@ async def stream(
                 "audio",
                 forceplay=forceplay,
             )
-            button = stream_markup(
-                _,
-                chat_id,
-                autoplay_status=await is_autoplay_on(chat_id),
-                thumb_status=await is_thumb_on(chat_id),
+            button = stream_markup(_, chat_id)
+            run = await app.send_photo(
+                original_chat_id,
+                photo=config.SOUNCLOUD_IMG_URL,
+                caption=_["stream_1"].format(
+                    config.SUPPORT_CHAT, title[:23], duration_min, user_name
+                ),
+                reply_markup=InlineKeyboardMarkup(button),
             )
-            caption = _["stream_1"].format(
-                config.SUPPORT_CHAT, title[:23], duration_min, user_name
-            )
-            if await is_thumb_on(chat_id):
-                run = await app.send_photo(
-                    original_chat_id,
-                    photo=config.SOUNCLOUD_IMG_URL,
-                    has_spoiler=True,
-                    caption=caption,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            else:
-                run = await app.send_message(
-                    original_chat_id,
-                    text=caption,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
             db[chat_id][0]["mystic"] = run
+            remember_player_message(chat_id, run)
             db[chat_id][0]["markup"] = "tg"
+
     elif streamtype == "telegram":
         file_path = result["path"]
         link = result["link"]
         title = (result["title"]).title()
         duration_min = result["dur"]
-        status = True if video else None
+        if not file_path:
+            raise AssistantErr(_["play_14"])
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
@@ -336,19 +373,20 @@ async def stream(
                 user_name,
                 streamtype,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
             )
             position = len(db.get(chat_id)) - 1
             button = aq_markup(_, chat_id)
-            await app.send_message(
+            queue_notice = await app.send_message(
                 chat_id=original_chat_id,
                 text=_["queue_4"].format(position, title[:27], duration_min, user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+            remember_queue_message(chat_id, queue_notice, position)
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Swaggy.join_call(chat_id, original_chat_id, file_path, video=status)
+            await JARVIS.join_call(chat_id, original_chat_id, file_path, video=is_video)
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -358,42 +396,29 @@ async def stream(
                 user_name,
                 streamtype,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
                 forceplay=forceplay,
             )
-            if video:
+            if is_video:
                 await add_active_video_chat(chat_id)
-            button = stream_markup(
-                _,
-                chat_id,
-                autoplay_status=await is_autoplay_on(chat_id),
-                thumb_status=await is_thumb_on(chat_id),
+            button = stream_markup(_, chat_id)
+            run = await app.send_photo(
+                original_chat_id,
+                photo=config.TELEGRAM_VIDEO_URL if is_video else config.TELEGRAM_AUDIO_URL,
+                caption=_["stream_1"].format(link, title[:23], duration_min, user_name),
+                reply_markup=InlineKeyboardMarkup(button),
             )
-            caption = _["stream_1"].format(link, title[:23], duration_min, user_name)
-            if await is_thumb_on(chat_id):
-                run = await app.send_photo(
-                    original_chat_id,
-                    has_spoiler=True,
-                    photo=config.TELEGRAM_VIDEO_URL if video else config.TELEGRAM_AUDIO_URL,
-                    caption=caption,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            else:
-                run = await app.send_message(
-                    original_chat_id,
-                    text=caption,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
             db[chat_id][0]["mystic"] = run
+            remember_player_message(chat_id, run)
             db[chat_id][0]["markup"] = "tg"
+
     elif streamtype == "live":
         link = result["link"]
         vidid = result["vidid"]
         title = (result["title"]).title()
         thumbnail = result["thumb"]
         duration_min = "Live Track"
-        status = True if video else None
+
         if await is_active_chat(chat_id):
             await put_queue(
                 chat_id,
@@ -404,27 +429,31 @@ async def stream(
                 user_name,
                 vidid,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
             )
             position = len(db.get(chat_id)) - 1
             button = aq_markup(_, chat_id)
-            await app.send_message(
+            queue_notice = await app.send_message(
                 chat_id=original_chat_id,
                 text=_["queue_4"].format(position, title[:27], duration_min, user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+            remember_queue_message(chat_id, queue_notice, position)
         else:
             if not forceplay:
                 db[chat_id] = []
             n, file_path = await YouTube.video(link)
             if n == 0:
                 raise AssistantErr(_["str_3"])
-            await Swaggy.join_call(
+            if not file_path:
+                raise AssistantErr(_["play_14"])
+
+            await JARVIS.join_call(
                 chat_id,
                 original_chat_id,
                 file_path,
-                video=status,
-                image=thumbnail if thumbnail else None,
+                video=is_video,
+                image=thumbnail or None,
             )
             await put_queue(
                 chat_id,
@@ -435,48 +464,30 @@ async def stream(
                 user_name,
                 vidid,
                 user_id,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
                 forceplay=forceplay,
             )
-            img = await get_thumb(
-                vidid,
-                title=title,
-                duration=duration_min,
+            button = stream_markup(_, chat_id)
+            schedule_stream_card(
+                chat_id=chat_id,
+                original_chat_id=original_chat_id,
+                videoid=vidid,
+                user_id=user_id,
+                caption=_["stream_1"].format(
+                    f"https://t.me/{app.username}?start=info_{vidid}",
+                    title[:23],
+                    duration_min,
+                    user_name,
+                ),
+                button=button,
+                markup="tg",
             )
-            thumb_on_now = await is_thumb_on(chat_id)
-            button = stream_markup(
-                _,
-                chat_id,
-                autoplay_status=await is_autoplay_on(chat_id),
-                thumb_status=thumb_on_now,
-            )
-            caption = _["stream_1"].format(
-                f"https://t.me/{app.username}?start=info_{vidid}",
-                title[:23],
-                duration_min,
-                user_name,
-            )
-            if thumb_on_now:
-                run = await app.send_photo(
-                    original_chat_id,
-                    photo=img,
-                    has_spoiler=True,
-                    caption=caption,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            else:
-                run = await app.send_message(
-                    original_chat_id,
-                    text=caption,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            db[chat_id][0]["mystic"] = run
-            db[chat_id][0]["markup"] = "tg"
+
     elif streamtype == "index":
         link = result
         title = "ɪɴᴅᴇx ᴏʀ ᴍ3ᴜ8 ʟɪɴᴋ"
         duration_min = "00:00"
+
         if await is_active_chat(chat_id):
             await put_queue_index(
                 chat_id,
@@ -486,7 +497,7 @@ async def stream(
                 duration_min,
                 user_name,
                 link,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
             )
             position = len(db.get(chat_id)) - 1
             button = aq_markup(_, chat_id)
@@ -494,14 +505,15 @@ async def stream(
                 text=_["queue_4"].format(position, title[:27], duration_min, user_name),
                 reply_markup=InlineKeyboardMarkup(button),
             )
+            remember_queue_message(chat_id, mystic, position)
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Swaggy.join_call(
+            await JARVIS.join_call(
                 chat_id,
                 original_chat_id,
                 link,
-                video=True if video else None,
+                video=is_video,
             )
             await put_queue_index(
                 chat_id,
@@ -511,31 +523,17 @@ async def stream(
                 duration_min,
                 user_name,
                 link,
-                "video" if video else "audio",
+                "video" if is_video else "audio",
                 forceplay=forceplay,
             )
-            button = stream_markup(
-                _,
-                chat_id,
-                autoplay_status=await is_autoplay_on(chat_id),
-                thumb_status=await is_thumb_on(chat_id),
+            button = stream_markup(_, chat_id)
+            run = await app.send_photo(
+                original_chat_id,
+                photo=config.STREAM_IMG_URL,
+                caption=_["stream_2"].format(user_name),
+                reply_markup=InlineKeyboardMarkup(button),
             )
-            caption = _["stream_2"].format(user_name)
-            if await is_thumb_on(chat_id):
-                run = await app.send_photo(
-                    original_chat_id,
-                    photo=config.STREAM_IMG_URL,
-                    has_spoiler=True,
-                    caption=caption,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-            else:
-                run = await app.send_message(
-                    original_chat_id,
-                    text=caption,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
             db[chat_id][0]["mystic"] = run
+            remember_player_message(chat_id, run)
             db[chat_id][0]["markup"] = "tg"
             await mystic.delete()
