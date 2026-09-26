@@ -35,8 +35,8 @@ except Exception:                     # pragma: no cover
     _HAS_PYROGRAM = False
 
 # ── Config ───────────────────────────────────────────────────────────────────
-API_URL = os.environ.get("HELLAPI_URL", "").rstrip("/")
-API_KEY = os.environ.get("HELLAPI_KEY", "")
+API_URL = os.environ.get("HELLAPI_URL", "http://localhost:8000").rstrip("/")
+API_KEY = os.environ.get("HELLAPI_KEY", "HellAPIWq7tjT94fjh8vXb9xlX3FMGWoJOnkNdz")
 
 if not API_URL:
     raise EnvironmentError(
