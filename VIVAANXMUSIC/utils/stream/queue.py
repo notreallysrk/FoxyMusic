@@ -8,7 +8,7 @@ from VIVAANXMUSIC.utils.exceptions import AssistantErr
 from VIVAANXMUSIC.utils.formatters import check_duration, seconds_to_min
 from config import autoclean, time_to_seconds
 
-QUEUE_LIMIT = int(getattr(config, "QUEUE_LIMIT", getenv("QUEUE_LIMIT", "10")))
+QUEUE_LIMIT = int(getattr(config, "QUEUE_LIMIT", getenv("QUEUE_LIMIT", "100")))
 
 
 def _queue_limit_error() -> AssistantErr:
@@ -112,3 +112,4 @@ async def put_queue_index(
             db[chat_id].append(put)
     else:
         db[chat_id].append(put)
+        
