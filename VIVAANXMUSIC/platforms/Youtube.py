@@ -9,7 +9,7 @@ import aiohttp
 import yt_dlp
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-from py_yt import Playlist
+from youtubesearchpython.future import VideosSearch
 
 
 # Primary downloader: Shruti (fast path)
@@ -20,7 +20,7 @@ SHRUTI_API_URL = os.environ.get(
 
 SHRUTI_API_KEY = os.environ.get(
     "SHRUTI_API_KEY",
-    "ShrutiBots3INQP6TuWWkKEEhJep5P",
+    "ShrutiBotsmcyx3fMnHiRpo0qeQtLI",
 )
 
 # Fallback downloader: Ritesh
