@@ -117,9 +117,9 @@ async def get_thumb(videoid):
         draw = ImageDraw.Draw(image1)
 
         try:
-            font_title = ImageFont.truetype("AloneMusic/assets/font.ttf", 45)
-            font_details = ImageFont.truetype("AloneMusic/assets/font2.ttf", 30)
-            font_watermark = ImageFont.truetype("AloneMusic/assets/font2.ttf", 25)
+            font_title = ImageFont.truetype("VIVAANXMUSIC/assets/font.ttf", 45)
+            font_details = ImageFont.truetype("VIVAANXMUSIC/assets/font2.ttf", 30)
+            font_watermark = ImageFont.truetype("VIVAANXMUSIC/assets/font2.ttf", 25)
         except:
             font_title = ImageFont.truetype("arial.ttf", 45)
             font_details = ImageFont.truetype("arial.ttf", 30)
@@ -146,7 +146,7 @@ async def get_thumb(videoid):
             stroke_fill="black",
         )
 
-        stats_text = f"YouTube : {views} | Time : {duration} | Player : @aashikmusicbot"
+        stats_text = f"YouTube : {views} | Time : {duration} | Player : @Queenhoneybot"
         w_stats = get_text_width(stats_text, font_details)
         draw.text(
             ((1280 - w_stats) / 2, text_y_pos + 70),
@@ -157,7 +157,7 @@ async def get_thumb(videoid):
             stroke_fill="black",
         )
 
-        text_classy = "AloneMusic"
+        text_classy = "QUEEN X MUSIC"
         w_classy = get_text_width(text_classy, font_watermark)
 
         draw.text(
@@ -171,7 +171,7 @@ async def get_thumb(videoid):
 
         draw.text(
             (30, 680),
-            text="AloneMusic",
+            text="QUEEN X MUSIC",
             fill="white",
             font=font_watermark,
             stroke_width=1,
