@@ -13,7 +13,7 @@ import re
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from py_yt import VideosSearch
+from youtubesearchpython.future import VideosSearch
 
 from config import YOUTUBE_IMG_URL
 
