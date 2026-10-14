@@ -15,14 +15,18 @@ from config import BANNED_USERS, PING_VID_URL
 @language
 async def ping_com(client, message: Message, _):
     start = datetime.now()
-    response = await message.reply_video(
-        video=PING_VID_URL,
-        caption=_["ping_1"].format(app.mention),
-    )
+
     pytgping = await JARVIS.ping()
     UP, CPU, RAM, DISK = await bot_sys_stats()
-    resp = (datetime.now() - start).microseconds / 1000
-    await response.edit_text(
-        _["ping_2"].format(resp, app.mention, UP, RAM, CPU, DISK, pytgping),
+    resp = (datetime.now() - start).total_seconds() * 1000
+
+    caption = _["ping_2"].format(
+        resp, app.mention, UP, RAM, CPU, DISK, pytgping
+    )
+
+    # Send normal photo instead of video
+    response = await message.reply_photo(
+        photo=PING_VID_URL,
+        caption=caption,
         reply_markup=supp_markup(_),
     )
