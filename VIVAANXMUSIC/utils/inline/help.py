@@ -47,7 +47,7 @@ async def generate_help_buttons(
             status = "✓ 𝐎ɴ" if autoplay_enabled else "✗ 𝐎ғғ"
 
             button = success_button(
-                text=f"Aᴜᴛᴏᴘʟᴀʏ {status}",
+                text=f"𝐀⊹𝐏ʟᴀʏ {status}",
                 callback_data="toggle_autoplay",
             )
 
