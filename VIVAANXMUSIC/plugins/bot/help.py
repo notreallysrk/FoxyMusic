@@ -249,13 +249,13 @@ async def toggle_autoplay_cb(
         )
 
         status = (
-            "🟢 ON"
+            "✓ 𝐎ɴ"
             if new_status
-            else "🔴 OFF"
+            else "✗ 𝐎ғғ"
         )
 
         await callback_query.answer(
-            f"Aᴜᴛᴏᴘʟᴀʏ {status}",
+            f"𝐀ᴜᴛᴏ𝐏ʟᴀʏ {status}",
             show_alert=False,
         )
 
