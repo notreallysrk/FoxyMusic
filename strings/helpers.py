@@ -1,346 +1,346 @@
 HELP_1_PROMO = """
-<b><u>Promotion / Demotion</u></b>
+<b><u>𝐏ʀᴏᴍᴏᴛɪᴏɴ / 𝐃ᴇᴍᴏᴛɪᴏɴ</u></b>
 
-- /promote [reply/@user/id] - grant limited admin rights.
-- /fullpromote [reply/@user/id] - grant full admin rights.
-- /demote [reply/@user/id] - remove admin rights.
-- /tempadmin [reply/@user/id] [time] - grant temporary admin rights.
+- /promote [reply/@user/id] - 𝐆ʀᴀɴᴛ 𝐋ɪᴍɪᴛᴇᴅ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
+- /fullpromote [reply/@user/id] - 𝐆ʀᴀɴᴛ 𝐅ᴜʟʟ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
+- /demote [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
+- /tempadmin [reply/@user/id] [time] - 𝐆ʀᴀɴᴛ 𝐓ᴇᴍᴘᴏʀᴀʀʏ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
 """
 
 HELP_1_PUNISH = """
-<b><u>Punishment / Policing</u></b>
+<b><u>𝐏ᴜɴɪsʜᴍᴇɴᴛ / 𝐏ᴏʟɪᴄɪɴɢ</u></b>
 
-- /ban [reply/@user/id] - ban a user from the group.
-- /unban [reply/@user/id] - unban a user.
-- /kick [reply/@user/id] - kick a user.
-- /kickme - leave the group yourself.
-- /mute [reply/@user/id] - mute a user.
-- /tmute [reply/@user/id] [time] - mute for a limited time.
-- /unmute [reply/@user/id] - unmute a user.
-- /tban [reply/@user/id] [time] - ban for a limited time.
-- /sban [reply/@user/id] - silent ban.
-- /dban [reply only] - delete the replied message and ban the sender.
+- /ban [reply/@user/id] - 𝐁ᴀɴ 𝐀 𝐔sᴇʀ 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
+- /unban [reply/@user/id] - 𝐔ɴʙᴀɴ 𝐀 𝐔sᴇʀ.
+- /kick [reply/@user/id] - 𝐊ɪᴄᴋ 𝐀 𝐔sᴇʀ.
+- /kickme - 𝐋ᴇᴀᴠᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐘ᴏᴜʀsᴇʟғ.
+- /mute [reply/@user/id] - 𝐌ᴜᴛᴇ 𝐀 𝐔sᴇʀ.
+- /tmute [reply/@user/id] [time] - 𝐌ᴜᴛᴇ 𝐅ᴏʀ 𝐀 𝐋ɪᴍɪᴛᴇᴅ 𝐓ɪᴍᴇ.
+- /unmute [reply/@user/id] - 𝐔ɴᴍᴜᴛᴇ 𝐀 𝐔sᴇʀ.
+- /tban [reply/@user/id] [time] - 𝐁ᴀɴ 𝐅ᴏʀ 𝐀 𝐋ɪᴍɪᴛᴇᴅ 𝐓ɪᴍᴇ.
+- /sban [reply/@user/id] - 𝐒ɪʟᴇɴᴛ 𝐁ᴀɴ.
+- /dban [reply only] - 𝐃ᴇʟᴇᴛᴇ 𝐓ʜᴇ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐀ɴᴅ 𝐁ᴀɴ 𝐓ʜᴇ 𝐒ᴇɴᴅᴇʀ.
 """
 
 HELP_2 = """
-<b><u>Admin Control</u></b>
-Core in-call controls for group admins. Linked-channel variants use the same command with a <code>c</code> prefix where available.
+<b><u>𝐀ᴅᴍɪɴ 𝐂ᴏɴᴛʀᴏʟ</u></b>
+𝐂ᴏʀᴇ 𝐈ɴ-ᴄᴀʟʟ 𝐂ᴏɴᴛʀᴏʟs 𝐅ᴏʀ 𝐆ʀᴏᴜᴘ 𝐀ᴅᴍɪɴs. 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐕ᴀʀɪᴀɴᴛs 𝐔sᴇ 𝐓ʜᴇ 𝐒ᴀᴍᴇ 𝐂ᴏᴍᴍᴀɴᴅ 𝐖ɪᴛʜ 𝐀 <code>c</code> 𝐏ʀᴇғɪx 𝐖ʜᴇʀᴇ 𝐀ᴠᴀɪʟᴀʙʟᴇ.
 
-- /pause, /cpause - pause the current stream.
-- /resume, /cresume - resume the paused stream.
-- /skip, /cskip, /next, /cnext - skip the current track.
-- /end - stop playback and clear the queue.
-- /player, /cplayer, /playing, /cplaying - open the player or view now playing info.
-- /queue, /cqueue - show queued tracks.
-- /reload, /refresh, /admincache - rebuild admin cache.
-- /reboot - reset the assistant and current VC session for this chat.
+- /pause, /cpause - 𝐏ᴀᴜsᴇ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
+- /resume, /cresume - 𝐑ᴇsᴜᴍᴇ 𝐓ʜᴇ 𝐏ᴀᴜsᴇᴅ 𝐒ᴛʀᴇᴀᴍ.
+- /skip, /cskip, /next, /cnext - 𝐒ᴋɪᴘ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐓ʀᴀᴄᴋ.
+- /end - 𝐒ᴛᴏᴘ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐀ɴᴅ 𝐂ʟᴇᴀʀ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ.
+- /player, /cplayer, /playing, /cplaying - 𝐎ᴘᴇɴ 𝐓ʜᴇ 𝐏ʟᴀʏᴇʀ 𝐎ʀ 𝐕ɪᴇᴡ 𝐍ᴏᴡ 𝐏ʟᴀʏɪɴɢ 𝐈ɴғᴏ.
+- /queue, /cqueue - 𝐒ʜᴏᴡ 𝐐ᴜᴇᴜᴇᴅ 𝐓ʀᴀᴄᴋs.
+- /reload, /refresh, /admincache - 𝐑ᴇʙᴜɪʟᴅ 𝐀ᴅᴍɪɴ 𝐂ᴀᴄʜᴇ.
+- /reboot - 𝐑ᴇsᴇᴛ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐀ɴᴅ 𝐂ᴜʀʀᴇɴᴛ 𝐕C 𝐒ᴇssɪᴏɴ 𝐅ᴏʀ 𝐓ʜɪs 𝐂ʜᴀᴛ.
 """
 
 HELP_3 = """
-<b><u>Auth Users</u></b>
+<b><u>𝐀ᴜᴛʜ 𝐔sᴇʀs</u></b>
 
-- /auth [reply/@user/id] - authorize a user for admin play controls.
-- /unauth [reply/@user/id] - remove an authorized user.
-- /authlist, /authusers - list authorized users in the chat.
+- /auth [reply/@user/id] - 𝐀ᴜᴛʜᴏʀɪᴢᴇ 𝐀 𝐔sᴇʀ 𝐅ᴏʀ 𝐀ᴅᴍɪɴ 𝐏ʟᴀʏ 𝐂ᴏɴᴛʀᴏʟs.
+- /unauth [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ɴ 𝐀ᴜᴛʜᴏʀɪᴢᴇᴅ 𝐔sᴇʀ.
+- /authlist, /authusers - 𝐋ɪsᴛ 𝐀ᴜᴛʜᴏʀɪᴢᴇᴅ 𝐔sᴇʀs 𝐈ɴ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
 """
 
 HELP_4 = """
-<b><u>Blacklist Chat</u></b> <i>(sudo)</i>
+<b><u>𝐁ʟᴀᴄᴋʟɪsᴛ 𝐂ʜᴀᴛ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
 
-- /blchat, /blacklistchat [chat id] - blacklist a chat from using the bot.
-- /whitelistchat, /unblacklistchat, /unblchat [chat id] - remove a blacklisted chat.
-- /blchats, /blacklistedchats - list blacklisted chats.
+- /blchat, /blacklistchat [chat id] - 𝐁ʟᴀᴄᴋʟɪsᴛ 𝐀 𝐂ʜᴀᴛ 𝐅ʀᴏᴍ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐁ᴏᴛ.
+- /whitelistchat, /unblacklistchat, /unblchat [chat id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐁ʟᴀᴄᴋʟɪsᴛᴇᴅ 𝐂ʜᴀᴛ.
+- /blchats, /blacklistedchats - 𝐋ɪsᴛ 𝐁ʟᴀᴄᴋʟɪsᴛᴇᴅ 𝐂ʜᴀᴛs.
 """
 
 HELP_5 = """
-<b><u>Block Users</u></b> <i>(sudo)</i>
+<b><u>𝐁ʟᴏᴄᴋ 𝐔sᴇʀs</u></b> <i>(𝐒ᴜᴅᴏ)</i>
 
-- /block [reply/@user/id] - block a user from using the bot.
-- /unblock [reply/@user/id] - unblock a user.
-- /blocked, /blockedusers, /blusers - list blocked users.
+- /block [reply/@user/id] - 𝐁ʟᴏᴄᴋ 𝐀 𝐔sᴇʀ 𝐅ʀᴏᴍ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐁ᴏᴛ.
+- /unblock [reply/@user/id] - 𝐔ɴʙʟᴏᴄᴋ 𝐀 𝐔sᴇʀ.
+- /blocked, /blockedusers, /blusers - 𝐋ɪsᴛ 𝐁ʟᴏᴄᴋᴇᴅ 𝐔sᴇʀs.
 """
 
 HELP_6 = """
-<b><u>Channel Play</u></b>
-Use these when a linked channel is attached to a group.
+<b><u>𝐂ʜᴀɴɴᴇʟ 𝐏ʟᴀʏ</u></b>
+𝐔sᴇ 𝐓ʜᴇsᴇ 𝐖ʜᴇɴ 𝐀 𝐋ɪɴᴋᴇᴅ 𝐂ʜᴀɴɴᴇʟ 𝐈s 𝐀ᴛᴛᴀᴄʜᴇᴅ 𝐓ᴏ 𝐀 𝐆ʀᴏᴜᴘ.
 
-- /channelplay [chat username/id] or /channelplay disable - link or unlink a channel.
-- /cplay, /cvplay - play audio or video in linked-channel mode.
-- /cplayforce, /cvplayforce - force-play in linked-channel mode.
-- /cqueue, /cplayer, /cplaying - inspect the linked-channel queue or player.
+- /channelplay [chat username/id] or /channelplay disable - 𝐋ɪɴᴋ 𝐎ʀ 𝐔ɴʟɪɴᴋ 𝐀 𝐂ʜᴀɴɴᴇʟ.
+- /cplay, /cvplay - 𝐏ʟᴀʏ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐈ɴ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐌ᴏᴅᴇ.
+- /cplayforce, /cvplayforce - 𝐅ᴏʀᴄᴇ-ᴘʟᴀʏ 𝐈ɴ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐌ᴏᴅᴇ.
+- /cqueue, /cplayer, /cplaying - 𝐈ɴsᴘᴇᴄᴛ 𝐓ʜᴇ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐐ᴜᴇᴜᴇ 𝐎ʀ 𝐏ʟᴀʏᴇʀ.
 """
 
 HELP_7 = """
-<b><u>Extra Tools</u></b>
+<b><u>𝐄xᴛʀᴀ 𝐓ᴏᴏʟs</u></b>
 
-- /tgm, /tgt, /telegraph - upload replied media to Telegraph.
-- /tr - translate text or a replied message.
-- /short, /unshort - shorten or expand a URL.
-- /speedtest, /spt - run a network speed test.
-- /webdl [url] - download a website snapshot/archive.
-- /bug [text or reply] - send a bug report to the owner.
-- /encrypt, /enc [reply] - PM-only: encrypt replied text/media/sticker into a random code.
-- /decrypt, /dec [code] - PM-only: decrypt once, resend content, then delete saved data.
+- /tgm, /tgt, /telegraph - 𝐔ᴘʟᴏᴀᴅ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐓ᴏ 𝐓ᴇʟᴇɢʀᴀᴘʜ.
+- /tr - 𝐓ʀᴀɴsʟᴀᴛᴇ 𝐓ᴇxᴛ 𝐎ʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ.
+- /short, /unshort - 𝐒ʜᴏʀᴛᴇɴ 𝐎ʀ 𝐄xᴘᴀɴᴅ 𝐀 𝐔RL.
+- /speedtest, /spt - 𝐑ᴜɴ 𝐀 𝐍ᴇᴛᴡᴏʀᴋ 𝐒ᴘᴇᴇᴅ 𝐓ᴇsᴛ.
+- /webdl [url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐖ᴇʙsɪᴛᴇ 𝐒ɴᴀᴘsʜᴏᴛ/ᴀʀᴄʜɪᴠᴇ.
+- /bug [text or reply] - 𝐒ᴇɴᴅ 𝐀 𝐁ᴜɢ 𝐑ᴇᴘᴏʀᴛ 𝐓ᴏ 𝐓ʜᴇ 𝐎ᴡɴᴇʀ.
+- /encrypt, /enc [reply] - 𝐏M-ᴏɴʟʏ: 𝐄ɴᴄʀʏᴘᴛ 𝐑ᴇᴘʟɪᴇᴅ 𝐓ᴇxᴛ/ᴍᴇᴅɪᴀ/sᴛɪᴄᴋᴇʀ 𝐈ɴᴛᴏ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐂ᴏᴅᴇ.
+- /decrypt, /dec [code] - 𝐏M-ᴏɴʟʏ: 𝐃ᴇᴄʀʏᴘᴛ 𝐎ɴᴄᴇ, 𝐑ᴇsᴇɴᴅ 𝐂ᴏɴᴛᴇɴᴛ, 𝐓ʜᴇɴ 𝐃ᴇʟᴇᴛᴇ 𝐒ᴀᴠᴇᴅ 𝐃ᴀᴛᴀ.
 """
 
 HELP_8 = """
-<b><u>Global Ban</u></b> <i>(sudo)</i>
+<b><u>𝐆ʟᴏʙᴀʟ 𝐁ᴀɴ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
 
-- /gban, /globalban [reply/@user/id] - globally ban a user across served chats.
-- /ungban [reply/@user/id] - remove a global ban.
-- /gbannedusers, /gbanlist - list globally banned users.
+- /gban, /globalban [reply/@user/id] - 𝐆ʟᴏʙᴀʟʟʏ 𝐁ᴀɴ 𝐀 𝐔sᴇʀ 𝐀ᴄʀᴏss 𝐒ᴇʀᴠᴇᴅ 𝐂ʜᴀᴛs.
+- /ungban [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐆ʟᴏʙᴀʟ 𝐁ᴀɴ.
+- /gbannedusers, /gbanlist - 𝐋ɪsᴛ 𝐆ʟᴏʙᴀʟʟʏ 𝐁ᴀɴɴᴇᴅ 𝐔sᴇʀs.
 """
 
 HELP_9 = """
-<b><u>Global Cast</u></b> <i>(sudo)</i>
+<b><u>𝐆ʟᴏʙᴀʟ 𝐂ᴀsᴛ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
 
-- /broadcast [text or reply] - broadcast a message to users/chats served by the bot.
+- /broadcast [text or reply] - 𝐁ʀᴏᴀᴅᴄᴀsᴛ 𝐀 𝐌ᴇssᴀɢᴇ 𝐓ᴏ 𝐔sᴇʀs/ᴄʜᴀᴛs 𝐒ᴇʀᴠᴇᴅ 𝐁ʏ 𝐓ʜᴇ 𝐁ᴏᴛ.
 """
 
 HELP_10 = """
-<b><u>Games</u></b>
+<b><u>𝐆ᴀᴍᴇs</u></b>
 
-- /dice, /dart, /basket, /jackpot, /ball, /football - Telegram dice games.
-- /truth - get a random truth question.
-- /dare - get a random dare.
+- /dice, /dart, /basket, /jackpot, /ball, /football - 𝐓ᴇʟᴇɢʀᴀᴍ 𝐃ɪᴄᴇ 𝐆ᴀᴍᴇs.
+- /truth - 𝐆ᴇᴛ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐓ʀᴜᴛʜ 𝐐ᴜᴇsᴛɪᴏɴ.
+- /dare - 𝐆ᴇᴛ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐃ᴀʀᴇ.
 """
 
 HELP_11 = """
-<b><u>AI Chat</u></b>
+<b><u>𝐀I 𝐂ʜᴀᴛ</u></b>
 
-- jarvis [prompt] - chat with the assistant using the jarvis trigger.
-- assis [prompt] - get an AI voice reply.
-- /gpt, /claude, /bard, /gemini, /llama, /mistral - text AI replies.
-- /geminivision - analyze a replied image.
-- /chatgpt, /ai, /ask, /Master - alternate text-AI entry commands.
+- jarvis [prompt] - 𝐂ʜᴀᴛ 𝐖ɪᴛʜ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐉ᴀʀᴠɪs 𝐓ʀɪɢɢᴇʀ.
+- assis [prompt] - 𝐆ᴇᴛ 𝐀ɴ 𝐀I 𝐕ᴏɪᴄᴇ 𝐑ᴇᴘʟʏ.
+- /gpt, /claude, /bard, /gemini, /llama, /mistral - 𝐓ᴇxᴛ 𝐀I 𝐑ᴇᴘʟɪᴇs.
+- /geminivision - 𝐀ɴᴀʟʏᴢᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
+- /chatgpt, /ai, /ask, /Master - 𝐀ʟᴛᴇʀɴᴀᴛᴇ 𝐓ᴇxᴛ-AI 𝐄ɴᴛʀʏ 𝐂ᴏᴍᴍᴀɴᴅs.
 """
 
 HELP_12 = """
-<b><u>Info</u></b>
+<b><u>𝐈ɴғᴏ</u></b>
 
-- /id - get chat, user, or replied-message IDs.
-- /info, /userinfo, /whois - inspect a user's details.
-- /sg - fetch user history details.
-- /groupdata - show current group information.
-- /phone - look up details for a phone number.
+- /id - 𝐆ᴇᴛ 𝐂ʜᴀᴛ, 𝐔sᴇʀ, 𝐎ʀ 𝐑ᴇᴘʟɪᴇᴅ-ᴍᴇssᴀɢᴇ 𝐈Ds.
+- /info, /userinfo, /whois - 𝐈ɴsᴘᴇᴄᴛ 𝐀 𝐔sᴇʀ's 𝐃ᴇᴛᴀɪʟs.
+- /sg - 𝐅ᴇᴛᴄʜ 𝐔sᴇʀ 𝐇ɪsᴛᴏʀʏ 𝐃ᴇᴛᴀɪʟs.
+- /groupdata - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /phone - 𝐋ᴏᴏᴋ 𝐔ᴘ 𝐃ᴇᴛᴀɪʟs 𝐅ᴏʀ 𝐀 𝐏ʜᴏɴᴇ 𝐍ᴜᴍʙᴇʀ.
 """
 
 HELP_13 = """
-<b><u>Image</u></b>
+<b><u>𝐈ᴍᴀɢᴇ</u></b>
 
-- /editimg - AI edit a replied image or image album with a prompt.
-- /getdraw - generate an AI image from a prompt.
-- /upscale - upscale a replied image.
-- /rmbg - remove the background from a replied image.
-- /waifu [tag] - fetch a waifu image by tag.
+- /editimg - 𝐀I 𝐄ᴅɪᴛ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ 𝐎ʀ 𝐈ᴍᴀɢᴇ 𝐀ʟʙᴜᴍ 𝐖ɪᴛʜ 𝐀 𝐏ʀᴏᴍᴘᴛ.
+- /getdraw - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀ɴ 𝐀I 𝐈ᴍᴀɢᴇ 𝐅ʀᴏᴍ 𝐀 𝐏ʀᴏᴍᴘᴛ.
+- /upscale - 𝐔ᴘsᴄᴀʟᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
+- /rmbg - 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐁ᴀᴄᴋɢʀᴏᴜɴᴅ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
+- /waifu [tag] - 𝐅ᴇᴛᴄʜ 𝐀 𝐖ᴀɪғᴜ 𝐈ᴍᴀɢᴇ 𝐁ʏ 𝐓ᴀɢ.
 """
 
 HELP_14 = """
-<b><u>Log / Maintenance</u></b> <i>(sudo)</i>
+<b><u>𝐋ᴏɢ / 𝐌ᴀɪɴᴛᴇɴᴀɴᴄᴇ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
 
-- /logger [enable|disable] - toggle live logging.
-- /maintenance [enable|disable] - toggle maintenance mode.
-- /logs, /getlog, /getlogs - fetch current logs.
-- /update, /gitpull - pull latest upstream changes.
-- /restart - restart the bot process.
+- /logger [enable|disable] - 𝐓ᴏɢɢʟᴇ 𝐋ɪᴠᴇ 𝐋ᴏɢɢɪɴɢ.
+- /maintenance [enable|disable] - 𝐓ᴏɢɢʟᴇ 𝐌ᴀɪɴᴛᴇɴᴀɴᴄᴇ 𝐌ᴏᴅᴇ.
+- /logs, /getlog, /getlogs - 𝐅ᴇᴛᴄʜ 𝐂ᴜʀʀᴇɴᴛ 𝐋ᴏɢs.
+- /update, /gitpull - 𝐏ᴜʟʟ 𝐋ᴀᴛᴇsᴛ 𝐔ᴘsᴛʀᴇᴀᴍ 𝐂ʜᴀɴɢᴇs.
+- /restart - 𝐑ᴇsᴛᴀʀᴛ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐏ʀᴏᴄᴇss.
 """
 
 HELP_15 = """
-<b><u>Loop</u></b>
+<b><u>𝐋ᴏᴏᴘ</u></b>
 
-- /loop [enable|disable|count] - repeat the current track.
-- /cloop [enable|disable|count] - same action for linked-channel playback.
+- /loop [enable|disable|count] - 𝐑ᴇᴘᴇᴀᴛ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐓ʀᴀᴄᴋ.
+- /cloop [enable|disable|count] - 𝐒ᴀᴍᴇ 𝐀ᴄᴛɪᴏɴ 𝐅ᴏʀ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐏ʟᴀʏʙᴀᴄᴋ.
 """
 
 HELP_16 = """
-<b><u>Group Management</u></b>
+<b><u>𝐆ʀᴏᴜᴘ 𝐌ᴀɴᴀɢᴇᴍᴇɴᴛ</u></b>
 
-- /pin, /unpin - pin or unpin messages.
-- /settitle - change the group title.
-- /setdiscription - change the group description.
-- /setphoto, /removephoto - set or remove the group photo.
-- /welcome [on|off] - toggle welcome messages.
-- /admins, /staff - list admins in the group.
-- /bots - list bot accounts in the group.
-- /zombies - clean deleted accounts from the group.
-- /imposter [on|off] - toggle the username/name change watcher.
-- /lang, /setlang, /language - change bot language for the chat.
-- /givelink - export the current group's invite link.
-- /user - export the member list as CSV or TXT.
+- /pin, /unpin - 𝐏ɪɴ 𝐎ʀ 𝐔ɴᴘɪɴ 𝐌ᴇssᴀɢᴇs.
+- /settitle - 𝐂ʜᴀɴɢᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐓ɪᴛʟᴇ.
+- /setdiscription - 𝐂ʜᴀɴɢᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐃ᴇsᴄʀɪᴘᴛɪᴏɴ.
+- /setphoto, /removephoto - 𝐒ᴇᴛ 𝐎ʀ 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐏ʜᴏᴛᴏ.
+- /welcome [on|off] - 𝐓ᴏɢɢʟᴇ 𝐖ᴇʟᴄᴏᴍᴇ 𝐌ᴇssᴀɢᴇs.
+- /admins, /staff - 𝐋ɪsᴛ 𝐀ᴅᴍɪɴs 𝐈ɴ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
+- /bots - 𝐋ɪsᴛ 𝐁ᴏᴛ 𝐀ᴄᴄᴏᴜɴᴛs 𝐈ɴ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
+- /zombies - 𝐂ʟᴇᴀɴ 𝐃ᴇʟᴇᴛᴇᴅ 𝐀ᴄᴄᴏᴜɴᴛs 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
+- /imposter [on|off] - 𝐓ᴏɢɢʟᴇ 𝐓ʜᴇ 𝐔sᴇʀɴᴀᴍᴇ/ɴᴀᴍᴇ 𝐂ʜᴀɴɢᴇ 𝐖ᴀᴛᴄʜᴇʀ.
+- /lang, /setlang, /language - 𝐂ʜᴀɴɢᴇ 𝐁ᴏᴛ 𝐋ᴀɴɢᴜᴀɢᴇ 𝐅ᴏʀ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
+- /givelink - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ's 𝐈ɴᴠɪᴛᴇ 𝐋ɪɴᴋ.
+- /user - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐌ᴇᴍʙᴇʀ 𝐋ɪsᴛ 𝐀s 𝐂SV 𝐎ʀ 𝐓XT.
 """
 
 HELP_17 = """
-<b><u>Masti / Fun</u></b>
+<b><u>𝐌ᴀsᴛɪ / 𝐅ᴜɴ</u></b>
 
-- /couple, /love, /wish, /cute, /bored - fun social commands.
-- /cutie, /horny, /hot, /sexy, /sad, /lesbian, /chill, /kill - percentage-style fun ratings.
-- Reaction GIFs: /hug, /kiss, /slap, /punch, /bite, /pat, /cuddle, /tickle, /poke, /wave, /highfive, /dance, /smile, /blush, /smug, /wink, /stare, /shrug, /happy, /baka, /feed, /nom, /yawn, /facepalm, /yeet, /think, /shoot, /peck, /nod, /nope, /sleep, /lurk.
+- /couple, /love, /wish, /cute, /bored - 𝐅ᴜɴ 𝐒ᴏᴄɪᴀʟ 𝐂ᴏᴍᴍᴀɴᴅs.
+- /cutie, /horny, /hot, /sexy, /sad, /lesbian, /chill, /kill - 𝐏ᴇʀᴄᴇɴᴛᴀɢᴇ-sᴛʏʟᴇ 𝐅ᴜɴ 𝐑ᴀᴛɪɴɢs.
+- 𝐑ᴇᴀᴄᴛɪᴏɴ 𝐆IFs: /hug, /kiss, /slap, /punch, /bite, /pat, /cuddle, /tickle, /poke, /wave, /highfive, /dance, /smile, /blush, /smug, /wink, /stare, /shrug, /happy, /baka, /feed, /nom, /yawn, /facepalm, /yeet, /think, /shoot, /peck, /nod, /nope, /sleep, /lurk.
 """
 
 HELP_18 = """
-<b><u>Mass Actions</u></b>
-Use with care.
+<b><u>𝐌ᴀss 𝐀ᴄᴛɪᴏɴs</u></b>
+𝐔sᴇ 𝐖ɪᴛʜ 𝐂ᴀʀᴇ.
 
-- /deleteall - purge all messages in the current group after confirmation.
-- /purge, /spurge - bulk delete from a replied message up to the current message.
-- /del - delete a replied message quickly.
+- /deleteall - 𝐏ᴜʀɢᴇ 𝐀ʟʟ 𝐌ᴇssᴀɢᴇs 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ 𝐀ғᴛᴇʀ 𝐂ᴏɴғɪʀᴍᴀᴛɪᴏɴ.
+- /purge, /spurge - 𝐁ᴜʟᴋ 𝐃ᴇʟᴇᴛᴇ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐔ᴘ 𝐓ᴏ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐌ᴇssᴀɢᴇ.
+- /del - 𝐃ᴇʟᴇᴛᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐐ᴜɪᴄᴋʟʏ.
 """
 
 HELP_19 = """
-<b><u>Ping / Stats</u></b>
+<b><u>𝐏ɪɴɢ / 𝐒ᴛᴀᴛs</u></b>
 
-- /start - start the bot in private.
-- /help - open the help menu.
-- /ping - show bot latency and runtime info.
-- /stats, /gstats - show bot statistics.
+- /start - 𝐒ᴛᴀʀᴛ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐈ɴ 𝐏ʀɪᴠᴀᴛᴇ.
+- /help - 𝐎ᴘᴇɴ 𝐓ʜᴇ 𝐇ᴇʟᴘ 𝐌ᴇɴᴜ.
+- /ping - 𝐒ʜᴏᴡ 𝐁ᴏᴛ 𝐋ᴀᴛᴇɴᴄʏ 𝐀ɴᴅ 𝐑ᴜɴᴛɪᴍᴇ 𝐈ɴғᴏ.
+- /stats, /gstats - 𝐒ʜᴏᴡ 𝐁ᴏᴛ 𝐒ᴛᴀᴛɪsᴛɪᴄs.
 """
 
 HELP_20 = """
-<b><u>Play</u></b>
+<b><u>𝐏ʟᴀʏ</u></b>
 
-- /play, /vplay - play audio or video by query, URL, or replied media.
-- /playforce, /vplayforce - force-start a new track immediately.
-- /autoplay, /cautoplay [on|off] - continue with similar songs when the queue ends.
-- /settings, /setting - open group playback settings.
-- /playmode, /mode - switch direct/inline play mode.
+- /play, /vplay - 𝐏ʟᴀʏ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐁ʏ 𝐐ᴜᴇʀʏ, 𝐔RL, 𝐎ʀ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ.
+- /playforce, /vplayforce - 𝐅ᴏʀᴄᴇ-sᴛᴀʀᴛ 𝐀 𝐍ᴇᴡ 𝐓ʀᴀᴄᴋ 𝐈ᴍᴍᴇᴅɪᴀᴛᴇʟʏ.
+- /autoplay, /cautoplay [on|off] - 𝐂ᴏɴᴛɪɴᴜᴇ 𝐖ɪᴛʜ 𝐒ɪᴍɪʟᴀʀ 𝐒ᴏɴɢs 𝐖ʜᴇɴ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ 𝐄ɴᴅs.
+- /settings, /setting - 𝐎ᴘᴇɴ 𝐆ʀᴏᴜᴘ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐒ᴇᴛᴛɪɴɢs.
+- /playmode, /mode - 𝐒ᴡɪᴛᴄʜ 𝐃ɪʀᴇᴄᴛ/ɪɴʟɪɴᴇ 𝐏ʟᴀʏ 𝐌ᴏᴅᴇ.
 """
 
 HELP_21 = """
-<b><u>Repo Info</u></b>
+<b><u>𝐑ᴇᴘᴏ 𝐈ɴғᴏ</u></b>
 
-- /pypi [package] - fetch package info from PyPI.
-- /downloadrepo [github url] - download a repository as a zip.
+- /pypi [package] - 𝐅ᴇᴛᴄʜ 𝐏ᴀᴄᴋᴀɢᴇ 𝐈ɴғᴏ 𝐅ʀᴏᴍ 𝐏ʏPI.
+- /downloadrepo [github url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐑ᴇᴘᴏsɪᴛᴏʀʏ 𝐀s 𝐀 𝐙ɪᴘ.
 """
 
 HELP_22 = """
-<b><u>Search</u></b>
+<b><u>𝐒ᴇᴀʀᴄʜ</u></b>
 
-- /anime [query] - search anime details.
-- /movie [query] - fetch movie information.
-- /news [topic] - show the latest headlines on a topic from reliable sources.
-- /domain [name] - inspect a domain.
-- /ip [address] - inspect IP information.
-- /mongochk [mongo url] - check a MongoDB URI.
-- /weather [location] - show weather for a place.
-- /population [country code] - fetch population info for a country.
+- /anime [query] - 𝐒ᴇᴀʀᴄʜ 𝐀ɴɪᴍᴇ 𝐃ᴇᴛᴀɪʟs.
+- /movie [query] - 𝐅ᴇᴛᴄʜ 𝐌ᴏᴠɪᴇ 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /news [topic] - 𝐒ʜᴏᴡ 𝐓ʜᴇ 𝐋ᴀᴛᴇsᴛ 𝐇ᴇᴀᴅʟɪɴᴇs 𝐎ɴ 𝐀 𝐓ᴏᴘɪᴄ 𝐅ʀᴏᴍ 𝐑ᴇʟɪᴀʙʟᴇ 𝐒ᴏᴜʀᴄᴇs.
+- /domain [name] - 𝐈ɴsᴘᴇᴄᴛ 𝐀 𝐃ᴏᴍᴀɪɴ.
+- /ip [address] - 𝐈ɴsᴘᴇᴄᴛ 𝐈P 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /mongochk [mongo url] - 𝐂ʜᴇᴄᴋ 𝐀 𝐌ᴏɴɢᴏDB 𝐔RI.
+- /weather [location] - 𝐒ʜᴏᴡ 𝐖ᴇᴀᴛʜᴇʀ 𝐅ᴏʀ 𝐀 𝐏ʟᴀᴄᴇ.
+- /population [country code] - 𝐅ᴇᴛᴄʜ 𝐏ᴏᴘᴜʟᴀᴛɪᴏɴ 𝐈ɴғᴏ 𝐅ᴏʀ 𝐀 𝐂ᴏᴜɴᴛʀʏ.
 """
 
 HELP_23 = """
-<b><u>Seek</u></b>
+<b><u>𝐒ᴇᴇᴋ</u></b>
 
-- /seek, /cseek [seconds] - jump forward in the current stream.
-- /seekback, /cseekback [seconds] - jump backward in the current stream.
+- /seek, /cseek [seconds] - 𝐉ᴜᴍᴘ 𝐅ᴏʀᴡᴀʀᴅ 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
+- /seekback, /cseekback [seconds] - 𝐉ᴜᴍᴘ 𝐁ᴀᴄᴋᴡᴀʀᴅ 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
 """
 
 HELP_24 = """
-<b><u>Shuffle</u></b>
+<b><u>𝐒ʜᴜғғʟᴇ</u></b>
 
-- /shuffle, /cshuffle - shuffle the queue.
-- /queue, /cqueue - inspect the queue after shuffling.
+- /shuffle, /cshuffle - 𝐒ʜᴜғғʟᴇ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ.
+- /queue, /cqueue - 𝐈ɴsᴘᴇᴄᴛ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ 𝐀ғᴛᴇʀ 𝐒ʜᴜғғʟɪɴɢ.
 """
 
 HELP_25 = """
-<b><u>Download</u></b>
+<b><u>𝐃ᴏᴡɴʟᴏᴀᴅ</u></b>
 
-- /song [title/url] - download a song from YouTube.
-- /spotify [spotify track link] - fetch the track title and send the song as audio.
-- /apple [apple music track link] - fetch the track title and send the song as audio.
-- /lyrics [title or lyric line] - search matching songs, then fetch full lyrics by button.
-- /insta, /ig [instagram url] - download Instagram media.
-- /youtube, /yt [youtube url] - download YouTube media with audio.
-- /facebook, /fb [facebook url] - download Facebook media.
-- /x, /twitter [post url] - download X/Twitter post media.
-- /snap, /snapchat [snapchat url] - download Snapchat media.
-- /tiktok, /tt [tiktok url] - download TikTok media.
-- /remove [audio|video] - remove audio or video from a replied media file.
+- /song [title/url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐒ᴏɴɢ 𝐅ʀᴏᴍ 𝐘ᴏᴜTᴜʙᴇ.
+- /spotify [spotify track link] - 𝐅ᴇᴛᴄʜ 𝐓ʜᴇ 𝐓ʀᴀᴄᴋ 𝐓ɪᴛʟᴇ 𝐀ɴᴅ 𝐒ᴇɴᴅ 𝐓ʜᴇ 𝐒ᴏɴɢ 𝐀s 𝐀ᴜᴅɪᴏ.
+- /apple [apple music track link] - 𝐅ᴇᴛᴄʜ 𝐓ʜᴇ 𝐓ʀᴀᴄᴋ 𝐓ɪᴛʟᴇ 𝐀ɴᴅ 𝐒ᴇɴᴅ 𝐓ʜᴇ 𝐒ᴏɴɢ 𝐀s 𝐀ᴜᴅɪᴏ.
+- /lyrics [title or lyric line] - 𝐒ᴇᴀʀᴄʜ 𝐌ᴀᴛᴄʜɪɴɢ 𝐒ᴏɴɢs, 𝐓ʜᴇɴ 𝐅ᴇᴛᴄʜ 𝐅ᴜʟʟ 𝐋ʏʀɪᴄs 𝐁ʏ 𝐁ᴜᴛᴛᴏɴ.
+- /insta, /ig [instagram url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐈ɴsᴛᴀɢʀᴀᴍ 𝐌ᴇᴅɪᴀ.
+- /youtube, /yt [youtube url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐘ᴏᴜTᴜʙᴇ 𝐌ᴇᴅɪᴀ 𝐖ɪᴛʜ 𝐀ᴜᴅɪᴏ.
+- /facebook, /fb [facebook url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐅ᴀᴄᴇʙᴏᴏᴋ 𝐌ᴇᴅɪᴀ.
+- /x, /twitter [post url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐗/Tᴡɪᴛᴛᴇʀ 𝐏ᴏsᴛ 𝐌ᴇᴅɪᴀ.
+- /snap, /snapchat [snapchat url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐒ɴᴀᴘᴄʜᴀᴛ 𝐌ᴇᴅɪᴀ.
+- /tiktok, /tt [tiktok url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐓ɪᴋTᴏᴋ 𝐌ᴇᴅɪᴀ.
+- /remove [audio|video] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐅ɪʟᴇ.
 """
 
 HELP_26 = """
-<b><u>Speed</u></b>
+<b><u>𝐒ᴘᴇᴇᴅ</u></b>
 
-- /speed, /slow, /playback [value] - change playback speed.
-- /cspeed, /cslow, /cplayback [value] - same controls for linked-channel playback.
+- /speed, /slow, /playback [value] - 𝐂ʜᴀɴɢᴇ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐒ᴘᴇᴇᴅ.
+- /cspeed, /cslow, /cplayback [value] - 𝐒ᴀᴍᴇ 𝐂ᴏɴᴛʀᴏʟs 𝐅ᴏʀ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐏ʟᴀʏʙᴀᴄᴋ.
 """
 
 HELP_27 = """
-<b><u>Sticker</u></b>
+<b><u>𝐒ᴛɪᴄᴋᴇʀ</u></b>
 
-- /mmf - turn replied media into a meme-style sticker.
-- /tiny - shrink a replied sticker.
-- /kang - steal a replied sticker/image into your pack.
-- /packkang - clone a full sticker pack item by item.
-- /stickerid, /stid - show sticker IDs for a replied sticker.
-- /st - send a sticker by its file ID.
-- /stdl - download a replied sticker.
-- /meme - generate a meme image.
+- /mmf - 𝐓ᴜʀɴ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐈ɴᴛᴏ 𝐀 𝐌ᴇᴍᴇ-sᴛʏʟᴇ 𝐒ᴛɪᴄᴋᴇʀ.
+- /tiny - 𝐒ʜʀɪɴᴋ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
+- /kang - 𝐒ᴛᴇᴀʟ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ/ɪᴍᴀɢᴇ 𝐈ɴᴛᴏ 𝐘ᴏᴜʀ 𝐏ᴀᴄᴋ.
+- /packkang - 𝐂ʟᴏɴᴇ 𝐀 𝐅ᴜʟʟ 𝐒ᴛɪᴄᴋᴇʀ 𝐏ᴀᴄᴋ 𝐈ᴛᴇᴍ 𝐁ʏ 𝐈ᴛᴇᴍ.
+- /stickerid, /stid - 𝐒ʜᴏᴡ 𝐒ᴛɪᴄᴋᴇʀ 𝐈Ds 𝐅ᴏʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
+- /st - 𝐒ᴇɴᴅ 𝐀 𝐒ᴛɪᴄᴋᴇʀ 𝐁ʏ 𝐈ᴛs 𝐅ɪʟᴇ 𝐈D.
+- /stdl - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
+- /meme - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐌ᴇᴍᴇ 𝐈ᴍᴀɢᴇ.
 """
 
 HELP_28 = """
-<b><u>Tag-All</u></b>
+<b><u>𝐓ᴀɢ-Aʟʟ</u></b>
 
-- /utag, /all, /mention [text] - mention everyone with custom text or a replied message.
-- /cancel, /ustop - stop utag mention spam.
-- /tagall - random funny tag-all mode.
-- /tagoff, /tagstop - stop random tag-all mode.
-- /gmtag, /gmstop - morning wish tag mode and stop.
-- /gntag, /gnstop - night wish tag mode and stop.
-- /hitag, /histop - Hindi quote tag mode and stop.
-- /lifetag, /lifestop - English quote tag mode and stop.
-- /shayari, /shayarioff - shayari tag mode and stop.
+- /utag, /all, /mention [text] - 𝐌ᴇɴᴛɪᴏɴ 𝐄ᴠᴇʀʏᴏɴᴇ 𝐖ɪᴛʜ 𝐂ᴜsᴛᴏᴍ 𝐓ᴇxᴛ 𝐎ʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ.
+- /cancel, /ustop - 𝐒ᴛᴏᴘ 𝐔ᴛᴀɢ 𝐌ᴇɴᴛɪᴏɴ 𝐒ᴘᴀᴍ.
+- /tagall - 𝐑ᴀɴᴅᴏᴍ 𝐅ᴜɴɴʏ 𝐓ᴀɢ-ᴀʟʟ 𝐌ᴏᴅᴇ.
+- /tagoff, /tagstop - 𝐒ᴛᴏᴘ 𝐑ᴀɴᴅᴏᴍ 𝐓ᴀɢ-ᴀʟʟ 𝐌ᴏᴅᴇ.
+- /gmtag, /gmstop - 𝐌ᴏʀɴɪɴɢ 𝐖ɪsʜ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
+- /gntag, /gnstop - 𝐍ɪɢʜᴛ 𝐖ɪsʜ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
+- /hitag, /histop - 𝐇ɪɴᴅɪ 𝐐ᴜᴏᴛᴇ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
+- /lifetag, /lifestop - 𝐄ɴɢʟɪsʜ 𝐐ᴜᴏᴛᴇ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
+- /shayari, /shayarioff - 𝐒ʜᴀʏᴀʀɪ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
 """
 
 HELP_29 = """
-<b><u>Text Editing</u></b>
+<b><u>𝐓ᴇxᴛ 𝐄ᴅɪᴛɪɴɢ</u></b>
 
-- /font, /fonts - stylize text with font buttons.
-- /figlet - generate figlet-style text.
-- /encode, /decode - convert text to and from hex.
-- /genpassword, /genpw - generate a password.
-- /write - render text in notebook style.
-- /day - convert a date to its weekday.
-- /qr - generate a QR code.
-- /q - create a quote sticker from replied messages.
+- /font, /fonts - 𝐒ᴛʏʟɪᴢᴇ 𝐓ᴇxᴛ 𝐖ɪᴛʜ 𝐅ᴏɴᴛ 𝐁ᴜᴛᴛᴏɴs.
+- /figlet - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐅ɪɢʟᴇᴛ-sᴛʏʟᴇ 𝐓ᴇxᴛ.
+- /encode, /decode - 𝐂ᴏɴᴠᴇʀᴛ 𝐓ᴇxᴛ 𝐓ᴏ 𝐀ɴᴅ 𝐅ʀᴏᴍ 𝐇ᴇx.
+- /genpassword, /genpw - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐏ᴀssᴡᴏʀᴅ.
+- /write - 𝐑ᴇɴᴅᴇʀ 𝐓ᴇxᴛ 𝐈ɴ 𝐍ᴏᴛᴇʙᴏᴏᴋ 𝐒ᴛʏʟᴇ.
+- /day - 𝐂ᴏɴᴠᴇʀᴛ 𝐀 𝐃ᴀᴛᴇ 𝐓ᴏ 𝐈ᴛs 𝐖ᴇᴇᴋᴅᴀʏ.
+- /qr - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐐R 𝐂ᴏᴅᴇ.
+- /q - 𝐂ʀᴇᴀᴛᴇ 𝐀 𝐐ᴜᴏᴛᴇ 𝐒ᴛɪᴄᴋᴇʀ 𝐅ʀᴏᴍ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇs.
 """
 
 HELP_30 = """
-<b><u>Gen Vid</u></b>
+<b><u>𝐆ᴇɴ 𝐕ɪᴅ</u></b>
 
-- /genvid [prompt] - generate a short AI video from text.
-- Reply to an image with /genvid [motion prompt] - animate that image.
-- The bot automatically retries across the configured video backends.
+- /genvid [prompt] - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐒ʜᴏʀᴛ 𝐀I 𝐕ɪᴅᴇᴏ 𝐅ʀᴏᴍ 𝐓ᴇxᴛ.
+- 𝐑ᴇᴘʟʏ 𝐓ᴏ 𝐀ɴ 𝐈ᴍᴀɢᴇ 𝐖ɪᴛʜ /genvid [motion prompt] - 𝐀ɴɪᴍᴀᴛᴇ 𝐓ʜᴀᴛ 𝐈ᴍᴀɢᴇ.
+- 𝐓ʜᴇ 𝐁ᴏᴛ 𝐀ᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ 𝐑ᴇᴛʀɪᴇs 𝐀ᴄʀᴏss 𝐓ʜᴇ 𝐂ᴏɴғɪɢᴜʀᴇᴅ 𝐕ɪᴅᴇᴏ 𝐁ᴀᴄᴋᴇɴᴅs.
 """
 
 HELP_31 = """
-<b><u>Voice</u></b>
+<b><u>𝐕ᴏɪᴄᴇ</u></b>
 
-- /vcinfo, /vcmembers - show current voice chat participants.
-- /activevc, /activevoice, /vc - list active voice chats.
-- /activev, /activevideo, /avc - list active video chats.
-- /ac, /av - show active voice/video chat counts.
-- /vcnotify [on|off] - send a group alert when someone joins the VC.
-- /voices [text] - guided TTS voice picker.
-- /tts [voice] [text] - direct text-to-speech.
-- /voiceall - export the full voice model list.
-- /autoend [enable|disable] - auto-leave when the voice chat is empty.
-- /botschk - owner checker for monitored bot accounts.
+- /vcinfo, /vcmembers - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛ 𝐏ᴀʀᴛɪᴄɪᴘᴀɴᴛs.
+- /activevc, /activevoice, /vc - 𝐋ɪsᴛ 𝐀ᴄᴛɪᴠᴇ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛs.
+- /activev, /activevideo, /avc - 𝐋ɪsᴛ 𝐀ᴄᴛɪᴠᴇ 𝐕ɪᴅᴇᴏ 𝐂ʜᴀᴛs.
+- /ac, /av - 𝐒ʜᴏᴡ 𝐀ᴄᴛɪᴠᴇ 𝐕ᴏɪᴄᴇ/ᴠɪᴅᴇᴏ 𝐂ʜᴀᴛ 𝐂ᴏᴜɴᴛs.
+- /vcnotify [on|off] - 𝐒ᴇɴᴅ 𝐀 𝐆ʀᴏᴜᴘ 𝐀ʟᴇʀᴛ 𝐖ʜᴇɴ 𝐒ᴏᴍᴇᴏɴᴇ 𝐉ᴏɪɴs 𝐓ʜᴇ 𝐕C.
+- /voices [text] - 𝐆ᴜɪᴅᴇᴅ 𝐓TS 𝐕ᴏɪᴄᴇ 𝐏ɪᴄᴋᴇʀ.
+- /tts [voice] [text] - 𝐃ɪʀᴇᴄᴛ 𝐓ᴇxᴛ-ᴛᴏ-sᴘᴇᴇᴄʜ.
+- /voiceall - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐅ᴜʟʟ 𝐕ᴏɪᴄᴇ 𝐌ᴏᴅᴇʟ 𝐋ɪsᴛ.
+- /autoend [enable|disable] - 𝐀ᴜᴛᴏ-ʟᴇᴀᴠᴇ 𝐖ʜᴇɴ 𝐓ʜᴇ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛ 𝐈s 𝐄ᴍᴘᴛʏ.
+- /botschk - 𝐎ᴡɴᴇʀ 𝐂ʜᴇᴄᴋᴇʀ 𝐅ᴏʀ 𝐌ᴏɴɪᴛᴏʀᴇᴅ 𝐁ᴏᴛ 𝐀ᴄᴄᴏᴜɴᴛs.
 """
 
 HELP_32 = """
-<b><u>Assistant</u></b>
+<b><u>𝐀ssɪsᴛᴀɴᴛ</u></b>
 
-- /assistantjoin, /userbotjoin - invite the assistant account to the chat.
-- /userbotleave - remove the assistant from the current chat.
-- /link, /invitelink [group id] - export invite/details for another group.
-- /leavegroup - make the bot leave the current group.
+- /assistantjoin, /userbotjoin - 𝐈ɴᴠɪᴛᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐀ᴄᴄᴏᴜɴᴛ 𝐓ᴏ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
+- /userbotleave - 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐂ʜᴀᴛ.
+- /link, /invitelink [group id] - 𝐄xᴘᴏʀᴛ 𝐈ɴᴠɪᴛᴇ/ᴅᴇᴛᴀɪʟs 𝐅ᴏʀ 𝐀ɴᴏᴛʜᴇʀ 𝐆ʀᴏᴜᴘ.
+- /leavegroup - 𝐌ᴀᴋᴇ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐋ᴇᴀᴠᴇ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ.
 """
 
 HELP_33 = """
-<b><u>Sudo / Owner</u></b>
+<b><u>𝐒ᴜᴅᴏ / 𝐎ᴡɴᴇʀ</u></b>
 
-- /sudolist, /listsudo, /sudoers - show current sudo users.
-- /addsudo [reply/@user/id] - add a sudo user.
-- /delsudo, /rmsudo [reply/@user/id] - remove a sudo user.
-- /delallsudo - remove every sudo user except the owner.
-- /post - copy a replied message to the configured dump/log chat.
-- /leaveall - dev-only command to make the assistant leave all chats.
+- /sudolist, /listsudo, /sudoers - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴜᴅᴏ 𝐔sᴇʀs.
+- /addsudo [reply/@user/id] - 𝐀ᴅᴅ 𝐀 𝐒ᴜᴅᴏ 𝐔sᴇʀ.
+- /delsudo, /rmsudo [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐒ᴜᴅᴏ 𝐔sᴇʀ.
+- /delallsudo - 𝐑ᴇᴍᴏᴠᴇ 𝐄ᴠᴇʀʏ 𝐒ᴜᴅᴏ 𝐔sᴇʀ 𝐄xᴄᴇᴘᴛ 𝐓ʜᴇ 𝐎ᴡɴᴇʀ.
+- /post - 𝐂ᴏᴘʏ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐓ᴏ 𝐓ʜᴇ 𝐂ᴏɴғɪɢᴜʀᴇᴅ 𝐃ᴜᴍᴘ/ʟᴏɢ 𝐂ʜᴀᴛ.
+- /leaveall - 𝐃ᴇᴠ-ᴏɴʟʏ 𝐂ᴏᴍᴍᴀɴᴅ 𝐓ᴏ 𝐌ᴀᴋᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐋ᴇᴀᴠᴇ 𝐀ʟʟ 𝐂ʜᴀᴛs.
 """
