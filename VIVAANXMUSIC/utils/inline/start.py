@@ -34,23 +34,23 @@ def private_panel(_):
             )
         ],
         [
-            primary_button(
+            danger_button(
                 text=_["S_B_7"],
                 user_id=config.OWNER_ID,
             ),
-            danger_button(
+            primary_button(
                 text=_["S_B_4"],
                 url=config.SUPPORT_CHAT,
             ),
         ],
         [
-            danger_button(
+            primary_button(
                 text=_["S_B_3"],
                 callback_data="open_help",
             ),
         ],
         [
-            primary_button(
+            danger_button(
                 text=_["S_B_2"],
                 url=config.SUPPORT_CHANNEL,
             ),
