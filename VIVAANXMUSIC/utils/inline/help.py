@@ -44,7 +44,7 @@ async def generate_help_buttons(
                         f"HELP AUTOPLAY STATUS ERROR: {error}"
                     )
 
-            status = "🟢 ON" if autoplay_enabled else "🔴 OFF"
+            status = "✓ 𝐎ɴ" if autoplay_enabled else "✗ 𝐎ғғ"
 
             button = success_button(
                 text=f"Aᴜᴛᴏᴘʟᴀʏ {status}",
@@ -101,11 +101,11 @@ async def first_page(
     buttons.append(
         [
             primary_button(
-                text="๏ ᴍᴇɴᴜ ๏",
+                text="☰ 𝐌ᴇɴᴜ",
                 callback_data="back_to_main",
             ),
             success_button(
-                text="๏ ɴᴇxᴛ ๏",
+                text="⟶",
                 callback_data="help_next_2",
             ),
         ]
@@ -129,11 +129,11 @@ async def second_page(
     buttons.append(
         [
             primary_button(
-                text="๏ ʙᴀᴄᴋ ๏",
+                text="⟵",
                 callback_data="help_prev_1",
             ),
             primary_button(
-                text="๏ ᴍᴇɴᴜ ๏",
+                text="☰ 𝐌ᴇɴᴜ",
                 callback_data="back_to_main",
             ),
         ]
