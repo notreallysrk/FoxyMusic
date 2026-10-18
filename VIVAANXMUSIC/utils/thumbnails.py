@@ -6,128 +6,180 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from youtubesearchpython.future import VideosSearch
 from config import YOUTUBE_IMG_URL
 
-# Constants
 CACHE_DIR = "cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
+W, H = 1280, 720
 
-PANEL_W, PANEL_H = 763, 545
-PANEL_X = (1280 - PANEL_W) // 2
-PANEL_Y = 88
-TRANSPARENCY = 170
-INNER_OFFSET = 36
 
-THUMB_W, THUMB_H = 542, 273
-THUMB_X = PANEL_X + (PANEL_W - THUMB_W) // 2
-THUMB_Y = PANEL_Y + INNER_OFFSET
+def _font(size, bold=False):
+    paths = [
+        "VIVAANXMUSIC/assets/thumb/font2.ttf" if bold else "VIVAANXMUSIC/assets/thumb/font.ttf",
+        "VIVAANXMUSIC/assets/thumb/font.ttf",
+    ]
+    for path in paths:
+        try:
+            return ImageFont.truetype(path, size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
 
-TITLE_X = 377
-META_X = 377
-TITLE_Y = THUMB_Y + THUMB_H + 10
-META_Y = TITLE_Y + 45
 
-BAR_X, BAR_Y = 388, META_Y + 45
-BAR_RED_LEN = 280
-BAR_TOTAL_LEN = 480
-
-ICONS_W, ICONS_H = 415, 45
-ICONS_X = PANEL_X + (PANEL_W - ICONS_W) // 2
-ICONS_Y = BAR_Y + 48
-
-MAX_TITLE_WIDTH = 580
-
-def trim_to_width(text: str, font: ImageFont.FreeTypeFont, max_w: int) -> str:
-    ellipsis = "…"
-    if font.getlength(text) <= max_w:
+def _fit(text, font, width):
+    text = str(text or "Unknown")
+    if font.getlength(text) <= width:
         return text
-    for i in range(len(text) - 1, 0, -1):
-        if font.getlength(text[:i] + ellipsis) <= max_w:
-            return text[:i] + ellipsis
-    return ellipsis
+    while text and font.getlength(text + "…") > width:
+        text = text[:-1]
+    return text + "…"
+
+
+def _cover(image, size):
+    image = image.convert("RGB")
+    sw, sh = image.size
+    tw, th = size
+    scale = max(tw / max(sw, 1), th / max(sh, 1))
+    image = image.resize((int(sw * scale), int(sh * scale)), Image.Resampling.LANCZOS)
+    left = (image.width - tw) // 2
+    top = (image.height - th) // 2
+    return image.crop((left, top, left + tw, top + th))
+
+
+def _rounded_paste(canvas, image, xy, radius, border=(255, 255, 255, 150), border_width=2):
+    image = image.convert("RGBA")
+    mask = Image.new("L", image.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, image.width - 1, image.height - 1), radius, fill=255)
+    canvas.paste(image, xy, mask)
+    if border_width:
+        ImageDraw.Draw(canvas).rounded_rectangle((xy[0], xy[1], xy[0] + image.width - 1, xy[1] + image.height - 1), radius, outline=border, width=border_width)
+
+
+async def _download(session, url, fallback):
+    try:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=12)) as resp:
+            if resp.status == 200:
+                raw = await resp.read()
+                from io import BytesIO
+                return Image.open(BytesIO(raw)).convert("RGB")
+    except Exception:
+        pass
+    return fallback.copy().convert("RGB")
+
 
 async def get_thumb(videoid, user_id=None):
-    cache_path = os.path.join(CACHE_DIR, f"{videoid}_v4.png")
+    # Bump cache version so older single-panel thumbnails are regenerated.
+    cache_path = os.path.join(CACHE_DIR, f"{videoid}_v5.png")
     if os.path.exists(cache_path):
         return cache_path
 
-    # YouTube video data fetch
-    results = VideosSearch(f"https://www.youtube.com/watch?v={videoid}", limit=1)
     try:
-        results_data = await results.next()
-        result_items = results_data.get("result", [])
-        if not result_items:
-            raise ValueError("No results found.")
-        data = result_items[0]
-        title = re.sub(r"\W+", " ", data.get("title", "Unsupported Title")).title()
-        thumbnail = data.get("thumbnails", [{}])[0].get("url", YOUTUBE_IMG_URL)
-        duration = data.get("duration")
-        views = data.get("viewCount", {}).get("short", "Unknown Views")
+        response = await VideosSearch(f"https://www.youtube.com/watch?v={videoid}", limit=1).next()
+        results = response.get("result", [])
+        if not results:
+            raise ValueError("No YouTube result")
+        current = results[0]
+        title = current.get("title", "Unknown Song")
+        channel = current.get("channel", {}).get("name", "YouTube Music")
+        thumbnail_url = current.get("thumbnails", [{}])[0].get("url", YOUTUBE_IMG_URL)
+        duration = current.get("duration") or "Live"
+        views = current.get("viewCount", {}).get("short", "Views unavailable")
     except Exception:
-        title, thumbnail, duration, views = "Unsupported Title", YOUTUBE_IMG_URL, None, "Unknown Views"
+        title, channel, thumbnail_url, duration, views = "Unknown Song", "YouTube Music", YOUTUBE_IMG_URL, "Live", "Views unavailable"
 
-    is_live = not duration or str(duration).strip().lower() in {"", "live", "live now"}
-    duration_text = "Live" if is_live else duration or "Unknown Mins"
+    async with aiohttp.ClientSession() as session:
+        main_image = await _download(session, thumbnail_url, Image.new("RGB", (16, 9), (80, 45, 25)))
+        # Find nearby songs for the layered carousel; gracefully fall back if search fails.
+        related = []
+        try:
+            search = await VideosSearch(f"{title} {channel}", limit=7).next()
+            for item in search.get("result", []):
+                vid = item.get("id")
+                if vid and vid != videoid:
+                    related.append({
+                        "title": item.get("title", "Related song"),
+                        "channel": item.get("channel", {}).get("name", "YouTube Music"),
+                        "url": item.get("thumbnails", [{}])[0].get("url", thumbnail_url),
+                    })
+                if len(related) == 4:
+                    break
+        except Exception:
+            pass
+        related_images = []
+        for item in related:
+            related_images.append(await _download(session, item["url"], main_image))
 
-    # Download thumbnail
-    thumb_path = os.path.join(CACHE_DIR, f"thumb{videoid}.png")
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(thumbnail) as resp:
-                if resp.status == 200:
-                    async with aiofiles.open(thumb_path, "wb") as f:
-                        await f.write(await resp.read())
-    except Exception:
-        return YOUTUBE_IMG_URL
-
-    # Create base image
-    base = Image.open(thumb_path).resize((1280, 720)).convert("RGBA")
-    bg = ImageEnhance.Brightness(base.filter(ImageFilter.BoxBlur(10))).enhance(0.6)
-
-    # Frosted glass panel
-    panel_area = bg.crop((PANEL_X, PANEL_Y, PANEL_X + PANEL_W, PANEL_Y + PANEL_H))
-    overlay = Image.new("RGBA", (PANEL_W, PANEL_H), (255, 255, 255, TRANSPARENCY))
-    frosted = Image.alpha_composite(panel_area, overlay)
-    mask = Image.new("L", (PANEL_W, PANEL_H), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, PANEL_W, PANEL_H), 50, fill=255)
-    bg.paste(frosted, (PANEL_X, PANEL_Y), mask)
-
-    # Draw details
+    # Warm blurred background based on the current song artwork.
+    bg = _cover(main_image, (W, H)).filter(ImageFilter.GaussianBlur(30))
+    bg = ImageEnhance.Brightness(bg).enhance(0.48).convert("RGBA")
+    warm = Image.new("RGBA", (W, H), (150, 72, 14, 95))
+    bg = Image.alpha_composite(bg, warm)
+    shade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shade)
+    sd.rectangle((0, 0, W, H), fill=(15, 12, 14, 40))
+    bg = Image.alpha_composite(bg, shade)
     draw = ImageDraw.Draw(bg)
-    try:
-        title_font = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/font2.ttf", 32)
-        regular_font = ImageFont.truetype("VIVAANXMUSIC/assets/thumb/font.ttf", 18)
-    except OSError:
-        title_font = regular_font = ImageFont.load_default()
 
-    thumb = base.resize((THUMB_W, THUMB_H))
-    tmask = Image.new("L", thumb.size, 0)
-    ImageDraw.Draw(tmask).rounded_rectangle((0, 0, THUMB_W, THUMB_H), 20, fill=255)
-    bg.paste(thumb, (THUMB_X, THUMB_Y), tmask)
+    # Five layered song cards, with the currently playing song emphasized in the middle.
+    slots = [
+        (78, 210, 220, 310, 0),
+        (245, 178, 270, 350, 1),
+        (815, 178, 270, 350, 1),
+        (982, 210, 220, 310, 0),
+    ]
+    # Render back cards first so the central card naturally sits on top.
+    for idx, (x, y, cw, ch, _) in enumerate(slots):
+        im = related_images[idx] if idx < len(related_images) else main_image
+        card = Image.new("RGBA", (cw, ch), (25, 25, 29, 205))
+        art_h = int(ch * 0.68)
+        art = _cover(im, (cw - 10, art_h))
+        _rounded_paste(card, art, (5, 5), 16, border=(255, 255, 255, 100), border_width=1)
+        cd = ImageDraw.Draw(card)
+        small = _font(17, True)
+        sub = _font(13)
+        label = related[idx]["title"] if idx < len(related) else "More music"
+        artist = related[idx]["channel"] if idx < len(related) else channel
+        cd.text((12, art_h + 13), _fit(label, small, cw - 24), font=small, fill=(255, 255, 255, 245))
+        cd.text((12, art_h + 40), _fit(artist, sub, cw - 24), font=sub, fill=(218, 218, 228, 230))
+        _rounded_paste(bg, card, (x, y), 22, border=(255, 255, 255, 135), border_width=2)
 
-    draw.text((TITLE_X, TITLE_Y), trim_to_width(title, title_font, MAX_TITLE_WIDTH), fill="black", font=title_font)
-    draw.text((META_X, META_Y), f"YouTube | {views}", fill="black", font=regular_font)
+    # Main featured card.
+    cx, cy, cw, ch = 438, 112, 404, 438
+    card = Image.new("RGBA", (cw, ch), (30, 27, 30, 220))
+    art = _cover(main_image, (cw - 18, 294))
+    _rounded_paste(card, art, (9, 9), 24, border=(255, 255, 255, 170), border_width=1)
+    cd = ImageDraw.Draw(card)
+    title_font, artist_font, meta_font = _font(29, True), _font(22), _font(16)
+    cd.text((24, 317), _fit(title, title_font, cw - 48), font=title_font, fill=(255, 255, 255, 255))
+    cd.text((24, 356), _fit(channel, artist_font, cw - 48), font=artist_font, fill=(220, 220, 232, 255))
+    cd.text((25, 402), f"▶   {_fit(views, meta_font, 170)}   •   {duration}", font=meta_font, fill=(240, 240, 245, 255))
+    _rounded_paste(bg, card, (cx, cy), 30, border=(255, 255, 255, 190), border_width=2)
 
-    # Progress bar
-    draw.line([(BAR_X, BAR_Y), (BAR_X + BAR_RED_LEN, BAR_Y)], fill="red", width=6)
-    draw.line([(BAR_X + BAR_RED_LEN, BAR_Y), (BAR_X + BAR_TOTAL_LEN, BAR_Y)], fill="gray", width=5)
-    draw.ellipse([(BAR_X + BAR_RED_LEN - 7, BAR_Y - 7), (BAR_X + BAR_RED_LEN + 7, BAR_Y + 7)], fill="red")
+    # Bottom translucent playback bar.
+    bar = (54, 574, 1226, 686)
+    draw.rounded_rectangle(bar, radius=55, fill=(20, 18, 23, 165), outline=(255, 255, 255, 145), width=2)
+    icon_font = _font(38, True)
+    draw.text((105, 602), "◀◀", font=_font(29, True), fill="white")
+    draw.text((225, 596), "Ⅱ", font=_font(43, True), fill="white")
+    draw.text((327, 602), "▶▶", font=_font(29, True), fill="white")
 
-    draw.text((BAR_X, BAR_Y + 15), "00:00", fill="black", font=regular_font)
-    end_text = "Live" if is_live else duration_text
-    draw.text((BAR_X + BAR_TOTAL_LEN - (90 if is_live else 60), BAR_Y + 15), end_text, fill="red" if is_live else "black", font=regular_font)
+    # Current-track mini player.
+    mini = (425, 586, 865, 674)
+    draw.rounded_rectangle(mini, radius=23, fill=(8, 8, 12, 205))
+    mini_art = _cover(main_image, (66, 66))
+    _rounded_paste(bg, mini_art, (437, 597), 10, border=(255, 255, 255, 100), border_width=1)
+    draw = ImageDraw.Draw(bg)
+    draw.text((516, 595), _fit(title, _font(19, True), 330), font=_font(19, True), fill="white")
+    draw.text((516, 621), _fit(channel, _font(15), 330), font=_font(15), fill=(215, 215, 225, 255))
+    draw.rounded_rectangle((516, 652, 839, 658), radius=3, fill=(110, 115, 135, 255))
+    draw.rounded_rectangle((516, 652, 650, 658), radius=3, fill=(255, 55, 95, 255))
+    draw.text((898, 607), "◖))", font=_font(28, True), fill="white")
+    draw.text((1000, 607), "☷", font=_font(31, True), fill="white")
+    draw.text((1095, 607), "☏", font=_font(29, True), fill="white")
 
-    # Icons
-    icons_path = "VIVAANXMUSIC/assets/thumb/play_icons.png"
-    if os.path.isfile(icons_path):
-        ic = Image.open(icons_path).resize((ICONS_W, ICONS_H)).convert("RGBA")
-        r, g, b, a = ic.split()
-        black_ic = Image.merge("RGBA", (r.point(lambda *_: 0), g.point(lambda *_: 0), b.point(lambda *_: 0), a))
-        bg.paste(black_ic, (ICONS_X, ICONS_Y), black_ic)
+    # Subtle bot branding footer.
+    brand_font = _font(15, True)
+    brand = "Q U E E N M U S I C B O T"
+    bw = draw.textbbox((0, 0), brand, font=brand_font)[2]
+    draw.text(((W - bw) / 2, 698), brand, font=brand_font, fill=(255, 255, 255, 210))
 
-    # Cleanup and save
-    try:
-        os.remove(thumb_path)
-    except OSError:
-        pass
-
-    bg.save(cache_path)
+    bg.convert("RGB").save(cache_path, quality=94)
     return cache_path
