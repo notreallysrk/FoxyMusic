@@ -6,17 +6,17 @@ from VIVAANXMUSIC.button_styles import primary_button, success_button
 def start_panel(_):
     buttons = [
         [
-            primary_button(
+            success_button(
                 text=_["S_B_1"],
                 url=f"https://t.me/{app.username}?startgroup=true",
             ),
-            success_button(
+            danger_button(
                 text=_["S_B_2"],
                 url=config.SUPPORT_CHANNEL,
             ),
         ],
         [
-            success_button(
+            primary_button(
                 text=_["S_B_4"],
                 url=config.SUPPORT_CHAT,
             ),
@@ -28,29 +28,29 @@ def start_panel(_):
 def private_panel(_):
     buttons = [
         [
-            primary_button(
+            success_button(
                 text=_["S_B_1"],
                 url=f"https://t.me/{app.username}?startgroup=true",
             )
         ],
         [
-            success_button(
+            primary_button(
                 text=_["S_B_7"],
                 user_id=config.OWNER_ID,
             ),
-            success_button(
+            danger_button(
                 text=_["S_B_4"],
                 url=config.SUPPORT_CHAT,
             ),
         ],
         [
-            primary_button(
+            danger_button(
                 text=_["S_B_3"],
                 callback_data="open_help",
             ),
         ],
         [
-            success_button(
+            primary_button(
                 text=_["S_B_2"],
                 url=config.SUPPORT_CHANNEL,
             ),
