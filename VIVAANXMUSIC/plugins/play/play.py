@@ -35,7 +35,7 @@ PLAYLIST_FETCH_LIMIT = int(
     getattr(
         config,
         "PLAYLIST_FETCH_LIMIT",
-        getenv("PLAYLIST_FETCH_LIMIT", str(getattr(config, "QUEUE_LIMIT", 10))),
+        getenv("PLAYLIST_FETCH_LIMIT", str(getattr(config, "QUEUE_LIMIT", 100))),
     )
 )
 
