@@ -23,7 +23,7 @@ opencv-python
 Pillow==12.0.0
 psutil
 
-ntgcalls==2.1.0
+ntgcalls==3.0.3
 py-tgcalls==2.2.11
 
 pycryptodome
