@@ -40,34 +40,46 @@ def git():
     else:
         UPSTREAM_REPO = config.UPSTREAM_REPO
     try:
-        repo = Repo()
-        LOGGER(__name__).info(f"Git Client Found [VPS DEPLOYER]")
-    except GitCommandError:
-        LOGGER(__name__).info(f"Invalid Git Command")
+        # Heroku/container deployments commonly receive a source archive/slug
+        # without the .git directory. Do not initialize a fake repository and
+        # attempt an interactive GitHub fetch during application startup.
+        repo = Repo(search_parent_directories=True)
+        LOGGER(__name__).info("Git repository found; checking upstream updater.")
     except InvalidGitRepositoryError:
-        repo = Repo.init()
-        if "origin" in repo.remotes:
-            origin = repo.remote("origin")
-        else:
-            origin = repo.create_remote("origin", UPSTREAM_REPO)
-        origin.fetch()
-        repo.create_head(
-            config.UPSTREAM_BRANCH,
-            origin.refs[config.UPSTREAM_BRANCH],
+        LOGGER(__name__).warning(
+            "Git updater skipped: this deployment has no .git metadata. "
+            "Deploy updates through your hosting provider instead."
         )
-        repo.heads[config.UPSTREAM_BRANCH].set_tracking_branch(
-            origin.refs[config.UPSTREAM_BRANCH]
-        )
-        repo.heads[config.UPSTREAM_BRANCH].checkout(True)
+        return
+    except GitCommandError as exc:
+        LOGGER(__name__).warning("Git updater skipped due to Git error: %s", exc)
+        return
+
+    try:
+        origin = repo.remote("origin")
+        # Use the configured upstream URL, including the configured token if
+        # supplied, rather than trusting a stale/private URL in the deployment.
+        if origin.url != UPSTREAM_REPO:
+            origin.set_url(UPSTREAM_REPO)
+        origin.fetch(config.UPSTREAM_BRANCH)
+        if config.UPSTREAM_BRANCH not in [head.name for head in repo.heads]:
+            if f"origin/{config.UPSTREAM_BRANCH}" not in [ref.name for ref in repo.refs]:
+                LOGGER(__name__).warning(
+                    "Git updater skipped: upstream branch '%s' was not found.",
+                    config.UPSTREAM_BRANCH,
+                )
+                return
+            repo.create_head(config.UPSTREAM_BRANCH, f"origin/{config.UPSTREAM_BRANCH}")
+        branch = repo.heads[config.UPSTREAM_BRANCH]
+        branch.set_tracking_branch(origin.refs[config.UPSTREAM_BRANCH])
+        branch.checkout(True)
         try:
-            repo.create_remote("origin", config.UPSTREAM_REPO)
-        except BaseException:
-            pass
-        nrs = repo.remote("origin")
-        nrs.fetch(config.UPSTREAM_BRANCH)
-        try:
-            nrs.pull(config.UPSTREAM_BRANCH)
+            branch.pull(config.UPSTREAM_BRANCH)
         except GitCommandError:
             repo.git.reset("--hard", "FETCH_HEAD")
         install_req("pip3 install --no-cache-dir -r requirements.txt")
-        LOGGER(__name__).info(f"Fetching updates from upstream repository...")
+        LOGGER(__name__).info("Fetching updates from upstream repository...")
+    except GitCommandError as exc:
+        LOGGER(__name__).warning(
+            "Git updater could not fetch updates; continuing startup: %s", exc
+        )
