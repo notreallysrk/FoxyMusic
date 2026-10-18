@@ -54,8 +54,8 @@ UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/HinaUpdate")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/HinaSupport")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
