@@ -11,10 +11,10 @@ API_ID = int(getenv("API_ID", 27798659))
 API_HASH = getenv("API_HASH", "26100c77cee02e5e34b2bbee58440f86")
 BOT_TOKEN = getenv("BOT_TOKEN")
 
-OWNER_ID = int(getenv("OWNER_ID", 8088623806))
-OWNER_USERNAME = getenv("OWNER_USERNAME", "ITZZ_ISTKHAR")
-BOT_USERNAME = getenv("BOT_USERNAME", "SukoonXRobot")
-BOT_NAME = getenv("BOT_NAME", "˹𝐕ɪᴠᴀᴀɴ ✘ 𝙼ᴜsɪᴄ˼ ♪")
+OWNER_ID = int(getenv("OWNER_ID", 7948719473))
+OWNER_USERNAME = getenv("OWNER_USERNAME", "ArchonCEO")
+BOT_USERNAME = getenv("BOT_USERNAME", "HinaMusicBot")
+BOT_NAME = getenv("BOT_NAME", "˹ʜɪηᴧ ꭙ мᴜsɪᴄ˼ ♪")
 ASSUSERNAME = getenv("ASSUSERNAME", "Vivaanassistant")
 
 # ── Database & logging ─────────────────────────────────────────────────────────
@@ -54,8 +54,8 @@ UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ll_ROYAL_ABOUT_ll")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/hot_dpz_stor")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
