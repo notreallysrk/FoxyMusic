@@ -968,9 +968,9 @@ async def manage_callback(
         # ----------------------------------------------
 
         await callback.answer(
-            "🟢 AUTO PLAY ON"
+            "✓ 𝐀ᴜᴛᴏ𝐏ʟᴀʏ 𝐎ɴ"
             if not current
-            else "🔴 AUTO PLAY OFF",
+            else "✗ 𝐀ᴜᴛᴏ𝐏ʟᴀʏ 𝐎ғғ",
             show_alert=False,
         )
 
