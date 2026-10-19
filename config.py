@@ -13,9 +13,9 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 
 OWNER_ID = int(getenv("OWNER_ID", 7948719473))
 OWNER_USERNAME = getenv("OWNER_USERNAME", "ArchonCEO")
-BOT_USERNAME = getenv("BOT_USERNAME", "HinaMusicBot")
+BOT_USERNAME = getenv("BOT_USERNAME", "KavyaMusicBot")
 BOT_NAME = getenv("BOT_NAME", "˹ʜɪηᴧ ꭙ мᴜsɪᴄ˼ ♪")
-ASSUSERNAME = getenv("ASSUSERNAME", "Vivaanassistant")
+ASSUSERNAME = getenv("ASSUSERNAME", "KavyaAssistant")
 
 # ── Database & logging ─────────────────────────────────────────────────────────
 MONGO_DB_URI = getenv("MONGO_DB_URI")
@@ -49,13 +49,13 @@ HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 # ── Git / updates ──────────────────────────────────────────────────────────────
-UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/notreallysrk/QueenMusicBot")
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/notreallysrk/Kavya")
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/HinaUpdate")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/HinaSupport")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = True
