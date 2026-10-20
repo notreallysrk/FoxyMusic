@@ -58,7 +58,7 @@ SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
-AUTO_LEAVING_ASSISTANT = True
+AUTO_LEAVING_ASSISTANT = False
 AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "30000"))
 
 # ── Debug ──────────────────────────────────────────────────────────────────────
