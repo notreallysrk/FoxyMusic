@@ -53,6 +53,7 @@ from VIVAANXMUSIC.utils.autoplay import (
     fetch_autoplay_track,
     remember_played,
 )
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 autoend = {}
 counter = {}
@@ -856,7 +857,7 @@ class Call:
                     return await app.send_message(original_chat_id, text=_["call_6"])
                 self._schedule_playback_watchdog(client, chat_id)
                 button = stream_markup(_, chat_id)
-                run = await app.send_photo(chat_id=original_chat_id, photo=config.STREAM_IMG_URL, caption=_["stream_2"].format(user), reply_markup=InlineKeyboardMarkup(button))
+                run = await rich_call(app.send_photo, chat_id=original_chat_id, photo=config.STREAM_IMG_URL, caption=_["stream_2"].format(user), reply_markup=InlineKeyboardMarkup(button))
                 current["mystic"] = run
                 remember_player_message(chat_id, run)
                 current["markup"] = "tg"
@@ -882,13 +883,13 @@ class Call:
                 self._schedule_playback_watchdog(client, chat_id)
                 if videoid == "telegram":
                     button = stream_markup(_, chat_id)
-                    run = await app.send_photo(chat_id=original_chat_id, photo=config.TELEGRAM_AUDIO_URL if str(streamtype) == "audio" else config.TELEGRAM_VIDEO_URL, caption=_["stream_1"].format(config.SUPPORT_CHAT, title[:23], current.get("dur"), user), reply_markup=InlineKeyboardMarkup(button))
+                    run = await rich_call(app.send_photo, chat_id=original_chat_id, photo=config.TELEGRAM_AUDIO_URL if str(streamtype) == "audio" else config.TELEGRAM_VIDEO_URL, caption=_["stream_1"].format(config.SUPPORT_CHAT, title[:23], current.get("dur"), user), reply_markup=InlineKeyboardMarkup(button))
                     current["mystic"] = run
                     remember_player_message(chat_id, run)
                     current["markup"] = "tg"
                 elif videoid == "soundcloud":
                     button = stream_markup(_, chat_id)
-                    run = await app.send_photo(chat_id=original_chat_id, photo=config.SOUNCLOUD_IMG_URL, caption=_["stream_1"].format(config.SUPPORT_CHAT, title[:23], current.get("dur"), user), reply_markup=InlineKeyboardMarkup(button))
+                    run = await rich_call(app.send_photo, chat_id=original_chat_id, photo=config.SOUNCLOUD_IMG_URL, caption=_["stream_1"].format(config.SUPPORT_CHAT, title[:23], current.get("dur"), user), reply_markup=InlineKeyboardMarkup(button))
                     current["mystic"] = run
                     remember_player_message(chat_id, run)
                     current["markup"] = "tg"
