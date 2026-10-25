@@ -24,6 +24,7 @@ from VIVAANXMUSIC.utils.database import (
     is_maintenance,
 )
 from VIVAANXMUSIC.utils.inline import botplaylist_markup
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 # Cache for invite links per chat
 links = {}
@@ -45,11 +46,11 @@ def PlayWrapper(command):
                     ]
                 ]
             )
-            return await message.reply_text(_["general_3"], reply_markup=upl)
+            return await rich_call(message.reply_text, _["general_3"], reply_markup=upl)
 
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
-                return await message.reply_text(
+                return await rich_call(message.reply_text,
                     text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
                     disable_web_page_preview=True,
                 )
@@ -76,7 +77,7 @@ def PlayWrapper(command):
                 if "stream" in message.command:
                     return await message.reply_text(_["str_1"])
                 buttons = botplaylist_markup(_)
-                return await message.reply_photo(
+                return await rich_call(message.reply_photo,
                     photo=PLAYLIST_IMG_URL,
                     caption=_["play_18"],
                     reply_markup=InlineKeyboardMarkup(buttons),
@@ -131,7 +132,7 @@ def PlayWrapper(command):
                     ChatMemberStatus.BANNED,
                     ChatMemberStatus.RESTRICTED,
                 ):
-                    return await message.reply_text(
+                    return await rich_call(message.reply_text,
                         _["call_2"].format(
                             app.mention, userbot.id, userbot.name, userbot.username
                         ),
@@ -203,7 +204,7 @@ def PlayWrapper(command):
                             _["call_3"].format(app.mention, type(e).__name__)
                         )
                     await asyncio.sleep(3)
-                    await myu.edit(_["call_5"].format(app.mention))
+                    await rich_call(myu.edit, _["call_5"].format(app.mention))
                 except UserAlreadyParticipant:
                     pass
                 except Exception as e:
