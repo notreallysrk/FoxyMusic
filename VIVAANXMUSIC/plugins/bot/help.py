@@ -41,30 +41,34 @@ async def edit_help_message(
 
     try:
         if message.photo or message.video or message.document:
-            await message.edit_caption(
+            await rich_call(
+                message.edit_caption,
                 caption=caption,
                 reply_markup=keyboard,
             )
         else:
-            await message.edit_text(
+            await rich_call(
+                message.edit_text,
                 text=caption,
                 reply_markup=keyboard,
-                disable_web_page_preview=True,
             )
 
     except Exception as error:
+        # Telegram returns MESSAGE_NOT_MODIFIED when the requested view is already shown.
+        # This is harmless and should not be reported as a UI failure.
+        if "MESSAGE_NOT_MODIFIED" in str(error).upper():
+            return
         print(f"HELP MESSAGE EDIT ERROR: {error}")
 
-        # Agar same caption/text already hai,
-        # sirf keyboard update karne ki koshish karo.
+        # If the body edit failed for another reason, try updating only the buttons.
         try:
-            await message.edit_reply_markup(
+            await rich_call(
+                message.edit_reply_markup,
                 reply_markup=keyboard,
             )
         except Exception as markup_error:
-            print(
-                f"HELP MARKUP EDIT ERROR: {markup_error}"
-            )
+            if "MESSAGE_NOT_MODIFIED" not in str(markup_error).upper():
+                print(f"HELP MARKUP EDIT ERROR: {markup_error}")
 
 
 @app.on_message(
@@ -485,12 +489,10 @@ async def back_to_main_cb(
         )
 
     except Exception:
-        await callback_query.message.edit_text(
+        await rich_call(
+            callback_query.message.edit_text,
             text=caption,
-            reply_markup=InlineKeyboardMarkup(
-                out
-            ),
-            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(out),
         )
 
     await callback_query.answer()

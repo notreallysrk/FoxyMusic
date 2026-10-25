@@ -43,6 +43,26 @@ async def _send_start_message(
     return await rich_call(message.reply_video, media, caption=caption, reply_markup=markup)
 
 
+async def _reply_photo_or_text(message, photo, caption, reply_markup):
+    """Send the start UI with a photo when Telegram can fetch it; otherwise keep the UI usable."""
+    try:
+        return await rich_call(
+            message.reply_photo,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+        )
+    except Exception as error:
+        print(f"START PHOTO SEND FAILED; FALLING BACK TO TEXT: {error}")
+        # A text fallback avoids losing the /start/help UI when a remote image URL expires
+        # or Telegram's servers cannot fetch it.
+        return await rich_call(
+            message.reply_text,
+            text=caption,
+            reply_markup=reply_markup,
+        )
+
+
 async def delete_sticker_after_delay(message: Message, delay: int) -> None:
     await asyncio.sleep(delay)
     try:
@@ -65,10 +85,11 @@ async def start_pm(client, message: Message, _):
         if name.startswith("help"):
             keyboard = first_page(_)
 
-            return await message.reply_photo(
-                photo=HELP_IMG_URL,
-                caption=_["help_1"].format(config.SUPPORT_CHAT),
-                reply_markup=keyboard,
+            return await _reply_photo_or_text(
+                message,
+                HELP_IMG_URL,
+                _["help_1"].format(config.SUPPORT_CHAT),
+                keyboard,
             )
 
         if name.startswith("sud"):
@@ -196,10 +217,11 @@ async def start_pm(client, message: Message, _):
         stats_coro,
     )
 
-    # START IMAGE
-    await message.reply_photo(
-        photo=random.choice(START_VIDS),
-        caption=random.choice(AYUV).format(
+    # START IMAGE (with text fallback if Telegram cannot fetch the remote image)
+    await _reply_photo_or_text(
+        message,
+        random.choice(START_VIDS),
+        random.choice(AYUV).format(
             message.from_user.mention,
             app.mention,
             UP,
@@ -209,7 +231,7 @@ async def start_pm(client, message: Message, _):
             len(served_users),
             len(served_chats),
         ),
-        reply_markup=InlineKeyboardMarkup(out),
+        InlineKeyboardMarkup(out),
     )
 
     if await is_on_off(2):
@@ -238,13 +260,14 @@ async def start_gp(client, message: Message, _):
     uptime = int(time.time() - _boot_)
 
     try:
-        await message.reply_photo(
-            photo=random.choice(START_VIDS),
-            caption=_["start_1"].format(
+        await _reply_photo_or_text(
+            message,
+            random.choice(START_VIDS),
+            _["start_1"].format(
                 app.mention,
                 get_readable_time(uptime),
             ),
-            reply_markup=InlineKeyboardMarkup(out),
+            InlineKeyboardMarkup(out),
         )
 
     except Exception as ex:
@@ -286,15 +309,16 @@ async def welcome(client, message: Message):
                 out = start_panel(_)
 
                 # BOT ADD HONE PAR IMAGE
-                await message.reply_photo(
-                    photo=random.choice(START_VIDS),
-                    caption=_["start_3"].format(
+                await _reply_photo_or_text(
+                    message,
+                    random.choice(START_VIDS),
+                    _["start_3"].format(
                         message.from_user.mention,
                         app.mention,
                         message.chat.title,
                         app.mention,
                     ),
-                    reply_markup=InlineKeyboardMarkup(out),
+                    InlineKeyboardMarkup(out),
                 )
 
                 await add_served_chat(message.chat.id)
