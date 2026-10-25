@@ -25,6 +25,7 @@ from VIVAANXMUSIC.utils.stream.queue import (
     put_queue_index,
 )
 from VIVAANXMUSIC.utils.errors import capture_internal_err
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 # =========================================================
@@ -509,7 +510,7 @@ async def stream(
         if final_position < 0:
             final_position = 0
 
-        return await app.send_photo(
+        return await rich_call(app.send_photo, 
             original_chat_id,
             photo=playlist_photo,
             caption=_[
@@ -645,7 +646,7 @@ async def stream(
                 chat_id,
             )
 
-            await app.send_message(
+            await rich_call(app.send_message, 
                 chat_id=original_chat_id,
                 text=_[
                     "queue_4"
@@ -793,7 +794,7 @@ async def stream(
                 chat_id,
             )
 
-            await app.send_message(
+            await rich_call(app.send_message, 
                 chat_id=original_chat_id,
                 text=_[
                     "queue_4"
@@ -838,7 +839,7 @@ async def stream(
                 chat_id,
             )
 
-            run = await app.send_photo(
+            run = await rich_call(app.send_photo, 
                 original_chat_id,
                 photo=config.SOUNCLOUD_IMG_URL,
                 caption=_[
@@ -924,7 +925,7 @@ async def stream(
                 chat_id,
             )
 
-            await app.send_message(
+            await rich_call(app.send_message, 
                 chat_id=original_chat_id,
                 text=_[
                     "queue_4"
@@ -978,7 +979,7 @@ async def stream(
                 chat_id,
             )
 
-            run = await app.send_photo(
+            run = await rich_call(app.send_photo, 
                 original_chat_id,
                 photo=(
                     config.TELEGRAM_VIDEO_URL
@@ -1065,7 +1066,7 @@ async def stream(
                 chat_id,
             )
 
-            await app.send_message(
+            await rich_call(app.send_message, 
                 chat_id=original_chat_id,
                 text=_[
                     "queue_4"
@@ -1208,7 +1209,7 @@ async def stream(
                 chat_id,
             )
 
-            await mystic.edit_text(
+            await rich_call(mystic.edit_text, 
                 text=_[
                     "queue_4"
                 ].format(
@@ -1255,7 +1256,7 @@ async def stream(
                 chat_id,
             )
 
-            run = await app.send_photo(
+            run = await rich_call(app.send_photo, 
                 original_chat_id,
                 photo=config.STREAM_IMG_URL,
                 caption=_[
