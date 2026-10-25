@@ -40,18 +40,13 @@ async def edit_help_message(
     message = callback_query.message
 
     try:
-        if message.photo or message.video or message.document:
-            await rich_call(
-                message.edit_caption,
-                caption=caption,
-                reply_markup=keyboard,
-            )
-        else:
-            await rich_call(
-                message.edit_text,
-                text=caption,
-                reply_markup=keyboard,
-            )
+        # Always use Rich editing: rich messages may not expose .photo/.video
+        # through the legacy Message shortcuts.
+        await rich_call(
+            message.edit_text,
+            text=caption,
+            reply_markup=keyboard,
+        )
 
     except Exception as error:
         # Telegram returns MESSAGE_NOT_MODIFIED when the requested view is already shown.
@@ -183,14 +178,12 @@ async def helper_cb(
     current_page = int(match.group(2))
 
     if number == 1:
-        await rich_call(callback_query.edit_message_text, 
+        await edit_help_message(
+            callback_query,
             _["S_B_M"],
-            reply_markup=action_sub_menu(
-                _,
-                current_page,
-            ),
-            disable_web_page_preview=True,
+            action_sub_menu(_, current_page),
         )
+        await callback_query.answer()
         return
 
     help_text = getattr(
@@ -206,14 +199,12 @@ async def helper_cb(
         )
         return
 
-    await rich_call(callback_query.edit_message_text, 
+    await edit_help_message(
+        callback_query,
         help_text,
-        reply_markup=help_back_markup(
-            _,
-            current_page,
-        ),
-        disable_web_page_preview=True,
+        help_back_markup(_, current_page),
     )
+    await callback_query.answer()
 
 
 # =====================================================
@@ -249,7 +240,8 @@ async def toggle_autoplay_cb(
             chat_id,
         )
 
-        await callback_query.message.edit_reply_markup(
+        await rich_call(
+            callback_query.message.edit_reply_markup,
             reply_markup=keyboard,
         )
 
@@ -433,14 +425,8 @@ async def action_prom_cb(
     callback_query: types.CallbackQuery,
     _,
 ):
-    await rich_call(callback_query.edit_message_text, 
-        helpers.HELP_1_PROMO,
-        reply_markup=help_back_markup(
-            _,
-            1,
-        ),
-        disable_web_page_preview=True,
-    )
+    await edit_help_message(callback_query, helpers.HELP_1_PROMO, help_back_markup(_, 1))
+    await callback_query.answer()
 
 
 @app.on_callback_query(
@@ -453,14 +439,8 @@ async def action_pun_cb(
     callback_query: types.CallbackQuery,
     _,
 ):
-    await rich_call(callback_query.edit_message_text, 
-        helpers.HELP_1_PUNISH,
-        reply_markup=help_back_markup(
-            _,
-            1,
-        ),
-        disable_web_page_preview=True,
-    )
+    await edit_help_message(callback_query, helpers.HELP_1_PUNISH, help_back_markup(_, 1))
+    await callback_query.answer()
 
 
 @app.on_callback_query(
@@ -481,18 +461,13 @@ async def back_to_main_cb(
     )
 
     try:
-        await callback_query.message.edit_caption(
-            caption=caption,
-            reply_markup=InlineKeyboardMarkup(
-                out
-            ),
-        )
-
-    except Exception:
         await rich_call(
             callback_query.message.edit_text,
             text=caption,
             reply_markup=InlineKeyboardMarkup(out),
         )
+    except Exception as error:
+        if "MESSAGE_NOT_MODIFIED" not in str(error).upper():
+            print(f"HELP BACK TO MAIN ERROR: {error}")
 
     await callback_query.answer()
