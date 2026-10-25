@@ -1,346 +1,346 @@
 HELP_1_PROMO = """
-<b><u>𝐏ʀᴏᴍᴏᴛɪᴏɴ / 𝐃ᴇᴍᴏᴛɪᴏɴ</u></b>
+<b><u>Pʀᴏᴍᴏᴛɪᴏɴ / Dᴇᴍᴏᴛɪᴏɴ</u></b>
 
-- /promote [reply/@user/id] - 𝐆ʀᴀɴᴛ 𝐋ɪᴍɪᴛᴇᴅ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
-- /fullpromote [reply/@user/id] - 𝐆ʀᴀɴᴛ 𝐅ᴜʟʟ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
-- /demote [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
-- /tempadmin [reply/@user/id] [time] - 𝐆ʀᴀɴᴛ 𝐓ᴇᴍᴘᴏʀᴀʀʏ 𝐀ᴅᴍɪɴ 𝐑ɪɢʜᴛs.
+- /promote [reply/@user/id] - Gʀᴀɴᴛ Lɪᴍɪᴛᴇᴅ Aᴅᴍɪɴ Rɪɢʜᴛs.
+- /fullpromote [reply/@user/id] - Gʀᴀɴᴛ Fᴜʟʟ Aᴅᴍɪɴ Rɪɢʜᴛs.
+- /demote [reply/@user/id] - Rᴇᴍᴏᴠᴇ Aᴅᴍɪɴ Rɪɢʜᴛs.
+- /tempadmin [reply/@user/id] [time] - Gʀᴀɴᴛ Tᴇᴍᴘᴏʀᴀʀʏ Aᴅᴍɪɴ Rɪɢʜᴛs.
 """
 
 HELP_1_PUNISH = """
-<b><u>𝐏ᴜɴɪsʜᴍᴇɴᴛ / 𝐏ᴏʟɪᴄɪɴɢ</u></b>
+<b><u>Pᴜɴɪsʜᴍᴇɴᴛ / Pᴏʟɪᴄɪɴɢ</u></b>
 
-- /ban [reply/@user/id] - 𝐁ᴀɴ 𝐀 𝐔sᴇʀ 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
-- /unban [reply/@user/id] - 𝐔ɴʙᴀɴ 𝐀 𝐔sᴇʀ.
-- /kick [reply/@user/id] - 𝐊ɪᴄᴋ 𝐀 𝐔sᴇʀ.
-- /kickme - 𝐋ᴇᴀᴠᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐘ᴏᴜʀsᴇʟғ.
-- /mute [reply/@user/id] - 𝐌ᴜᴛᴇ 𝐀 𝐔sᴇʀ.
-- /tmute [reply/@user/id] [time] - 𝐌ᴜᴛᴇ 𝐅ᴏʀ 𝐀 𝐋ɪᴍɪᴛᴇᴅ 𝐓ɪᴍᴇ.
-- /unmute [reply/@user/id] - 𝐔ɴᴍᴜᴛᴇ 𝐀 𝐔sᴇʀ.
-- /tban [reply/@user/id] [time] - 𝐁ᴀɴ 𝐅ᴏʀ 𝐀 𝐋ɪᴍɪᴛᴇᴅ 𝐓ɪᴍᴇ.
-- /sban [reply/@user/id] - 𝐒ɪʟᴇɴᴛ 𝐁ᴀɴ.
-- /dban [reply only] - 𝐃ᴇʟᴇᴛᴇ 𝐓ʜᴇ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐀ɴᴅ 𝐁ᴀɴ 𝐓ʜᴇ 𝐒ᴇɴᴅᴇʀ.
+- /ban [reply/@user/id] - Bᴀɴ A Usᴇʀ Fʀᴏᴍ Tʜᴇ Gʀᴏᴜᴘ.
+- /unban [reply/@user/id] - Uɴʙᴀɴ A Usᴇʀ.
+- /kick [reply/@user/id] - Kɪᴄᴋ A Usᴇʀ.
+- /kickme - Lᴇᴀᴠᴇ Tʜᴇ Gʀᴏᴜᴘ Yᴏᴜʀsᴇʟғ.
+- /mute [reply/@user/id] - Mᴜᴛᴇ A Usᴇʀ.
+- /tmute [reply/@user/id] [time] - Mᴜᴛᴇ Fᴏʀ A Lɪᴍɪᴛᴇᴅ Tɪᴍᴇ.
+- /unmute [reply/@user/id] - Uɴᴍᴜᴛᴇ A Usᴇʀ.
+- /tban [reply/@user/id] [time] - Bᴀɴ Fᴏʀ A Lɪᴍɪᴛᴇᴅ Tɪᴍᴇ.
+- /sban [reply/@user/id] - Sɪʟᴇɴᴛ Bᴀɴ.
+- /dban [reply only] - Dᴇʟᴇᴛᴇ Tʜᴇ Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ Aɴᴅ Bᴀɴ Tʜᴇ Sᴇɴᴅᴇʀ.
 """
 
 HELP_2 = """
-<b><u>𝐀ᴅᴍɪɴ 𝐂ᴏɴᴛʀᴏʟ</u></b>
-𝐂ᴏʀᴇ 𝐈ɴ-ᴄᴀʟʟ 𝐂ᴏɴᴛʀᴏʟs 𝐅ᴏʀ 𝐆ʀᴏᴜᴘ 𝐀ᴅᴍɪɴs. 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐕ᴀʀɪᴀɴᴛs 𝐔sᴇ 𝐓ʜᴇ 𝐒ᴀᴍᴇ 𝐂ᴏᴍᴍᴀɴᴅ 𝐖ɪᴛʜ 𝐀 <code>c</code> 𝐏ʀᴇғɪx 𝐖ʜᴇʀᴇ 𝐀ᴠᴀɪʟᴀʙʟᴇ.
+<b><u>Aᴅᴍɪɴ Cᴏɴᴛʀᴏʟ</u></b>
+Cᴏʀᴇ Iɴ-Cᴀʟʟ Cᴏɴᴛʀᴏʟs Fᴏʀ Gʀᴏᴜᴘ Aᴅᴍɪɴs. Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Vᴀʀɪᴀɴᴛs Usᴇ Tʜᴇ Sᴀᴍᴇ Cᴏᴍᴍᴀɴᴅ Wɪᴛʜ A <code>c</code> Pʀᴇғɪx Wʜᴇʀᴇ Aᴠᴀɪʟᴀʙʟᴇ.
 
-- /pause, /cpause - 𝐏ᴀᴜsᴇ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
-- /resume, /cresume - 𝐑ᴇsᴜᴍᴇ 𝐓ʜᴇ 𝐏ᴀᴜsᴇᴅ 𝐒ᴛʀᴇᴀᴍ.
-- /skip, /cskip, /next, /cnext - 𝐒ᴋɪᴘ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐓ʀᴀᴄᴋ.
-- /end - 𝐒ᴛᴏᴘ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐀ɴᴅ 𝐂ʟᴇᴀʀ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ.
-- /player, /cplayer, /playing, /cplaying - 𝐎ᴘᴇɴ 𝐓ʜᴇ 𝐏ʟᴀʏᴇʀ 𝐎ʀ 𝐕ɪᴇᴡ 𝐍ᴏᴡ 𝐏ʟᴀʏɪɴɢ 𝐈ɴғᴏ.
-- /queue, /cqueue - 𝐒ʜᴏᴡ 𝐐ᴜᴇᴜᴇᴅ 𝐓ʀᴀᴄᴋs.
-- /reload, /refresh, /admincache - 𝐑ᴇʙᴜɪʟᴅ 𝐀ᴅᴍɪɴ 𝐂ᴀᴄʜᴇ.
-- /reboot - 𝐑ᴇsᴇᴛ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐀ɴᴅ 𝐂ᴜʀʀᴇɴᴛ 𝐕C 𝐒ᴇssɪᴏɴ 𝐅ᴏʀ 𝐓ʜɪs 𝐂ʜᴀᴛ.
+- /pause, /cpause - Pᴀᴜsᴇ Tʜᴇ Cᴜʀʀᴇɴᴛ Sᴛʀᴇᴀᴍ.
+- /resume, /cresume - Rᴇsᴜᴍᴇ Tʜᴇ Pᴀᴜsᴇᴅ Sᴛʀᴇᴀᴍ.
+- /skip, /cskip, /next, /cnext - Sᴋɪᴘ Tʜᴇ Cᴜʀʀᴇɴᴛ Tʀᴀᴄᴋ.
+- /end - Sᴛᴏᴘ Pʟᴀʏʙᴀᴄᴋ Aɴᴅ Cʟᴇᴀʀ Tʜᴇ Qᴜᴇᴜᴇ.
+- /player, /cplayer, /playing, /cplaying - Oᴘᴇɴ Tʜᴇ Pʟᴀʏᴇʀ Oʀ Vɪᴇᴡ Nᴏᴡ Pʟᴀʏɪɴɢ Iɴғᴏ.
+- /queue, /cqueue - Sʜᴏᴡ Qᴜᴇᴜᴇᴅ Tʀᴀᴄᴋs.
+- /reload, /refresh, /admincache - Rᴇʙᴜɪʟᴅ Aᴅᴍɪɴ Cᴀᴄʜᴇ.
+- /reboot - Rᴇsᴇᴛ Tʜᴇ Assɪsᴛᴀɴᴛ Aɴᴅ Cᴜʀʀᴇɴᴛ VC Sᴇssɪᴏɴ Fᴏʀ Tʜɪs Cʜᴀᴛ.
 """
 
 HELP_3 = """
-<b><u>𝐀ᴜᴛʜ 𝐔sᴇʀs</u></b>
+<b><u>Aᴜᴛʜ Usᴇʀs</u></b>
 
-- /auth [reply/@user/id] - 𝐀ᴜᴛʜᴏʀɪᴢᴇ 𝐀 𝐔sᴇʀ 𝐅ᴏʀ 𝐀ᴅᴍɪɴ 𝐏ʟᴀʏ 𝐂ᴏɴᴛʀᴏʟs.
-- /unauth [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ɴ 𝐀ᴜᴛʜᴏʀɪᴢᴇᴅ 𝐔sᴇʀ.
-- /authlist, /authusers - 𝐋ɪsᴛ 𝐀ᴜᴛʜᴏʀɪᴢᴇᴅ 𝐔sᴇʀs 𝐈ɴ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
+- /auth [reply/@user/id] - Aᴜᴛʜᴏʀɪᴢᴇ A Usᴇʀ Fᴏʀ Aᴅᴍɪɴ Pʟᴀʏ Cᴏɴᴛʀᴏʟs.
+- /unauth [reply/@user/id] - Rᴇᴍᴏᴠᴇ Aɴ Aᴜᴛʜᴏʀɪᴢᴇᴅ Usᴇʀ.
+- /authlist, /authusers - Lɪsᴛ Aᴜᴛʜᴏʀɪᴢᴇᴅ Usᴇʀs Iɴ Tʜᴇ Cʜᴀᴛ.
 """
 
 HELP_4 = """
-<b><u>𝐁ʟᴀᴄᴋʟɪsᴛ 𝐂ʜᴀᴛ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
+<b><u>Bʟᴀᴄᴋʟɪsᴛ Cʜᴀᴛ</u></b> <i>(Sᴜᴅᴏ)</i>
 
-- /blchat, /blacklistchat [chat id] - 𝐁ʟᴀᴄᴋʟɪsᴛ 𝐀 𝐂ʜᴀᴛ 𝐅ʀᴏᴍ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐁ᴏᴛ.
-- /whitelistchat, /unblacklistchat, /unblchat [chat id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐁ʟᴀᴄᴋʟɪsᴛᴇᴅ 𝐂ʜᴀᴛ.
-- /blchats, /blacklistedchats - 𝐋ɪsᴛ 𝐁ʟᴀᴄᴋʟɪsᴛᴇᴅ 𝐂ʜᴀᴛs.
+- /blchat, /blacklistchat [chat id] - Bʟᴀᴄᴋʟɪsᴛ A Cʜᴀᴛ Fʀᴏᴍ Usɪɴɢ Tʜᴇ Bᴏᴛ.
+- /whitelistchat, /unblacklistchat, /unblchat [chat id] - Rᴇᴍᴏᴠᴇ A Bʟᴀᴄᴋʟɪsᴛᴇᴅ Cʜᴀᴛ.
+- /blchats, /blacklistedchats - Lɪsᴛ Bʟᴀᴄᴋʟɪsᴛᴇᴅ Cʜᴀᴛs.
 """
 
 HELP_5 = """
-<b><u>𝐁ʟᴏᴄᴋ 𝐔sᴇʀs</u></b> <i>(𝐒ᴜᴅᴏ)</i>
+<b><u>Bʟᴏᴄᴋ Usᴇʀs</u></b> <i>(Sᴜᴅᴏ)</i>
 
-- /block [reply/@user/id] - 𝐁ʟᴏᴄᴋ 𝐀 𝐔sᴇʀ 𝐅ʀᴏᴍ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐁ᴏᴛ.
-- /unblock [reply/@user/id] - 𝐔ɴʙʟᴏᴄᴋ 𝐀 𝐔sᴇʀ.
-- /blocked, /blockedusers, /blusers - 𝐋ɪsᴛ 𝐁ʟᴏᴄᴋᴇᴅ 𝐔sᴇʀs.
+- /block [reply/@user/id] - Bʟᴏᴄᴋ A Usᴇʀ Fʀᴏᴍ Usɪɴɢ Tʜᴇ Bᴏᴛ.
+- /unblock [reply/@user/id] - Uɴʙʟᴏᴄᴋ A Usᴇʀ.
+- /blocked, /blockedusers, /blusers - Lɪsᴛ Bʟᴏᴄᴋᴇᴅ Usᴇʀs.
 """
 
 HELP_6 = """
-<b><u>𝐂ʜᴀɴɴᴇʟ 𝐏ʟᴀʏ</u></b>
-𝐔sᴇ 𝐓ʜᴇsᴇ 𝐖ʜᴇɴ 𝐀 𝐋ɪɴᴋᴇᴅ 𝐂ʜᴀɴɴᴇʟ 𝐈s 𝐀ᴛᴛᴀᴄʜᴇᴅ 𝐓ᴏ 𝐀 𝐆ʀᴏᴜᴘ.
+<b><u>Cʜᴀɴɴᴇʟ Pʟᴀʏ</u></b>
+Usᴇ Tʜᴇsᴇ Wʜᴇɴ A Lɪɴᴋᴇᴅ Cʜᴀɴɴᴇʟ Is Aᴛᴛᴀᴄʜᴇᴅ Tᴏ A Gʀᴏᴜᴘ.
 
-- /channelplay [chat username/id] or /channelplay disable - 𝐋ɪɴᴋ 𝐎ʀ 𝐔ɴʟɪɴᴋ 𝐀 𝐂ʜᴀɴɴᴇʟ.
-- /cplay, /cvplay - 𝐏ʟᴀʏ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐈ɴ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐌ᴏᴅᴇ.
-- /cplayforce, /cvplayforce - 𝐅ᴏʀᴄᴇ-ᴘʟᴀʏ 𝐈ɴ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐌ᴏᴅᴇ.
-- /cqueue, /cplayer, /cplaying - 𝐈ɴsᴘᴇᴄᴛ 𝐓ʜᴇ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐐ᴜᴇᴜᴇ 𝐎ʀ 𝐏ʟᴀʏᴇʀ.
+- /channelplay [chat username/id] or /channelplay disable - Lɪɴᴋ Oʀ Uɴʟɪɴᴋ A Cʜᴀɴɴᴇʟ.
+- /cplay, /cvplay - Pʟᴀʏ Aᴜᴅɪᴏ Oʀ Vɪᴅᴇᴏ Iɴ Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Mᴏᴅᴇ.
+- /cplayforce, /cvplayforce - Fᴏʀᴄᴇ-Pʟᴀʏ Iɴ Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Mᴏᴅᴇ.
+- /cqueue, /cplayer, /cplaying - Iɴsᴘᴇᴄᴛ Tʜᴇ Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Qᴜᴇᴜᴇ Oʀ Pʟᴀʏᴇʀ.
 """
 
 HELP_7 = """
-<b><u>𝐄xᴛʀᴀ 𝐓ᴏᴏʟs</u></b>
+<b><u>Exᴛʀᴀ Tᴏᴏʟs</u></b>
 
-- /tgm, /tgt, /telegraph - 𝐔ᴘʟᴏᴀᴅ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐓ᴏ 𝐓ᴇʟᴇɢʀᴀᴘʜ.
-- /tr - 𝐓ʀᴀɴsʟᴀᴛᴇ 𝐓ᴇxᴛ 𝐎ʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ.
-- /short, /unshort - 𝐒ʜᴏʀᴛᴇɴ 𝐎ʀ 𝐄xᴘᴀɴᴅ 𝐀 𝐔RL.
-- /speedtest, /spt - 𝐑ᴜɴ 𝐀 𝐍ᴇᴛᴡᴏʀᴋ 𝐒ᴘᴇᴇᴅ 𝐓ᴇsᴛ.
-- /webdl [url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐖ᴇʙsɪᴛᴇ 𝐒ɴᴀᴘsʜᴏᴛ/ᴀʀᴄʜɪᴠᴇ.
-- /bug [text or reply] - 𝐒ᴇɴᴅ 𝐀 𝐁ᴜɢ 𝐑ᴇᴘᴏʀᴛ 𝐓ᴏ 𝐓ʜᴇ 𝐎ᴡɴᴇʀ.
-- /encrypt, /enc [reply] - 𝐏M-ᴏɴʟʏ: 𝐄ɴᴄʀʏᴘᴛ 𝐑ᴇᴘʟɪᴇᴅ 𝐓ᴇxᴛ/ᴍᴇᴅɪᴀ/sᴛɪᴄᴋᴇʀ 𝐈ɴᴛᴏ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐂ᴏᴅᴇ.
-- /decrypt, /dec [code] - 𝐏M-ᴏɴʟʏ: 𝐃ᴇᴄʀʏᴘᴛ 𝐎ɴᴄᴇ, 𝐑ᴇsᴇɴᴅ 𝐂ᴏɴᴛᴇɴᴛ, 𝐓ʜᴇɴ 𝐃ᴇʟᴇᴛᴇ 𝐒ᴀᴠᴇᴅ 𝐃ᴀᴛᴀ.
+- /tgm, /tgt, /telegraph - Uᴘʟᴏᴀᴅ Rᴇᴘʟɪᴇᴅ Mᴇᴅɪᴀ Tᴏ Tᴇʟᴇɢʀᴀᴘʜ.
+- /tr - Tʀᴀɴsʟᴀᴛᴇ Tᴇxᴛ Oʀ A Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ.
+- /short, /unshort - Sʜᴏʀᴛᴇɴ Oʀ Exᴘᴀɴᴅ A URL.
+- /speedtest, /spt - Rᴜɴ A Nᴇᴛᴡᴏʀᴋ Sᴘᴇᴇᴅ Tᴇsᴛ.
+- /webdl [url] - Dᴏᴡɴʟᴏᴀᴅ A Wᴇʙsɪᴛᴇ Sɴᴀᴘsʜᴏᴛ/Aʀᴄʜɪᴠᴇ.
+- /bug [text or reply] - Sᴇɴᴅ A Bᴜɢ Rᴇᴘᴏʀᴛ Tᴏ Tʜᴇ Oᴡɴᴇʀ.
+- /encrypt, /enc [reply] - PM-Oɴʟʏ: Eɴᴄʀʏᴘᴛ Rᴇᴘʟɪᴇᴅ Tᴇxᴛ/Mᴇᴅɪᴀ/Sᴛɪᴄᴋᴇʀ Iɴᴛᴏ A Rᴀɴᴅᴏᴍ Cᴏᴅᴇ.
+- /decrypt, /dec [code] - PM-Oɴʟʏ: Dᴇᴄʀʏᴘᴛ Oɴᴄᴇ, Rᴇsᴇɴᴅ Cᴏɴᴛᴇɴᴛ, Tʜᴇɴ Dᴇʟᴇᴛᴇ Sᴀᴠᴇᴅ Dᴀᴛᴀ.
 """
 
 HELP_8 = """
-<b><u>𝐆ʟᴏʙᴀʟ 𝐁ᴀɴ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
+<b><u>Gʟᴏʙᴀʟ Bᴀɴ</u></b> <i>(Sᴜᴅᴏ)</i>
 
-- /gban, /globalban [reply/@user/id] - 𝐆ʟᴏʙᴀʟʟʏ 𝐁ᴀɴ 𝐀 𝐔sᴇʀ 𝐀ᴄʀᴏss 𝐒ᴇʀᴠᴇᴅ 𝐂ʜᴀᴛs.
-- /ungban [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐆ʟᴏʙᴀʟ 𝐁ᴀɴ.
-- /gbannedusers, /gbanlist - 𝐋ɪsᴛ 𝐆ʟᴏʙᴀʟʟʏ 𝐁ᴀɴɴᴇᴅ 𝐔sᴇʀs.
+- /gban, /globalban [reply/@user/id] - Gʟᴏʙᴀʟʟʏ Bᴀɴ A Usᴇʀ Aᴄʀᴏss Sᴇʀᴠᴇᴅ Cʜᴀᴛs.
+- /ungban [reply/@user/id] - Rᴇᴍᴏᴠᴇ A Gʟᴏʙᴀʟ Bᴀɴ.
+- /gbannedusers, /gbanlist - Lɪsᴛ Gʟᴏʙᴀʟʟʏ Bᴀɴɴᴇᴅ Usᴇʀs.
 """
 
 HELP_9 = """
-<b><u>𝐆ʟᴏʙᴀʟ 𝐂ᴀsᴛ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
+<b><u>Gʟᴏʙᴀʟ Cᴀsᴛ</u></b> <i>(Sᴜᴅᴏ)</i>
 
-- /broadcast [text or reply] - 𝐁ʀᴏᴀᴅᴄᴀsᴛ 𝐀 𝐌ᴇssᴀɢᴇ 𝐓ᴏ 𝐔sᴇʀs/ᴄʜᴀᴛs 𝐒ᴇʀᴠᴇᴅ 𝐁ʏ 𝐓ʜᴇ 𝐁ᴏᴛ.
+- /broadcast [text or reply] - Bʀᴏᴀᴅᴄᴀsᴛ A Mᴇssᴀɢᴇ Tᴏ Usᴇʀs/Cʜᴀᴛs Sᴇʀᴠᴇᴅ Bʏ Tʜᴇ Bᴏᴛ.
 """
 
 HELP_10 = """
-<b><u>𝐆ᴀᴍᴇs</u></b>
+<b><u>Gᴀᴍᴇs</u></b>
 
-- /dice, /dart, /basket, /jackpot, /ball, /football - 𝐓ᴇʟᴇɢʀᴀᴍ 𝐃ɪᴄᴇ 𝐆ᴀᴍᴇs.
-- /truth - 𝐆ᴇᴛ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐓ʀᴜᴛʜ 𝐐ᴜᴇsᴛɪᴏɴ.
-- /dare - 𝐆ᴇᴛ 𝐀 𝐑ᴀɴᴅᴏᴍ 𝐃ᴀʀᴇ.
+- /dice, /dart, /basket, /jackpot, /ball, /football - Tᴇʟᴇɢʀᴀᴍ Dɪᴄᴇ Gᴀᴍᴇs.
+- /truth - Gᴇᴛ A Rᴀɴᴅᴏᴍ Tʀᴜᴛʜ Qᴜᴇsᴛɪᴏɴ.
+- /dare - Gᴇᴛ A Rᴀɴᴅᴏᴍ Dᴀʀᴇ.
 """
 
 HELP_11 = """
-<b><u>𝐀I 𝐂ʜᴀᴛ</u></b>
+<b><u>AI Cʜᴀᴛ</u></b>
 
-- jarvis [prompt] - 𝐂ʜᴀᴛ 𝐖ɪᴛʜ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐔sɪɴɢ 𝐓ʜᴇ 𝐉ᴀʀᴠɪs 𝐓ʀɪɢɢᴇʀ.
-- assis [prompt] - 𝐆ᴇᴛ 𝐀ɴ 𝐀I 𝐕ᴏɪᴄᴇ 𝐑ᴇᴘʟʏ.
-- /gpt, /claude, /bard, /gemini, /llama, /mistral - 𝐓ᴇxᴛ 𝐀I 𝐑ᴇᴘʟɪᴇs.
-- /geminivision - 𝐀ɴᴀʟʏᴢᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
-- /chatgpt, /ai, /ask, /Master - 𝐀ʟᴛᴇʀɴᴀᴛᴇ 𝐓ᴇxᴛ-AI 𝐄ɴᴛʀʏ 𝐂ᴏᴍᴍᴀɴᴅs.
+- jarvis [prompt] - Cʜᴀᴛ Wɪᴛʜ Tʜᴇ Assɪsᴛᴀɴᴛ Usɪɴɢ Tʜᴇ Jᴀʀᴠɪs Tʀɪɢɢᴇʀ.
+- assis [prompt] - Gᴇᴛ Aɴ AI Vᴏɪᴄᴇ Rᴇᴘʟʏ.
+- /gpt, /claude, /bard, /gemini, /llama, /mistral - Tᴇxᴛ AI Rᴇᴘʟɪᴇs.
+- /geminivision - Aɴᴀʟʏᴢᴇ A Rᴇᴘʟɪᴇᴅ Iᴍᴀɢᴇ.
+- /chatgpt, /ai, /ask, /Master - Aʟᴛᴇʀɴᴀᴛᴇ Tᴇxᴛ-AI Eɴᴛʀʏ Cᴏᴍᴍᴀɴᴅs.
 """
 
 HELP_12 = """
-<b><u>𝐈ɴғᴏ</u></b>
+<b><u>Iɴғᴏ</u></b>
 
-- /id - 𝐆ᴇᴛ 𝐂ʜᴀᴛ, 𝐔sᴇʀ, 𝐎ʀ 𝐑ᴇᴘʟɪᴇᴅ-ᴍᴇssᴀɢᴇ 𝐈Ds.
-- /info, /userinfo, /whois - 𝐈ɴsᴘᴇᴄᴛ 𝐀 𝐔sᴇʀ's 𝐃ᴇᴛᴀɪʟs.
-- /sg - 𝐅ᴇᴛᴄʜ 𝐔sᴇʀ 𝐇ɪsᴛᴏʀʏ 𝐃ᴇᴛᴀɪʟs.
-- /groupdata - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
-- /phone - 𝐋ᴏᴏᴋ 𝐔ᴘ 𝐃ᴇᴛᴀɪʟs 𝐅ᴏʀ 𝐀 𝐏ʜᴏɴᴇ 𝐍ᴜᴍʙᴇʀ.
+- /id - Gᴇᴛ Cʜᴀᴛ, Usᴇʀ, Oʀ Rᴇᴘʟɪᴇᴅ-Mᴇssᴀɢᴇ IDs.
+- /info, /userinfo, /whois - Iɴsᴘᴇᴄᴛ A Usᴇʀ's Dᴇᴛᴀɪʟs.
+- /sg - Fᴇᴛᴄʜ Usᴇʀ Hɪsᴛᴏʀʏ Dᴇᴛᴀɪʟs.
+- /groupdata - Sʜᴏᴡ Cᴜʀʀᴇɴᴛ Gʀᴏᴜᴘ Iɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /phone - Lᴏᴏᴋ Uᴘ Dᴇᴛᴀɪʟs Fᴏʀ A Pʜᴏɴᴇ Nᴜᴍʙᴇʀ.
 """
 
 HELP_13 = """
-<b><u>𝐈ᴍᴀɢᴇ</u></b>
+<b><u>Iᴍᴀɢᴇ</u></b>
 
-- /editimg - 𝐀I 𝐄ᴅɪᴛ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ 𝐎ʀ 𝐈ᴍᴀɢᴇ 𝐀ʟʙᴜᴍ 𝐖ɪᴛʜ 𝐀 𝐏ʀᴏᴍᴘᴛ.
-- /getdraw - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀ɴ 𝐀I 𝐈ᴍᴀɢᴇ 𝐅ʀᴏᴍ 𝐀 𝐏ʀᴏᴍᴘᴛ.
-- /upscale - 𝐔ᴘsᴄᴀʟᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
-- /rmbg - 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐁ᴀᴄᴋɢʀᴏᴜɴᴅ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐈ᴍᴀɢᴇ.
-- /waifu [tag] - 𝐅ᴇᴛᴄʜ 𝐀 𝐖ᴀɪғᴜ 𝐈ᴍᴀɢᴇ 𝐁ʏ 𝐓ᴀɢ.
+- /editimg - AI Eᴅɪᴛ A Rᴇᴘʟɪᴇᴅ Iᴍᴀɢᴇ Oʀ Iᴍᴀɢᴇ Aʟʙᴜᴍ Wɪᴛʜ A Pʀᴏᴍᴘᴛ.
+- /getdraw - Gᴇɴᴇʀᴀᴛᴇ Aɴ AI Iᴍᴀɢᴇ Fʀᴏᴍ A Pʀᴏᴍᴘᴛ.
+- /upscale - Uᴘsᴄᴀʟᴇ A Rᴇᴘʟɪᴇᴅ Iᴍᴀɢᴇ.
+- /rmbg - Rᴇᴍᴏᴠᴇ Tʜᴇ Bᴀᴄᴋɢʀᴏᴜɴᴅ Fʀᴏᴍ A Rᴇᴘʟɪᴇᴅ Iᴍᴀɢᴇ.
+- /waifu [tag] - Fᴇᴛᴄʜ A Wᴀɪғᴜ Iᴍᴀɢᴇ Bʏ Tᴀɢ.
 """
 
 HELP_14 = """
-<b><u>𝐋ᴏɢ / 𝐌ᴀɪɴᴛᴇɴᴀɴᴄᴇ</u></b> <i>(𝐒ᴜᴅᴏ)</i>
+<b><u>Lᴏɢ / Mᴀɪɴᴛᴇɴᴀɴᴄᴇ</u></b> <i>(Sᴜᴅᴏ)</i>
 
-- /logger [enable|disable] - 𝐓ᴏɢɢʟᴇ 𝐋ɪᴠᴇ 𝐋ᴏɢɢɪɴɢ.
-- /maintenance [enable|disable] - 𝐓ᴏɢɢʟᴇ 𝐌ᴀɪɴᴛᴇɴᴀɴᴄᴇ 𝐌ᴏᴅᴇ.
-- /logs, /getlog, /getlogs - 𝐅ᴇᴛᴄʜ 𝐂ᴜʀʀᴇɴᴛ 𝐋ᴏɢs.
-- /update, /gitpull - 𝐏ᴜʟʟ 𝐋ᴀᴛᴇsᴛ 𝐔ᴘsᴛʀᴇᴀᴍ 𝐂ʜᴀɴɢᴇs.
-- /restart - 𝐑ᴇsᴛᴀʀᴛ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐏ʀᴏᴄᴇss.
+- /logger [enable|disable] - Tᴏɢɢʟᴇ Lɪᴠᴇ Lᴏɢɢɪɴɢ.
+- /maintenance [enable|disable] - Tᴏɢɢʟᴇ Mᴀɪɴᴛᴇɴᴀɴᴄᴇ Mᴏᴅᴇ.
+- /logs, /getlog, /getlogs - Fᴇᴛᴄʜ Cᴜʀʀᴇɴᴛ Lᴏɢs.
+- /update, /gitpull - Pᴜʟʟ Lᴀᴛᴇsᴛ Uᴘsᴛʀᴇᴀᴍ Cʜᴀɴɢᴇs.
+- /restart - Rᴇsᴛᴀʀᴛ Tʜᴇ Bᴏᴛ Pʀᴏᴄᴇss.
 """
 
 HELP_15 = """
-<b><u>𝐋ᴏᴏᴘ</u></b>
+<b><u>Lᴏᴏᴘ</u></b>
 
-- /loop [enable|disable|count] - 𝐑ᴇᴘᴇᴀᴛ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐓ʀᴀᴄᴋ.
-- /cloop [enable|disable|count] - 𝐒ᴀᴍᴇ 𝐀ᴄᴛɪᴏɴ 𝐅ᴏʀ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐏ʟᴀʏʙᴀᴄᴋ.
+- /loop [enable|disable|count] - Rᴇᴘᴇᴀᴛ Tʜᴇ Cᴜʀʀᴇɴᴛ Tʀᴀᴄᴋ.
+- /cloop [enable|disable|count] - Sᴀᴍᴇ Aᴄᴛɪᴏɴ Fᴏʀ Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Pʟᴀʏʙᴀᴄᴋ.
 """
 
 HELP_16 = """
-<b><u>𝐆ʀᴏᴜᴘ 𝐌ᴀɴᴀɢᴇᴍᴇɴᴛ</u></b>
+<b><u>Gʀᴏᴜᴘ Mᴀɴᴀɢᴇᴍᴇɴᴛ</u></b>
 
-- /pin, /unpin - 𝐏ɪɴ 𝐎ʀ 𝐔ɴᴘɪɴ 𝐌ᴇssᴀɢᴇs.
-- /settitle - 𝐂ʜᴀɴɢᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐓ɪᴛʟᴇ.
-- /setdiscription - 𝐂ʜᴀɴɢᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐃ᴇsᴄʀɪᴘᴛɪᴏɴ.
-- /setphoto, /removephoto - 𝐒ᴇᴛ 𝐎ʀ 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ 𝐏ʜᴏᴛᴏ.
-- /welcome [on|off] - 𝐓ᴏɢɢʟᴇ 𝐖ᴇʟᴄᴏᴍᴇ 𝐌ᴇssᴀɢᴇs.
-- /admins, /staff - 𝐋ɪsᴛ 𝐀ᴅᴍɪɴs 𝐈ɴ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
-- /bots - 𝐋ɪsᴛ 𝐁ᴏᴛ 𝐀ᴄᴄᴏᴜɴᴛs 𝐈ɴ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
-- /zombies - 𝐂ʟᴇᴀɴ 𝐃ᴇʟᴇᴛᴇᴅ 𝐀ᴄᴄᴏᴜɴᴛs 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐆ʀᴏᴜᴘ.
-- /imposter [on|off] - 𝐓ᴏɢɢʟᴇ 𝐓ʜᴇ 𝐔sᴇʀɴᴀᴍᴇ/ɴᴀᴍᴇ 𝐂ʜᴀɴɢᴇ 𝐖ᴀᴛᴄʜᴇʀ.
-- /lang, /setlang, /language - 𝐂ʜᴀɴɢᴇ 𝐁ᴏᴛ 𝐋ᴀɴɢᴜᴀɢᴇ 𝐅ᴏʀ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
-- /givelink - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ's 𝐈ɴᴠɪᴛᴇ 𝐋ɪɴᴋ.
-- /user - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐌ᴇᴍʙᴇʀ 𝐋ɪsᴛ 𝐀s 𝐂SV 𝐎ʀ 𝐓XT.
+- /pin, /unpin - Pɪɴ Oʀ Uɴᴘɪɴ Mᴇssᴀɢᴇs.
+- /settitle - Cʜᴀɴɢᴇ Tʜᴇ Gʀᴏᴜᴘ Tɪᴛʟᴇ.
+- /setdiscription - Cʜᴀɴɢᴇ Tʜᴇ Gʀᴏᴜᴘ Dᴇsᴄʀɪᴘᴛɪᴏɴ.
+- /setphoto, /removephoto - Sᴇᴛ Oʀ Rᴇᴍᴏᴠᴇ Tʜᴇ Gʀᴏᴜᴘ Pʜᴏᴛᴏ.
+- /welcome [on|off] - Tᴏɢɢʟᴇ Wᴇʟᴄᴏᴍᴇ Mᴇssᴀɢᴇs.
+- /admins, /staff - Lɪsᴛ Aᴅᴍɪɴs Iɴ Tʜᴇ Gʀᴏᴜᴘ.
+- /bots - Lɪsᴛ Bᴏᴛ Aᴄᴄᴏᴜɴᴛs Iɴ Tʜᴇ Gʀᴏᴜᴘ.
+- /zombies - Cʟᴇᴀɴ Dᴇʟᴇᴛᴇᴅ Aᴄᴄᴏᴜɴᴛs Fʀᴏᴍ Tʜᴇ Gʀᴏᴜᴘ.
+- /imposter [on|off] - Tᴏɢɢʟᴇ Tʜᴇ Usᴇʀɴᴀᴍᴇ/Nᴀᴍᴇ Cʜᴀɴɢᴇ Wᴀᴛᴄʜᴇʀ.
+- /lang, /setlang, /language - Cʜᴀɴɢᴇ Bᴏᴛ Lᴀɴɢᴜᴀɢᴇ Fᴏʀ Tʜᴇ Cʜᴀᴛ.
+- /givelink - Exᴘᴏʀᴛ Tʜᴇ Cᴜʀʀᴇɴᴛ Gʀᴏᴜᴘ's Iɴᴠɪᴛᴇ Lɪɴᴋ.
+- /user - Exᴘᴏʀᴛ Tʜᴇ Mᴇᴍʙᴇʀ Lɪsᴛ As CSV Oʀ TXT.
 """
 
 HELP_17 = """
-<b><u>𝐌ᴀsᴛɪ / 𝐅ᴜɴ</u></b>
+<b><u>Mᴀsᴛɪ / Fᴜɴ</u></b>
 
-- /couple, /love, /wish, /cute, /bored - 𝐅ᴜɴ 𝐒ᴏᴄɪᴀʟ 𝐂ᴏᴍᴍᴀɴᴅs.
-- /cutie, /horny, /hot, /sexy, /sad, /lesbian, /chill, /kill - 𝐏ᴇʀᴄᴇɴᴛᴀɢᴇ-sᴛʏʟᴇ 𝐅ᴜɴ 𝐑ᴀᴛɪɴɢs.
-- 𝐑ᴇᴀᴄᴛɪᴏɴ 𝐆IFs: /hug, /kiss, /slap, /punch, /bite, /pat, /cuddle, /tickle, /poke, /wave, /highfive, /dance, /smile, /blush, /smug, /wink, /stare, /shrug, /happy, /baka, /feed, /nom, /yawn, /facepalm, /yeet, /think, /shoot, /peck, /nod, /nope, /sleep, /lurk.
+- /couple, /love, /wish, /cute, /bored - Fᴜɴ Sᴏᴄɪᴀʟ Cᴏᴍᴍᴀɴᴅs.
+- /cutie, /horny, /hot, /sexy, /sad, /lesbian, /chill, /kill - Pᴇʀᴄᴇɴᴛᴀɢᴇ-Sᴛʏʟᴇ Fᴜɴ Rᴀᴛɪɴɢs.
+- Rᴇᴀᴄᴛɪᴏɴ GIFs: /hug, /kiss, /slap, /punch, /bite, /pat, /cuddle, /tickle, /poke, /wave, /highfive, /dance, /smile, /blush, /smug, /wink, /stare, /shrug, /happy, /baka, /feed, /nom, /yawn, /facepalm, /yeet, /think, /shoot, /peck, /nod, /nope, /sleep, /lurk.
 """
 
 HELP_18 = """
-<b><u>𝐌ᴀss 𝐀ᴄᴛɪᴏɴs</u></b>
-𝐔sᴇ 𝐖ɪᴛʜ 𝐂ᴀʀᴇ.
+<b><u>Mᴀss Aᴄᴛɪᴏɴs</u></b>
+Usᴇ Wɪᴛʜ Cᴀʀᴇ.
 
-- /deleteall - 𝐏ᴜʀɢᴇ 𝐀ʟʟ 𝐌ᴇssᴀɢᴇs 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ 𝐀ғᴛᴇʀ 𝐂ᴏɴғɪʀᴍᴀᴛɪᴏɴ.
-- /purge, /spurge - 𝐁ᴜʟᴋ 𝐃ᴇʟᴇᴛᴇ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐔ᴘ 𝐓ᴏ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐌ᴇssᴀɢᴇ.
-- /del - 𝐃ᴇʟᴇᴛᴇ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐐ᴜɪᴄᴋʟʏ.
+- /deleteall - Pᴜʀɢᴇ Aʟʟ Mᴇssᴀɢᴇs Iɴ Tʜᴇ Cᴜʀʀᴇɴᴛ Gʀᴏᴜᴘ Aғᴛᴇʀ Cᴏɴғɪʀᴍᴀᴛɪᴏɴ.
+- /purge, /spurge - Bᴜʟᴋ Dᴇʟᴇᴛᴇ Fʀᴏᴍ A Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ Uᴘ Tᴏ Tʜᴇ Cᴜʀʀᴇɴᴛ Mᴇssᴀɢᴇ.
+- /del - Dᴇʟᴇᴛᴇ A Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ Qᴜɪᴄᴋʟʏ.
 """
 
 HELP_19 = """
-<b><u>𝐏ɪɴɢ / 𝐒ᴛᴀᴛs</u></b>
+<b><u>Pɪɴɢ / Sᴛᴀᴛs</u></b>
 
-- /start - 𝐒ᴛᴀʀᴛ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐈ɴ 𝐏ʀɪᴠᴀᴛᴇ.
-- /help - 𝐎ᴘᴇɴ 𝐓ʜᴇ 𝐇ᴇʟᴘ 𝐌ᴇɴᴜ.
-- /ping - 𝐒ʜᴏᴡ 𝐁ᴏᴛ 𝐋ᴀᴛᴇɴᴄʏ 𝐀ɴᴅ 𝐑ᴜɴᴛɪᴍᴇ 𝐈ɴғᴏ.
-- /stats, /gstats - 𝐒ʜᴏᴡ 𝐁ᴏᴛ 𝐒ᴛᴀᴛɪsᴛɪᴄs.
+- /start - Sᴛᴀʀᴛ Tʜᴇ Bᴏᴛ Iɴ Pʀɪᴠᴀᴛᴇ.
+- /help - Oᴘᴇɴ Tʜᴇ Hᴇʟᴘ Mᴇɴᴜ.
+- /ping - Sʜᴏᴡ Bᴏᴛ Lᴀᴛᴇɴᴄʏ Aɴᴅ Rᴜɴᴛɪᴍᴇ Iɴғᴏ.
+- /stats, /gstats - Sʜᴏᴡ Bᴏᴛ Sᴛᴀᴛɪsᴛɪᴄs.
 """
 
 HELP_20 = """
-<b><u>𝐏ʟᴀʏ</u></b>
+<b><u>Pʟᴀʏ</u></b>
 
-- /play, /vplay - 𝐏ʟᴀʏ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐁ʏ 𝐐ᴜᴇʀʏ, 𝐔RL, 𝐎ʀ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ.
-- /playforce, /vplayforce - 𝐅ᴏʀᴄᴇ-sᴛᴀʀᴛ 𝐀 𝐍ᴇᴡ 𝐓ʀᴀᴄᴋ 𝐈ᴍᴍᴇᴅɪᴀᴛᴇʟʏ.
-- /autoplay, /cautoplay [on|off] - 𝐂ᴏɴᴛɪɴᴜᴇ 𝐖ɪᴛʜ 𝐒ɪᴍɪʟᴀʀ 𝐒ᴏɴɢs 𝐖ʜᴇɴ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ 𝐄ɴᴅs.
-- /settings, /setting - 𝐎ᴘᴇɴ 𝐆ʀᴏᴜᴘ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐒ᴇᴛᴛɪɴɢs.
-- /playmode, /mode - 𝐒ᴡɪᴛᴄʜ 𝐃ɪʀᴇᴄᴛ/ɪɴʟɪɴᴇ 𝐏ʟᴀʏ 𝐌ᴏᴅᴇ.
+- /play, /vplay - Pʟᴀʏ Aᴜᴅɪᴏ Oʀ Vɪᴅᴇᴏ Bʏ Qᴜᴇʀʏ, URL, Oʀ Rᴇᴘʟɪᴇᴅ Mᴇᴅɪᴀ.
+- /playforce, /vplayforce - Fᴏʀᴄᴇ-Sᴛᴀʀᴛ A Nᴇᴡ Tʀᴀᴄᴋ Iᴍᴍᴇᴅɪᴀᴛᴇʟʏ.
+- /autoplay, /cautoplay [on|off] - Cᴏɴᴛɪɴᴜᴇ Wɪᴛʜ Sɪᴍɪʟᴀʀ Sᴏɴɢs Wʜᴇɴ Tʜᴇ Qᴜᴇᴜᴇ Eɴᴅs.
+- /settings, /setting - Oᴘᴇɴ Gʀᴏᴜᴘ Pʟᴀʏʙᴀᴄᴋ Sᴇᴛᴛɪɴɢs.
+- /playmode, /mode - Sᴡɪᴛᴄʜ Dɪʀᴇᴄᴛ/Iɴʟɪɴᴇ Pʟᴀʏ Mᴏᴅᴇ.
 """
 
 HELP_21 = """
-<b><u>𝐑ᴇᴘᴏ 𝐈ɴғᴏ</u></b>
+<b><u>Rᴇᴘᴏ Iɴғᴏ</u></b>
 
-- /pypi [package] - 𝐅ᴇᴛᴄʜ 𝐏ᴀᴄᴋᴀɢᴇ 𝐈ɴғᴏ 𝐅ʀᴏᴍ 𝐏ʏPI.
-- /downloadrepo [github url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐑ᴇᴘᴏsɪᴛᴏʀʏ 𝐀s 𝐀 𝐙ɪᴘ.
+- /pypi [package] - Fᴇᴛᴄʜ Pᴀᴄᴋᴀɢᴇ Iɴғᴏ Fʀᴏᴍ PʏPI.
+- /downloadrepo [github url] - Dᴏᴡɴʟᴏᴀᴅ A Rᴇᴘᴏsɪᴛᴏʀʏ As A Zɪᴘ.
 """
 
 HELP_22 = """
-<b><u>𝐒ᴇᴀʀᴄʜ</u></b>
+<b><u>Sᴇᴀʀᴄʜ</u></b>
 
-- /anime [query] - 𝐒ᴇᴀʀᴄʜ 𝐀ɴɪᴍᴇ 𝐃ᴇᴛᴀɪʟs.
-- /movie [query] - 𝐅ᴇᴛᴄʜ 𝐌ᴏᴠɪᴇ 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
-- /news [topic] - 𝐒ʜᴏᴡ 𝐓ʜᴇ 𝐋ᴀᴛᴇsᴛ 𝐇ᴇᴀᴅʟɪɴᴇs 𝐎ɴ 𝐀 𝐓ᴏᴘɪᴄ 𝐅ʀᴏᴍ 𝐑ᴇʟɪᴀʙʟᴇ 𝐒ᴏᴜʀᴄᴇs.
-- /domain [name] - 𝐈ɴsᴘᴇᴄᴛ 𝐀 𝐃ᴏᴍᴀɪɴ.
-- /ip [address] - 𝐈ɴsᴘᴇᴄᴛ 𝐈P 𝐈ɴғᴏʀᴍᴀᴛɪᴏɴ.
-- /mongochk [mongo url] - 𝐂ʜᴇᴄᴋ 𝐀 𝐌ᴏɴɢᴏDB 𝐔RI.
-- /weather [location] - 𝐒ʜᴏᴡ 𝐖ᴇᴀᴛʜᴇʀ 𝐅ᴏʀ 𝐀 𝐏ʟᴀᴄᴇ.
-- /population [country code] - 𝐅ᴇᴛᴄʜ 𝐏ᴏᴘᴜʟᴀᴛɪᴏɴ 𝐈ɴғᴏ 𝐅ᴏʀ 𝐀 𝐂ᴏᴜɴᴛʀʏ.
+- /anime [query] - Sᴇᴀʀᴄʜ Aɴɪᴍᴇ Dᴇᴛᴀɪʟs.
+- /movie [query] - Fᴇᴛᴄʜ Mᴏᴠɪᴇ Iɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /news [topic] - Sʜᴏᴡ Tʜᴇ Lᴀᴛᴇsᴛ Hᴇᴀᴅʟɪɴᴇs Oɴ A Tᴏᴘɪᴄ Fʀᴏᴍ Rᴇʟɪᴀʙʟᴇ Sᴏᴜʀᴄᴇs.
+- /domain [name] - Iɴsᴘᴇᴄᴛ A Dᴏᴍᴀɪɴ.
+- /ip [address] - Iɴsᴘᴇᴄᴛ IP Iɴғᴏʀᴍᴀᴛɪᴏɴ.
+- /mongochk [mongo url] - Cʜᴇᴄᴋ A MᴏɴɢᴏDB URI.
+- /weather [location] - Sʜᴏᴡ Wᴇᴀᴛʜᴇʀ Fᴏʀ A Pʟᴀᴄᴇ.
+- /population [country code] - Fᴇᴛᴄʜ Pᴏᴘᴜʟᴀᴛɪᴏɴ Iɴғᴏ Fᴏʀ A Cᴏᴜɴᴛʀʏ.
 """
 
 HELP_23 = """
-<b><u>𝐒ᴇᴇᴋ</u></b>
+<b><u>Sᴇᴇᴋ</u></b>
 
-- /seek, /cseek [seconds] - 𝐉ᴜᴍᴘ 𝐅ᴏʀᴡᴀʀᴅ 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
-- /seekback, /cseekback [seconds] - 𝐉ᴜᴍᴘ 𝐁ᴀᴄᴋᴡᴀʀᴅ 𝐈ɴ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴛʀᴇᴀᴍ.
+- /seek, /cseek [seconds] - Jᴜᴍᴘ Fᴏʀᴡᴀʀᴅ Iɴ Tʜᴇ Cᴜʀʀᴇɴᴛ Sᴛʀᴇᴀᴍ.
+- /seekback, /cseekback [seconds] - Jᴜᴍᴘ Bᴀᴄᴋᴡᴀʀᴅ Iɴ Tʜᴇ Cᴜʀʀᴇɴᴛ Sᴛʀᴇᴀᴍ.
 """
 
 HELP_24 = """
-<b><u>𝐒ʜᴜғғʟᴇ</u></b>
+<b><u>Sʜᴜғғʟᴇ</u></b>
 
-- /shuffle, /cshuffle - 𝐒ʜᴜғғʟᴇ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ.
-- /queue, /cqueue - 𝐈ɴsᴘᴇᴄᴛ 𝐓ʜᴇ 𝐐ᴜᴇᴜᴇ 𝐀ғᴛᴇʀ 𝐒ʜᴜғғʟɪɴɢ.
+- /shuffle, /cshuffle - Sʜᴜғғʟᴇ Tʜᴇ Qᴜᴇᴜᴇ.
+- /queue, /cqueue - Iɴsᴘᴇᴄᴛ Tʜᴇ Qᴜᴇᴜᴇ Aғᴛᴇʀ Sʜᴜғғʟɪɴɢ.
 """
 
 HELP_25 = """
-<b><u>𝐃ᴏᴡɴʟᴏᴀᴅ</u></b>
+<b><u>Dᴏᴡɴʟᴏᴀᴅ</u></b>
 
-- /song [title/url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐒ᴏɴɢ 𝐅ʀᴏᴍ 𝐘ᴏᴜTᴜʙᴇ.
-- /spotify [spotify track link] - 𝐅ᴇᴛᴄʜ 𝐓ʜᴇ 𝐓ʀᴀᴄᴋ 𝐓ɪᴛʟᴇ 𝐀ɴᴅ 𝐒ᴇɴᴅ 𝐓ʜᴇ 𝐒ᴏɴɢ 𝐀s 𝐀ᴜᴅɪᴏ.
-- /apple [apple music track link] - 𝐅ᴇᴛᴄʜ 𝐓ʜᴇ 𝐓ʀᴀᴄᴋ 𝐓ɪᴛʟᴇ 𝐀ɴᴅ 𝐒ᴇɴᴅ 𝐓ʜᴇ 𝐒ᴏɴɢ 𝐀s 𝐀ᴜᴅɪᴏ.
-- /lyrics [title or lyric line] - 𝐒ᴇᴀʀᴄʜ 𝐌ᴀᴛᴄʜɪɴɢ 𝐒ᴏɴɢs, 𝐓ʜᴇɴ 𝐅ᴇᴛᴄʜ 𝐅ᴜʟʟ 𝐋ʏʀɪᴄs 𝐁ʏ 𝐁ᴜᴛᴛᴏɴ.
-- /insta, /ig [instagram url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐈ɴsᴛᴀɢʀᴀᴍ 𝐌ᴇᴅɪᴀ.
-- /youtube, /yt [youtube url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐘ᴏᴜTᴜʙᴇ 𝐌ᴇᴅɪᴀ 𝐖ɪᴛʜ 𝐀ᴜᴅɪᴏ.
-- /facebook, /fb [facebook url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐅ᴀᴄᴇʙᴏᴏᴋ 𝐌ᴇᴅɪᴀ.
-- /x, /twitter [post url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐗/Tᴡɪᴛᴛᴇʀ 𝐏ᴏsᴛ 𝐌ᴇᴅɪᴀ.
-- /snap, /snapchat [snapchat url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐒ɴᴀᴘᴄʜᴀᴛ 𝐌ᴇᴅɪᴀ.
-- /tiktok, /tt [tiktok url] - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐓ɪᴋTᴏᴋ 𝐌ᴇᴅɪᴀ.
-- /remove [audio|video] - 𝐑ᴇᴍᴏᴠᴇ 𝐀ᴜᴅɪᴏ 𝐎ʀ 𝐕ɪᴅᴇᴏ 𝐅ʀᴏᴍ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐅ɪʟᴇ.
+- /song [title/url] - Dᴏᴡɴʟᴏᴀᴅ A Sᴏɴɢ Fʀᴏᴍ YᴏᴜTᴜʙᴇ.
+- /spotify [spotify track link] - Fᴇᴛᴄʜ Tʜᴇ Tʀᴀᴄᴋ Tɪᴛʟᴇ Aɴᴅ Sᴇɴᴅ Tʜᴇ Sᴏɴɢ As Aᴜᴅɪᴏ.
+- /apple [apple music track link] - Fᴇᴛᴄʜ Tʜᴇ Tʀᴀᴄᴋ Tɪᴛʟᴇ Aɴᴅ Sᴇɴᴅ Tʜᴇ Sᴏɴɢ As Aᴜᴅɪᴏ.
+- /lyrics [title or lyric line] - Sᴇᴀʀᴄʜ Mᴀᴛᴄʜɪɴɢ Sᴏɴɢs, Tʜᴇɴ Fᴇᴛᴄʜ Fᴜʟʟ Lʏʀɪᴄs Bʏ Bᴜᴛᴛᴏɴ.
+- /insta, /ig [instagram url] - Dᴏᴡɴʟᴏᴀᴅ Iɴsᴛᴀɢʀᴀᴍ Mᴇᴅɪᴀ.
+- /youtube, /yt [youtube url] - Dᴏᴡɴʟᴏᴀᴅ YᴏᴜTᴜʙᴇ Mᴇᴅɪᴀ Wɪᴛʜ Aᴜᴅɪᴏ.
+- /facebook, /fb [facebook url] - Dᴏᴡɴʟᴏᴀᴅ Fᴀᴄᴇʙᴏᴏᴋ Mᴇᴅɪᴀ.
+- /x, /twitter [post url] - Dᴏᴡɴʟᴏᴀᴅ X/Tᴡɪᴛᴛᴇʀ Pᴏsᴛ Mᴇᴅɪᴀ.
+- /snap, /snapchat [snapchat url] - Dᴏᴡɴʟᴏᴀᴅ Sɴᴀᴘᴄʜᴀᴛ Mᴇᴅɪᴀ.
+- /tiktok, /tt [tiktok url] - Dᴏᴡɴʟᴏᴀᴅ TɪᴋTᴏᴋ Mᴇᴅɪᴀ.
+- /remove [audio|video] - Rᴇᴍᴏᴠᴇ Aᴜᴅɪᴏ Oʀ Vɪᴅᴇᴏ Fʀᴏᴍ A Rᴇᴘʟɪᴇᴅ Mᴇᴅɪᴀ Fɪʟᴇ.
 """
 
 HELP_26 = """
-<b><u>𝐒ᴘᴇᴇᴅ</u></b>
+<b><u>Sᴘᴇᴇᴅ</u></b>
 
-- /speed, /slow, /playback [value] - 𝐂ʜᴀɴɢᴇ 𝐏ʟᴀʏʙᴀᴄᴋ 𝐒ᴘᴇᴇᴅ.
-- /cspeed, /cslow, /cplayback [value] - 𝐒ᴀᴍᴇ 𝐂ᴏɴᴛʀᴏʟs 𝐅ᴏʀ 𝐋ɪɴᴋᴇᴅ-ᴄʜᴀɴɴᴇʟ 𝐏ʟᴀʏʙᴀᴄᴋ.
+- /speed, /slow, /playback [value] - Cʜᴀɴɢᴇ Pʟᴀʏʙᴀᴄᴋ Sᴘᴇᴇᴅ.
+- /cspeed, /cslow, /cplayback [value] - Sᴀᴍᴇ Cᴏɴᴛʀᴏʟs Fᴏʀ Lɪɴᴋᴇᴅ-Cʜᴀɴɴᴇʟ Pʟᴀʏʙᴀᴄᴋ.
 """
 
 HELP_27 = """
-<b><u>𝐒ᴛɪᴄᴋᴇʀ</u></b>
+<b><u>Sᴛɪᴄᴋᴇʀ</u></b>
 
-- /mmf - 𝐓ᴜʀɴ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇᴅɪᴀ 𝐈ɴᴛᴏ 𝐀 𝐌ᴇᴍᴇ-sᴛʏʟᴇ 𝐒ᴛɪᴄᴋᴇʀ.
-- /tiny - 𝐒ʜʀɪɴᴋ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
-- /kang - 𝐒ᴛᴇᴀʟ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ/ɪᴍᴀɢᴇ 𝐈ɴᴛᴏ 𝐘ᴏᴜʀ 𝐏ᴀᴄᴋ.
-- /packkang - 𝐂ʟᴏɴᴇ 𝐀 𝐅ᴜʟʟ 𝐒ᴛɪᴄᴋᴇʀ 𝐏ᴀᴄᴋ 𝐈ᴛᴇᴍ 𝐁ʏ 𝐈ᴛᴇᴍ.
-- /stickerid, /stid - 𝐒ʜᴏᴡ 𝐒ᴛɪᴄᴋᴇʀ 𝐈Ds 𝐅ᴏʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
-- /st - 𝐒ᴇɴᴅ 𝐀 𝐒ᴛɪᴄᴋᴇʀ 𝐁ʏ 𝐈ᴛs 𝐅ɪʟᴇ 𝐈D.
-- /stdl - 𝐃ᴏᴡɴʟᴏᴀᴅ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐒ᴛɪᴄᴋᴇʀ.
-- /meme - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐌ᴇᴍᴇ 𝐈ᴍᴀɢᴇ.
+- /mmf - Tᴜʀɴ Rᴇᴘʟɪᴇᴅ Mᴇᴅɪᴀ Iɴᴛᴏ A Mᴇᴍᴇ-Sᴛʏʟᴇ Sᴛɪᴄᴋᴇʀ.
+- /tiny - Sʜʀɪɴᴋ A Rᴇᴘʟɪᴇᴅ Sᴛɪᴄᴋᴇʀ.
+- /kang - Sᴛᴇᴀʟ A Rᴇᴘʟɪᴇᴅ Sᴛɪᴄᴋᴇʀ/Iᴍᴀɢᴇ Iɴᴛᴏ Yᴏᴜʀ Pᴀᴄᴋ.
+- /packkang - Cʟᴏɴᴇ A Fᴜʟʟ Sᴛɪᴄᴋᴇʀ Pᴀᴄᴋ Iᴛᴇᴍ Bʏ Iᴛᴇᴍ.
+- /stickerid, /stid - Sʜᴏᴡ Sᴛɪᴄᴋᴇʀ IDs Fᴏʀ A Rᴇᴘʟɪᴇᴅ Sᴛɪᴄᴋᴇʀ.
+- /st - Sᴇɴᴅ A Sᴛɪᴄᴋᴇʀ Bʏ Iᴛs Fɪʟᴇ ID.
+- /stdl - Dᴏᴡɴʟᴏᴀᴅ A Rᴇᴘʟɪᴇᴅ Sᴛɪᴄᴋᴇʀ.
+- /meme - Gᴇɴᴇʀᴀᴛᴇ A Mᴇᴍᴇ Iᴍᴀɢᴇ.
 """
 
 HELP_28 = """
-<b><u>𝐓ᴀɢ-Aʟʟ</u></b>
+<b><u>Tᴀɢ-Aʟʟ</u></b>
 
-- /utag, /all, /mention [text] - 𝐌ᴇɴᴛɪᴏɴ 𝐄ᴠᴇʀʏᴏɴᴇ 𝐖ɪᴛʜ 𝐂ᴜsᴛᴏᴍ 𝐓ᴇxᴛ 𝐎ʀ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ.
-- /cancel, /ustop - 𝐒ᴛᴏᴘ 𝐔ᴛᴀɢ 𝐌ᴇɴᴛɪᴏɴ 𝐒ᴘᴀᴍ.
-- /tagall - 𝐑ᴀɴᴅᴏᴍ 𝐅ᴜɴɴʏ 𝐓ᴀɢ-ᴀʟʟ 𝐌ᴏᴅᴇ.
-- /tagoff, /tagstop - 𝐒ᴛᴏᴘ 𝐑ᴀɴᴅᴏᴍ 𝐓ᴀɢ-ᴀʟʟ 𝐌ᴏᴅᴇ.
-- /gmtag, /gmstop - 𝐌ᴏʀɴɪɴɢ 𝐖ɪsʜ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
-- /gntag, /gnstop - 𝐍ɪɢʜᴛ 𝐖ɪsʜ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
-- /hitag, /histop - 𝐇ɪɴᴅɪ 𝐐ᴜᴏᴛᴇ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
-- /lifetag, /lifestop - 𝐄ɴɢʟɪsʜ 𝐐ᴜᴏᴛᴇ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
-- /shayari, /shayarioff - 𝐒ʜᴀʏᴀʀɪ 𝐓ᴀɢ 𝐌ᴏᴅᴇ 𝐀ɴᴅ 𝐒ᴛᴏᴘ.
+- /utag, /all, /mention [text] - Mᴇɴᴛɪᴏɴ Eᴠᴇʀʏᴏɴᴇ Wɪᴛʜ Cᴜsᴛᴏᴍ Tᴇxᴛ Oʀ A Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ.
+- /cancel, /ustop - Sᴛᴏᴘ Uᴛᴀɢ Mᴇɴᴛɪᴏɴ Sᴘᴀᴍ.
+- /tagall - Rᴀɴᴅᴏᴍ Fᴜɴɴʏ Tᴀɢ-Aʟʟ Mᴏᴅᴇ.
+- /tagoff, /tagstop - Sᴛᴏᴘ Rᴀɴᴅᴏᴍ Tᴀɢ-Aʟʟ Mᴏᴅᴇ.
+- /gmtag, /gmstop - Mᴏʀɴɪɴɢ Wɪsʜ Tᴀɢ Mᴏᴅᴇ Aɴᴅ Sᴛᴏᴘ.
+- /gntag, /gnstop - Nɪɢʜᴛ Wɪsʜ Tᴀɢ Mᴏᴅᴇ Aɴᴅ Sᴛᴏᴘ.
+- /hitag, /histop - Hɪɴᴅɪ Qᴜᴏᴛᴇ Tᴀɢ Mᴏᴅᴇ Aɴᴅ Sᴛᴏᴘ.
+- /lifetag, /lifestop - Eɴɢʟɪsʜ Qᴜᴏᴛᴇ Tᴀɢ Mᴏᴅᴇ Aɴᴅ Sᴛᴏᴘ.
+- /shayari, /shayarioff - Sʜᴀʏᴀʀɪ Tᴀɢ Mᴏᴅᴇ Aɴᴅ Sᴛᴏᴘ.
 """
 
 HELP_29 = """
-<b><u>𝐓ᴇxᴛ 𝐄ᴅɪᴛɪɴɢ</u></b>
+<b><u>Tᴇxᴛ Eᴅɪᴛɪɴɢ</u></b>
 
-- /font, /fonts - 𝐒ᴛʏʟɪᴢᴇ 𝐓ᴇxᴛ 𝐖ɪᴛʜ 𝐅ᴏɴᴛ 𝐁ᴜᴛᴛᴏɴs.
-- /figlet - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐅ɪɢʟᴇᴛ-sᴛʏʟᴇ 𝐓ᴇxᴛ.
-- /encode, /decode - 𝐂ᴏɴᴠᴇʀᴛ 𝐓ᴇxᴛ 𝐓ᴏ 𝐀ɴᴅ 𝐅ʀᴏᴍ 𝐇ᴇx.
-- /genpassword, /genpw - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐏ᴀssᴡᴏʀᴅ.
-- /write - 𝐑ᴇɴᴅᴇʀ 𝐓ᴇxᴛ 𝐈ɴ 𝐍ᴏᴛᴇʙᴏᴏᴋ 𝐒ᴛʏʟᴇ.
-- /day - 𝐂ᴏɴᴠᴇʀᴛ 𝐀 𝐃ᴀᴛᴇ 𝐓ᴏ 𝐈ᴛs 𝐖ᴇᴇᴋᴅᴀʏ.
-- /qr - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐐R 𝐂ᴏᴅᴇ.
-- /q - 𝐂ʀᴇᴀᴛᴇ 𝐀 𝐐ᴜᴏᴛᴇ 𝐒ᴛɪᴄᴋᴇʀ 𝐅ʀᴏᴍ 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇs.
+- /font, /fonts - Sᴛʏʟɪᴢᴇ Tᴇxᴛ Wɪᴛʜ Fᴏɴᴛ Bᴜᴛᴛᴏɴs.
+- /figlet - Gᴇɴᴇʀᴀᴛᴇ Fɪɢʟᴇᴛ-Sᴛʏʟᴇ Tᴇxᴛ.
+- /encode, /decode - Cᴏɴᴠᴇʀᴛ Tᴇxᴛ Tᴏ Aɴᴅ Fʀᴏᴍ Hᴇx.
+- /genpassword, /genpw - Gᴇɴᴇʀᴀᴛᴇ A Pᴀssᴡᴏʀᴅ.
+- /write - Rᴇɴᴅᴇʀ Tᴇxᴛ Iɴ Nᴏᴛᴇʙᴏᴏᴋ Sᴛʏʟᴇ.
+- /day - Cᴏɴᴠᴇʀᴛ A Dᴀᴛᴇ Tᴏ Iᴛs Wᴇᴇᴋᴅᴀʏ.
+- /qr - Gᴇɴᴇʀᴀᴛᴇ A QR Cᴏᴅᴇ.
+- /q - Cʀᴇᴀᴛᴇ A Qᴜᴏᴛᴇ Sᴛɪᴄᴋᴇʀ Fʀᴏᴍ Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇs.
 """
 
 HELP_30 = """
-<b><u>𝐆ᴇɴ 𝐕ɪᴅ</u></b>
+<b><u>Gᴇɴ Vɪᴅ</u></b>
 
-- /genvid [prompt] - 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐀 𝐒ʜᴏʀᴛ 𝐀I 𝐕ɪᴅᴇᴏ 𝐅ʀᴏᴍ 𝐓ᴇxᴛ.
-- 𝐑ᴇᴘʟʏ 𝐓ᴏ 𝐀ɴ 𝐈ᴍᴀɢᴇ 𝐖ɪᴛʜ /genvid [motion prompt] - 𝐀ɴɪᴍᴀᴛᴇ 𝐓ʜᴀᴛ 𝐈ᴍᴀɢᴇ.
-- 𝐓ʜᴇ 𝐁ᴏᴛ 𝐀ᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ 𝐑ᴇᴛʀɪᴇs 𝐀ᴄʀᴏss 𝐓ʜᴇ 𝐂ᴏɴғɪɢᴜʀᴇᴅ 𝐕ɪᴅᴇᴏ 𝐁ᴀᴄᴋᴇɴᴅs.
+- /genvid [prompt] - Gᴇɴᴇʀᴀᴛᴇ A Sʜᴏʀᴛ AI Vɪᴅᴇᴏ Fʀᴏᴍ Tᴇxᴛ.
+- Rᴇᴘʟʏ Tᴏ Aɴ Iᴍᴀɢᴇ Wɪᴛʜ /genvid [motion prompt] - Aɴɪᴍᴀᴛᴇ Tʜᴀᴛ Iᴍᴀɢᴇ.
+- Tʜᴇ Bᴏᴛ Aᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ Rᴇᴛʀɪᴇs Aᴄʀᴏss Tʜᴇ Cᴏɴғɪɢᴜʀᴇᴅ Vɪᴅᴇᴏ Bᴀᴄᴋᴇɴᴅs.
 """
 
 HELP_31 = """
-<b><u>𝐕ᴏɪᴄᴇ</u></b>
+<b><u>Vᴏɪᴄᴇ</u></b>
 
-- /vcinfo, /vcmembers - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛ 𝐏ᴀʀᴛɪᴄɪᴘᴀɴᴛs.
-- /activevc, /activevoice, /vc - 𝐋ɪsᴛ 𝐀ᴄᴛɪᴠᴇ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛs.
-- /activev, /activevideo, /avc - 𝐋ɪsᴛ 𝐀ᴄᴛɪᴠᴇ 𝐕ɪᴅᴇᴏ 𝐂ʜᴀᴛs.
-- /ac, /av - 𝐒ʜᴏᴡ 𝐀ᴄᴛɪᴠᴇ 𝐕ᴏɪᴄᴇ/ᴠɪᴅᴇᴏ 𝐂ʜᴀᴛ 𝐂ᴏᴜɴᴛs.
-- /vcnotify [on|off] - 𝐒ᴇɴᴅ 𝐀 𝐆ʀᴏᴜᴘ 𝐀ʟᴇʀᴛ 𝐖ʜᴇɴ 𝐒ᴏᴍᴇᴏɴᴇ 𝐉ᴏɪɴs 𝐓ʜᴇ 𝐕C.
-- /voices [text] - 𝐆ᴜɪᴅᴇᴅ 𝐓TS 𝐕ᴏɪᴄᴇ 𝐏ɪᴄᴋᴇʀ.
-- /tts [voice] [text] - 𝐃ɪʀᴇᴄᴛ 𝐓ᴇxᴛ-ᴛᴏ-sᴘᴇᴇᴄʜ.
-- /voiceall - 𝐄xᴘᴏʀᴛ 𝐓ʜᴇ 𝐅ᴜʟʟ 𝐕ᴏɪᴄᴇ 𝐌ᴏᴅᴇʟ 𝐋ɪsᴛ.
-- /autoend [enable|disable] - 𝐀ᴜᴛᴏ-ʟᴇᴀᴠᴇ 𝐖ʜᴇɴ 𝐓ʜᴇ 𝐕ᴏɪᴄᴇ 𝐂ʜᴀᴛ 𝐈s 𝐄ᴍᴘᴛʏ.
-- /botschk - 𝐎ᴡɴᴇʀ 𝐂ʜᴇᴄᴋᴇʀ 𝐅ᴏʀ 𝐌ᴏɴɪᴛᴏʀᴇᴅ 𝐁ᴏᴛ 𝐀ᴄᴄᴏᴜɴᴛs.
+- /vcinfo, /vcmembers - Sʜᴏᴡ Cᴜʀʀᴇɴᴛ Vᴏɪᴄᴇ Cʜᴀᴛ Pᴀʀᴛɪᴄɪᴘᴀɴᴛs.
+- /activevc, /activevoice, /vc - Lɪsᴛ Aᴄᴛɪᴠᴇ Vᴏɪᴄᴇ Cʜᴀᴛs.
+- /activev, /activevideo, /avc - Lɪsᴛ Aᴄᴛɪᴠᴇ Vɪᴅᴇᴏ Cʜᴀᴛs.
+- /ac, /av - Sʜᴏᴡ Aᴄᴛɪᴠᴇ Vᴏɪᴄᴇ/Vɪᴅᴇᴏ Cʜᴀᴛ Cᴏᴜɴᴛs.
+- /vcnotify [on|off] - Sᴇɴᴅ A Gʀᴏᴜᴘ Aʟᴇʀᴛ Wʜᴇɴ Sᴏᴍᴇᴏɴᴇ Jᴏɪɴs Tʜᴇ VC.
+- /voices [text] - Gᴜɪᴅᴇᴅ TTS Vᴏɪᴄᴇ Pɪᴄᴋᴇʀ.
+- /tts [voice] [text] - Dɪʀᴇᴄᴛ Tᴇxᴛ-Tᴏ-Sᴘᴇᴇᴄʜ.
+- /voiceall - Exᴘᴏʀᴛ Tʜᴇ Fᴜʟʟ Vᴏɪᴄᴇ Mᴏᴅᴇʟ Lɪsᴛ.
+- /autoend [enable|disable] - Aᴜᴛᴏ-Lᴇᴀᴠᴇ Wʜᴇɴ Tʜᴇ Vᴏɪᴄᴇ Cʜᴀᴛ Is Eᴍᴘᴛʏ.
+- /botschk - Oᴡɴᴇʀ Cʜᴇᴄᴋᴇʀ Fᴏʀ Mᴏɴɪᴛᴏʀᴇᴅ Bᴏᴛ Aᴄᴄᴏᴜɴᴛs.
 """
 
 HELP_32 = """
-<b><u>𝐀ssɪsᴛᴀɴᴛ</u></b>
+<b><u>Assɪsᴛᴀɴᴛ</u></b>
 
-- /assistantjoin, /userbotjoin - 𝐈ɴᴠɪᴛᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐀ᴄᴄᴏᴜɴᴛ 𝐓ᴏ 𝐓ʜᴇ 𝐂ʜᴀᴛ.
-- /userbotleave - 𝐑ᴇᴍᴏᴠᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐅ʀᴏᴍ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐂ʜᴀᴛ.
-- /link, /invitelink [group id] - 𝐄xᴘᴏʀᴛ 𝐈ɴᴠɪᴛᴇ/ᴅᴇᴛᴀɪʟs 𝐅ᴏʀ 𝐀ɴᴏᴛʜᴇʀ 𝐆ʀᴏᴜᴘ.
-- /leavegroup - 𝐌ᴀᴋᴇ 𝐓ʜᴇ 𝐁ᴏᴛ 𝐋ᴇᴀᴠᴇ 𝐓ʜᴇ 𝐂ᴜʀʀᴇɴᴛ 𝐆ʀᴏᴜᴘ.
+- /assistantjoin, /userbotjoin - Iɴᴠɪᴛᴇ Tʜᴇ Assɪsᴛᴀɴᴛ Aᴄᴄᴏᴜɴᴛ Tᴏ Tʜᴇ Cʜᴀᴛ.
+- /userbotleave - Rᴇᴍᴏᴠᴇ Tʜᴇ Assɪsᴛᴀɴᴛ Fʀᴏᴍ Tʜᴇ Cᴜʀʀᴇɴᴛ Cʜᴀᴛ.
+- /link, /invitelink [group id] - Exᴘᴏʀᴛ Iɴᴠɪᴛᴇ/Dᴇᴛᴀɪʟs Fᴏʀ Aɴᴏᴛʜᴇʀ Gʀᴏᴜᴘ.
+- /leavegroup - Mᴀᴋᴇ Tʜᴇ Bᴏᴛ Lᴇᴀᴠᴇ Tʜᴇ Cᴜʀʀᴇɴᴛ Gʀᴏᴜᴘ.
 """
 
 HELP_33 = """
-<b><u>𝐒ᴜᴅᴏ / 𝐎ᴡɴᴇʀ</u></b>
+<b><u>Sᴜᴅᴏ / Oᴡɴᴇʀ</u></b>
 
-- /sudolist, /listsudo, /sudoers - 𝐒ʜᴏᴡ 𝐂ᴜʀʀᴇɴᴛ 𝐒ᴜᴅᴏ 𝐔sᴇʀs.
-- /addsudo [reply/@user/id] - 𝐀ᴅᴅ 𝐀 𝐒ᴜᴅᴏ 𝐔sᴇʀ.
-- /delsudo, /rmsudo [reply/@user/id] - 𝐑ᴇᴍᴏᴠᴇ 𝐀 𝐒ᴜᴅᴏ 𝐔sᴇʀ.
-- /delallsudo - 𝐑ᴇᴍᴏᴠᴇ 𝐄ᴠᴇʀʏ 𝐒ᴜᴅᴏ 𝐔sᴇʀ 𝐄xᴄᴇᴘᴛ 𝐓ʜᴇ 𝐎ᴡɴᴇʀ.
-- /post - 𝐂ᴏᴘʏ 𝐀 𝐑ᴇᴘʟɪᴇᴅ 𝐌ᴇssᴀɢᴇ 𝐓ᴏ 𝐓ʜᴇ 𝐂ᴏɴғɪɢᴜʀᴇᴅ 𝐃ᴜᴍᴘ/ʟᴏɢ 𝐂ʜᴀᴛ.
-- /leaveall - 𝐃ᴇᴠ-ᴏɴʟʏ 𝐂ᴏᴍᴍᴀɴᴅ 𝐓ᴏ 𝐌ᴀᴋᴇ 𝐓ʜᴇ 𝐀ssɪsᴛᴀɴᴛ 𝐋ᴇᴀᴠᴇ 𝐀ʟʟ 𝐂ʜᴀᴛs.
+- /sudolist, /listsudo, /sudoers - Sʜᴏᴡ Cᴜʀʀᴇɴᴛ Sᴜᴅᴏ Usᴇʀs.
+- /addsudo [reply/@user/id] - Aᴅᴅ A Sᴜᴅᴏ Usᴇʀ.
+- /delsudo, /rmsudo [reply/@user/id] - Rᴇᴍᴏᴠᴇ A Sᴜᴅᴏ Usᴇʀ.
+- /delallsudo - Rᴇᴍᴏᴠᴇ Eᴠᴇʀʏ Sᴜᴅᴏ Usᴇʀ Exᴄᴇᴘᴛ Tʜᴇ Oᴡɴᴇʀ.
+- /post - Cᴏᴘʏ A Rᴇᴘʟɪᴇᴅ Mᴇssᴀɢᴇ Tᴏ Tʜᴇ Cᴏɴғɪɢᴜʀᴇᴅ Dᴜᴍᴘ/Lᴏɢ Cʜᴀᴛ.
+- /leaveall - Dᴇᴠ-Oɴʟʏ Cᴏᴍᴍᴀɴᴅ Tᴏ Mᴀᴋᴇ Tʜᴇ Assɪsᴛᴀɴᴛ Lᴇᴀᴠᴇ Aʟʟ Cʜᴀᴛs.
 """
