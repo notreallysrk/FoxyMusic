@@ -3,6 +3,7 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 
 from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 @app.on_message(filters.command("id"))
@@ -51,7 +52,7 @@ async def get_id(client, message: Message):
         if reply.sender_chat:
             out.append(f"ɪᴅ ᴏғ ᴛʜᴇ ʀᴇᴘʟɪᴇᴅ ᴄʜᴀᴛ/ᴄʜᴀɴɴᴇʟ: `{reply.sender_chat.id}`")
 
-    await message.reply_text(
+    await rich_call(message.reply_text,
         "\n".join(out),
         disable_web_page_preview=True,
         parse_mode=ParseMode.MARKDOWN,
