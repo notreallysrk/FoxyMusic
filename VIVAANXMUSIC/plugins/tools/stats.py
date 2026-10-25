@@ -26,11 +26,24 @@ from VIVAANXMUSIC.utils.rich_buttons import rich_call
 @language
 async def stats_global(client, message: Message, _):
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
-    await rich_call(message.reply_video, 
-        video=config.STATS_VID_URL,
-        caption=_["gstats_2"].format(app.mention),
-        reply_markup=upl,
-    )
+    caption = _["gstats_2"].format(app.mention)
+    try:
+        await rich_call(
+            message.reply_video,
+            video=config.STATS_VID_URL,
+            caption=caption,
+            reply_markup=upl,
+        )
+    except Exception as exc:
+        # Telegram's Rich Message API can reject video media with
+        # RICH_MESSAGE_VIDEO_INVALID. Retry with Pyrogram's normal media API.
+        if "RICH_MESSAGE_VIDEO_INVALID" not in str(exc):
+            raise
+        await message.reply_video(
+            video=config.STATS_VID_URL,
+            caption=caption,
+            reply_markup=upl,
+        )
 
 
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
