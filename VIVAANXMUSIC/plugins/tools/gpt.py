@@ -9,6 +9,7 @@ from pyrogram.types import Message
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.utils.free_ai import FreeAIError, generate_chat_response
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 async def send_typing_action(client: Client, chat_id: int, interval: int = 3):
@@ -82,7 +83,7 @@ def build_response_text(model_name: str, content: str) -> str:
 
 async def send_chunked_reply(message: Message, text: str):
     for start in range(0, len(text), 4096):
-        await message.reply_text(
+        await rich_call(message.reply_text,
             text[start : start + 4096],
             disable_web_page_preview=True,
         )

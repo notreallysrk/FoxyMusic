@@ -9,6 +9,7 @@ from pyrogram.types import Message
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.security import build_subprocess_env
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 MAX_SIZE_MB = 50
 MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024

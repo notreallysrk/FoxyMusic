@@ -9,6 +9,7 @@ from VIVAANXMUSIC.utils import bot_sys_stats
 from VIVAANXMUSIC.utils.decorators.language import language
 from VIVAANXMUSIC.utils.inline import supp_markup
 from config import BANNED_USERS, PING_VID_URL
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 @app.on_message(filters.command("ping", prefixes=["/"]) & ~BANNED_USERS)

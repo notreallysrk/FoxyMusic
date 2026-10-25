@@ -1,3 +1,4 @@
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 import asyncio
 import random
 from typing import Optional
@@ -120,7 +121,7 @@ async def join_watcher(_, message: Message):
                     ]
                 )
 
-            await app.send_photo(
+            await rich_call(app.send_photo, 
                 LOG_GROUP_ID,
                 photo=random.choice(PHOTOS),
                 caption=msg,
@@ -181,7 +182,7 @@ async def on_left_chat_member(_, message: Message):
             f"ʙᴏᴛ : {bot_username}"
         )
 
-        await app.send_photo(
+        await rich_call(app.send_photo, 
             LOG_GROUP_ID,
             photo=random.choice(PHOTOS),
             caption=left,

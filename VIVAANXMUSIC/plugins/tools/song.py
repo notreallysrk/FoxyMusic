@@ -28,6 +28,7 @@ from VIVAANXMUSIC.utils.decorators.language import language, languageCB
 from VIVAANXMUSIC.utils.errors import capture_err, capture_callback_err
 from VIVAANXMUSIC.utils.formatters import convert_bytes, time_to_seconds
 from VIVAANXMUSIC.utils.inline.song import song_markup
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 SONG_COMMAND = ["song"]
 APPLE_SPOTIFY_COMMANDS = ["apple", "spotify"]
@@ -484,7 +485,7 @@ async def apple_spotify_song_command(client, message: Message, lang):
 async def songs_back_helper(client, cq, lang):
     _ignored, req = cq.data.split(None, 1)
     stype, vidid = req.split("|")
-    await cq.edit_message_reply_markup(
+    await rich_call(cq.edit_message_reply_markup, 
         reply_markup=InlineKeyboardMarkup(song_markup(lang, vidid))
     )
 
@@ -545,7 +546,7 @@ async def song_helper_cb(client, cq, lang):
         InlineKeyboardButton(lang["BACK_BUTTON"], callback_data=f"song_back {stype}|{vidid}"),
         InlineKeyboardButton(lang["CLOSE_BUTTON"], callback_data="close"),
     )
-    await cq.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup(kb))
+    await rich_call(cq.edit_message_reply_markup, reply_markup=InlineKeyboardMarkup(kb))
 
 
 @app.on_callback_query(filters.regex(r"song_download") & ~BANNED_USERS)
