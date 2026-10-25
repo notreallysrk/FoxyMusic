@@ -24,6 +24,7 @@ from VIVAANXMUSIC.utils.inline.help import (
 from VIVAANXMUSIC.utils.inline.start import private_panel
 from config import BANNED_USERS, HELP_IMG_URL, SUPPORT_CHAT
 from strings import get_string, helpers
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 async def edit_help_message(
@@ -121,7 +122,7 @@ async def helper_private(
     except Exception:
         pass
 
-    await update.reply_photo(
+    await rich_call(update.reply_photo, 
         photo=HELP_IMG_URL,
         caption=caption,
         reply_markup=keyboard,
@@ -141,7 +142,7 @@ async def help_com_group(
 ):
     keyboard = private_help_panel(_)
 
-    await message.reply_text(
+    await rich_call(message.reply_text, 
         _["help_2"],
         reply_markup=InlineKeyboardMarkup(
             keyboard
@@ -178,7 +179,7 @@ async def helper_cb(
     current_page = int(match.group(2))
 
     if number == 1:
-        await callback_query.edit_message_text(
+        await rich_call(callback_query.edit_message_text, 
             _["S_B_M"],
             reply_markup=action_sub_menu(
                 _,
@@ -201,7 +202,7 @@ async def helper_cb(
         )
         return
 
-    await callback_query.edit_message_text(
+    await rich_call(callback_query.edit_message_text, 
         help_text,
         reply_markup=help_back_markup(
             _,
@@ -428,7 +429,7 @@ async def action_prom_cb(
     callback_query: types.CallbackQuery,
     _,
 ):
-    await callback_query.edit_message_text(
+    await rich_call(callback_query.edit_message_text, 
         helpers.HELP_1_PROMO,
         reply_markup=help_back_markup(
             _,
@@ -448,7 +449,7 @@ async def action_pun_cb(
     callback_query: types.CallbackQuery,
     _,
 ):
-    await callback_query.edit_message_text(
+    await rich_call(callback_query.edit_message_text, 
         helpers.HELP_1_PUNISH,
         reply_markup=help_back_markup(
             _,

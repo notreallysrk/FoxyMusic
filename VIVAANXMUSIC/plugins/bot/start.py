@@ -29,6 +29,18 @@ from VIVAANXMUSIC.utils.inline.help import first_page
 from VIVAANXMUSIC.utils.inline.start import private_panel, start_panel
 from config import BANNED_USERS, AYUV, HELP_IMG_URL, START_VIDS, STICKERS
 from strings import get_string
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
+
+
+async def _send_start_message(
+    message, media, caption, buttons, *, photo=False, reply=True
+):
+    markup = InlineKeyboardMarkup(buttons)
+    if photo:
+        if reply:
+            return await rich_call(message.reply_photo, photo=media, caption=caption, reply_markup=markup)
+        return await rich_call(app.send_photo, chat_id=message.chat.id, photo=media, caption=caption, reply_markup=markup)
+    return await rich_call(message.reply_video, media, caption=caption, reply_markup=markup)
 
 
 async def delete_sticker_after_delay(message: Message, delay: int) -> None:
@@ -260,7 +272,7 @@ async def welcome(client, message: Message):
                     return await app.leave_chat(message.chat.id)
 
                 if message.chat.id in await blacklisted_chats():
-                    await message.reply_text(
+                    await rich_call(message.reply_text,
                         _["start_5"].format(
                             app.mention,
                             f"https://t.me/{app.username}?start=sudolist",

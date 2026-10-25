@@ -9,6 +9,7 @@ from VIVAANXMUSIC.utils.inlinequery import answer
 from VIVAANXMUSIC.button_styles import primary_button
 from config import BANNED_USERS
 from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.rich_buttons import rich_inline_photo
 
 
 @app.on_inline_query(~BANNED_USERS)
