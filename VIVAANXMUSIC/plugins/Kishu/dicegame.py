@@ -1,5 +1,6 @@
 from pyrogram import filters
 from VIVAANXMUSIC import app
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 # Dice 🎲
 @app.on_message(filters.command("dice"))

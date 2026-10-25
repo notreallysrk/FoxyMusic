@@ -3,6 +3,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from VIVAANXMUSIC import app
 from VIVAANXMUSIC.utils.font_styles import Fonts
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 FONT_TEXT_CACHE: dict[tuple[int, int], str] = {}
 
@@ -122,7 +123,7 @@ async def style_buttons(_, message, cb=False):
         )
 
     text = message.text.split(" ", 1)[1].strip()
-    sent = await message.reply_text(
+    sent = await rich_call(message.reply_text, 
         f"`{text}`",
         reply_markup=_build_buttons(0),
         quote=True,
@@ -157,7 +158,7 @@ async def style(_, query):
         )
 
     FONT_TEXT_CACHE[_cache_key(query.message)] = text
-    await query.message.edit_text(
+    await rich_call(query.message.edit_text, 
         styler(text),
         reply_markup=query.message.reply_markup,
     )
