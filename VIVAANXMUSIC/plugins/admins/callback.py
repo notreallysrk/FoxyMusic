@@ -498,17 +498,14 @@ async def player_more_callback(
 
     try:
 
-        await callback.message.edit_reply_markup(
-            reply_markup=player_more_markup(
-                chat_id
-            )
+        await rich_call(
+            callback.message.edit_reply_markup,
+            reply_markup=player_more_markup(chat_id),
         )
 
     except Exception as e:
-
-        print(
-            f"Player MORE menu error: {e}"
-        )
+        if "MESSAGE_NOT_MODIFIED" not in str(e).upper():
+            print(f"Player MORE menu error: {e}")
 
 
 # ==========================================================
