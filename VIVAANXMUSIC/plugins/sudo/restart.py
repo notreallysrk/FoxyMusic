@@ -22,6 +22,7 @@ from VIVAANXMUSIC.utils.database import (
 from VIVAANXMUSIC.utils.decorators.language import language
 from VIVAANXMUSIC.utils.pastebin import VIVAANBIN
 from VIVAANXMUSIC.security import build_subprocess_env
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
