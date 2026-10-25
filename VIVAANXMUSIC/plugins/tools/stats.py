@@ -7,7 +7,7 @@ import psutil
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.errors import MessageIdInvalid
-from pyrogram.types import InputMediaVideo, Message
+from pyrogram.types import InputMediaPhoto, Message
 from pytgcalls.__version__ import __version__ as pytgver
 
 import config
@@ -27,23 +27,12 @@ from VIVAANXMUSIC.utils.rich_buttons import rich_call
 async def stats_global(client, message: Message, _):
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
     caption = _["gstats_2"].format(app.mention)
-    try:
-        await rich_call(
-            message.reply_video,
-            video=config.STATS_VID_URL,
-            caption=caption,
-            reply_markup=upl,
-        )
-    except Exception as exc:
-        # Telegram's Rich Message API can reject video media with
-        # RICH_MESSAGE_VIDEO_INVALID. Retry with Pyrogram's normal media API.
-        if "RICH_MESSAGE_VIDEO_INVALID" not in str(exc):
-            raise
-        await message.reply_video(
-            video=config.STATS_VID_URL,
-            caption=caption,
-            reply_markup=upl,
-        )
+    await rich_call(
+        message.reply_photo,
+        photo=config.STATS_VID_URL,
+        caption=caption,
+        reply_markup=upl,
+    )
 
 
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
@@ -79,12 +68,12 @@ async def overall_stats(client, CallbackQuery, _):
         config.AUTO_LEAVING_ASSISTANT,
         config.DURATION_LIMIT_MIN,
     )
-    med = InputMediaVideo(media=config.STATS_VID_URL, caption=text)
+    med = InputMediaPhoto(media=config.STATS_VID_URL, caption=text)
     try:
         await rich_call(CallbackQuery.edit_message_media, media=med, reply_markup=upl)
     except MessageIdInvalid:
-        await rich_call(CallbackQuery.message.reply_video, 
-            video=config.STATS_VID_URL, caption=text, reply_markup=upl
+        await rich_call(CallbackQuery.message.reply_photo, 
+            photo=config.STATS_VID_URL, caption=text, reply_markup=upl
         )
 
 
@@ -236,10 +225,10 @@ async def bot_stats(client, CallbackQuery, _):
         call["collections"],
         call["objects"],
     )
-    med = InputMediaVideo(media=config.STATS_VID_URL, caption=text)
+    med = InputMediaPhoto(media=config.STATS_VID_URL, caption=text)
     try:
         await rich_call(CallbackQuery.edit_message_media, media=med, reply_markup=upl)
     except MessageIdInvalid:
-        await rich_call(CallbackQuery.message.reply_video, 
-            video=config.STATS_VID_URL, caption=text, reply_markup=upl
+        await rich_call(CallbackQuery.message.reply_photo, 
+            photo=config.STATS_VID_URL, caption=text, reply_markup=upl
         )

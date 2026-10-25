@@ -25,8 +25,8 @@ async def ping_com(client, message: Message, _):
         resp, app.mention, UP, RAM, CPU, DISK, pytgping
     )
 
-    # Send normal photo instead of video
-    response = await message.reply_photo(
+    response = await rich_call(
+        message.reply_photo,
         photo=PING_VID_URL,
         caption=caption,
         reply_markup=supp_markup(_),
