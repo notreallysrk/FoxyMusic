@@ -30,6 +30,7 @@ from VIVAANXMUSIC.utils.stream.source_status import get_youtube_source_status
 from VIVAANXMUSIC.utils.stream.stream import stream
 from VIVAANXMUSIC.utils.url_guard import is_safe_media_url
 from VIVAANXMUSIC.utils.thumbnails import get_thumb
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 PLAYLIST_FETCH_LIMIT = int(
     getattr(
@@ -449,7 +450,7 @@ async def play_command(
     else:
         if len(message.command) < 2:
             buttons = botplaylist_markup(_)
-            return await mystic.edit_text(
+            return await rich_call(mystic.edit_text, 
                 _["play_18"],
                 reply_markup=InlineKeyboardMarkup(buttons),
             )
@@ -497,7 +498,7 @@ async def play_command(
                     "c" if channel else "g",
                     "f" if fplay else "d",
                 )
-                return await mystic.edit_text(
+                return await rich_call(mystic.edit_text, 
                     _["play_13"],
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
@@ -557,7 +558,7 @@ async def play_command(
                 "f" if fplay else "d",
             )
             await mystic.delete()
-            await message.reply_photo(
+            await rich_call(message.reply_photo, 
                 photo=(
                     details["thumb"]
                     if plist_type == "yt"
@@ -589,7 +590,7 @@ async def play_command(
                     "f" if fplay else "d",
                 )
                 await mystic.delete()
-                await message.reply_photo(
+                await rich_call(message.reply_photo, 
                     photo=details["thumb"],
                     caption=_["play_10"].format(
                         details["title"].title(),
@@ -608,7 +609,7 @@ async def play_command(
                     "f" if fplay else "d",
                 )
                 await mystic.delete()
-                await message.reply_photo(
+                await rich_call(message.reply_photo, 
                     photo=details["thumb"],
                     caption=_["play_10"].format(
                         details["title"],
@@ -696,7 +697,7 @@ async def play_music(client, CallbackQuery, _):
                 "c" if cplay == "c" else "g",
                 "f" if fplay else "d",
             )
-            return await mystic.edit_text(
+            return await rich_call(mystic.edit_text, 
                 _["play_13"], reply_markup=InlineKeyboardMarkup(buttons)
             )
 
@@ -886,7 +887,7 @@ async def slider_queries(client, CallbackQuery, _):
             ),
         )
 
-        await CallbackQuery.edit_message_media(
+        await rich_call(CallbackQuery.edit_message_media, 
             media=med, reply_markup=InlineKeyboardMarkup(buttons)
         )
         await CallbackQuery.answer(_["playcb_2"])
