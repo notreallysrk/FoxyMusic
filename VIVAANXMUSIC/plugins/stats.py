@@ -18,7 +18,7 @@ def format_uptime(seconds):
     return f"{int(hours)}h {int(minutes)}m {int(secs)}s"
 
 
-@Client.on_message(filters.command("stats") & filters.group)
+# Legacy /stats handler disabled: Rich handler lives in plugins/tools/stats.py
 async def bot_stats(client: Client, message: Message):
     """Send bot statistics"""
     try:
@@ -48,7 +48,7 @@ async def bot_stats(client: Client, message: Message):
         await message.reply_text("❌ Error fetching statistics")
 
 
-@Client.on_message(filters.command("ping"))
+# Legacy /ping handler disabled: Rich handler lives in plugins/tools/ping.py
 async def ping_pong(client: Client, message: Message):
     """Check bot status"""
     start_time = time.time()
@@ -72,7 +72,7 @@ async def ping_pong(client: Client, message: Message):
     add_user(message.from_user.id)
 
 
-@Client.on_message(filters.command("help"))
+# Legacy /help handler disabled: Rich handler lives in plugins/bot/help.py
 async def help_command(client: Client, message: Message):
     """Send help message"""
     help_text = """
