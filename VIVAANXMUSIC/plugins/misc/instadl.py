@@ -15,6 +15,7 @@ from VIVAANXMUSIC.utils.socialdown import (
     download_bundle_files,
     get_social_bundle,
 )
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 URL_PATTERN = re.compile(r"https?://\S+", re.IGNORECASE)
 
