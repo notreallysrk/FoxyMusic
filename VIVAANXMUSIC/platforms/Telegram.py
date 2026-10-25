@@ -13,6 +13,7 @@ from VIVAANXMUSIC.utils.formatters import (
     get_readable_time,
     seconds_to_min,
 )
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 class TeleAPI:
@@ -24,7 +25,7 @@ class TeleAPI:
         n = self.chars_limit
         out = [string[i : i + n] for i in range(0, len(string), n)]
         for j, x in enumerate(out[:3], 1):
-            await message.reply_text(x, disable_web_page_preview=True)
+            await rich_call(message.reply_text, x, disable_web_page_preview=True)
         return True
 
     async def get_link(self, message):
@@ -117,7 +118,7 @@ class TeleAPI:
                     low, high, check = int(lower[counter]), int(higher[counter]), int(checker[counter])
                     if low < percentage_i <= high and high == check:
                         try:
-                            await mystic.edit_text(
+                            await rich_call(mystic.edit_text,
                                 text=_["tg_1"].format(
                                     app.mention, total_size, completed_size, str(percentage)[:5], speed_h, eta
                                 ),
@@ -138,9 +139,9 @@ class TeleAPI:
                     elapsed = get_readable_time(int(time.time() - speed_counter[message.id]))
                 except Exception:
                     elapsed = "0 sᴇᴄᴏɴᴅs"
-                await mystic.edit_text(_["tg_2"].format(elapsed))
+                await rich_call(mystic.edit_text, _["tg_2"].format(elapsed))
             except Exception:
-                await mystic.edit_text(_["tg_3"])
+                await rich_call(mystic.edit_text, _["tg_3"])
 
         task = asyncio.create_task(down_load())
         config.lyrical[mystic.id] = task
