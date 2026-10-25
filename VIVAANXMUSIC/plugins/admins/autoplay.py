@@ -10,6 +10,7 @@ from VIVAANXMUSIC.utils.database import (
 from VIVAANXMUSIC.utils.decorators.admins import AdminActual
 from VIVAANXMUSIC.utils.inline import close_markup
 from config import BANNED_USERS
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 @app.on_message(
@@ -32,7 +33,7 @@ async def autoplay_control(_, message: Message, strings):
         chat_id = await get_cmode(message.chat.id)
 
         if chat_id is None:
-            return await message.reply_text(
+            return await rich_call(message.reply_text, 
                 strings.get(
                     "setting_7",
                     "❖ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ ɪs ɴᴏᴛ ᴇɴᴀʙʟᴇᴅ."
@@ -43,7 +44,7 @@ async def autoplay_control(_, message: Message, strings):
         try:
             await app.get_chat(chat_id)
         except Exception:
-            return await message.reply_text(
+            return await rich_call(message.reply_text, 
                 strings.get(
                     "cplay_4",
                     "❖ ᴄʜᴀɴɴᴇʟ ɴᴏᴛ ғᴏᴜɴᴅ."
@@ -67,7 +68,7 @@ async def autoplay_control(_, message: Message, strings):
             "❖ ᴀᴜᴛᴏᴘʟᴀʏ ɪs ᴄᴜʀʀᴇɴᴛʟʏ {}."
         ).format(status)
 
-        return await message.reply_text(
+        return await rich_call(message.reply_text, 
             text,
             reply_markup=close_markup(strings),
         )
@@ -89,7 +90,7 @@ async def autoplay_control(_, message: Message, strings):
             "❖ ᴀᴜᴛᴏᴘʟᴀʏ ᴇɴᴀʙʟᴇᴅ ʙʏ {}."
         ).format(message.from_user.mention)
 
-        return await message.reply_text(
+        return await rich_call(message.reply_text, 
             text,
             reply_markup=close_markup(strings),
         )
@@ -108,12 +109,12 @@ async def autoplay_control(_, message: Message, strings):
             "❖ ᴀᴜᴛᴏᴘʟᴀʏ ᴅɪsᴀʙʟᴇᴅ ʙʏ {}."
         ).format(message.from_user.mention)
 
-        return await message.reply_text(
+        return await rich_call(message.reply_text, 
             text,
             reply_markup=close_markup(strings),
         )
 
-    return await message.reply_text(
+    return await rich_call(message.reply_text, 
         usage,
         reply_markup=close_markup(strings),
         )

@@ -68,6 +68,7 @@ from VIVAANXMUSIC.utils.stream.autodelete import (
 from VIVAANXMUSIC.utils.stream.cards import (
     schedule_stream_card,
 )
+from VIVAANXMUSIC.utils.rich_buttons import rich_call
 
 
 # ==========================================================
@@ -88,7 +89,7 @@ async def _safe_edit_callback_message(
     reply_markup=None,
 ):
     try:
-        await callback.edit_message_text(
+        await rich_call(callback.edit_message_text, 
             text,
             reply_markup=reply_markup,
         )
@@ -102,13 +103,13 @@ async def _safe_reply_callback_message(
     reply_markup=None,
 ):
     try:
-        return await callback.message.reply_text(
+        return await rich_call(callback.message.reply_text, 
             text,
             reply_markup=reply_markup,
         )
     except Exception:
         try:
-            return await app.send_message(
+            return await rich_call(app.send_message, 
                 callback.message.chat.id,
                 text,
                 reply_markup=reply_markup,
@@ -399,7 +400,7 @@ async def handle_upvote(
         )
 
         try:
-            await callback.edit_message_reply_markup(
+            await rich_call(callback.edit_message_reply_markup, 
                 reply_markup=markup
             )
         except Exception:
@@ -695,7 +696,7 @@ async def manage_callback(
             chat_id
         )
 
-        await callback.message.reply_text(
+        await rich_call(callback.message.reply_text, 
             _["admin_2"].format(
                 user_mention
             ),
@@ -727,7 +728,7 @@ async def manage_callback(
             chat_id
         )
 
-        await callback.message.reply_text(
+        await rich_call(callback.message.reply_text, 
             _["admin_4"].format(
                 user_mention
             ),
@@ -1327,7 +1328,7 @@ async def handle_skip_replay(
 
         if n == 0:
 
-            return await callback.message.reply_text(
+            return await rich_call(callback.message.reply_text, 
                 _["admin_7"].format(
                     title
                 ),
@@ -1550,7 +1551,7 @@ async def handle_skip_replay(
             chat_id,
         )
 
-        run = await callback.message.reply_photo(
+        run = await rich_call(callback.message.reply_photo, 
             photo=STREAM_IMG_URL,
             caption=_["stream_2"].format(
                 user
@@ -1627,7 +1628,7 @@ async def handle_skip_replay(
 
         if videoid == "telegram":
 
-            run = await callback.message.reply_photo(
+            run = await rich_call(callback.message.reply_photo, 
                 photo=(
                     TELEGRAM_AUDIO_URL
                     if str(streamtype) == "audio"
@@ -1659,7 +1660,7 @@ async def handle_skip_replay(
 
         elif videoid == "soundcloud":
 
-            run = await callback.message.reply_photo(
+            run = await rich_call(callback.message.reply_photo, 
                 photo=(
                     SOUNCLOUD_IMG_URL
                     if str(streamtype) == "audio"
@@ -2018,7 +2019,7 @@ async def markup_timer():
 
                     if buttons:
 
-                        await mystic.edit_reply_markup(
+                        await rich_call(mystic.edit_reply_markup, 
                             reply_markup=InlineKeyboardMarkup(
                                 buttons
                             )
