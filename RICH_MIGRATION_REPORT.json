@@ -1,0 +1,187 @@
+{
+  "note": "Conservative migration: only keyboard calls matching source rich_call usage are wrapped. Not a complete verified 1:1 migration; no live Telegram testing.",
+  "modified": [
+    {
+      "file": "VIVAANXMUSIC/platforms/Telegram.py",
+      "error": "unmatched ')' (<unknown>, line 125)"
+    },
+    {
+      "file": "VIVAANXMUSIC/utils/stream/stream.py",
+      "wrapped_calls": 9
+    },
+    {
+      "file": "VIVAANXMUSIC/utils/stream/cards.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/utils/decorators/play.py",
+      "error": "unmatched ')' (<unknown>, line 48)"
+    },
+    {
+      "file": "VIVAANXMUSIC/utils/decorators/admins.py",
+      "error": "unmatched ')' (<unknown>, line 52)"
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/sudo/sudoers.py",
+      "wrapped_calls": 3
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/misc/urlshortner.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/misc/tts.py",
+      "wrapped_calls": 6
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/stats.py",
+      "wrapped_calls": 6
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/song.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/kang.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/telegraph.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/bugs.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/masti.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/queue.py",
+      "wrapped_calls": 7
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/lyrics.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/active.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/tools/sticker.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/stop.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/autoplay.py",
+      "wrapped_calls": 6
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/loop.py",
+      "wrapped_calls": 3
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/autodelete.py",
+      "wrapped_calls": 4
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/seek.py",
+      "wrapped_calls": 4
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/resume.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/speed.py",
+      "wrapped_calls": 3
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/shuffle.py",
+      "wrapped_calls": 3
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/auth.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/totalmembers.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/vcnotify.py",
+      "wrapped_calls": 4
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/pause.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/admins/callback.py",
+      "wrapped_calls": 11
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Kishu/ip.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Kishu/figlet.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Kishu/wishcute.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Kishu/fonts.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Kishu/password.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Manager/del_msg.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Manager/grouphandler.py",
+      "wrapped_calls": 2
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Manager/zombie.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Manager/info.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/Manager/language.py",
+      "wrapped_calls": 6
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/play/play.py",
+      "wrapped_calls": 7
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/play/playmode.py",
+      "wrapped_calls": 1
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/bot/settings.py",
+      "wrapped_calls": 9
+    },
+    {
+      "file": "VIVAANXMUSIC/plugins/bot/help.py",
+      "wrapped_calls": 6
+    }
+  ],
+  "core_file": "VIVAANXMUSIC/utils/rich_buttons.py",
+  "dependency": "kurigram==2.2.26"
+}
