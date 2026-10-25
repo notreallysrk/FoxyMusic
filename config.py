@@ -11,11 +11,11 @@ API_ID = int(getenv("API_ID", 27798659))
 API_HASH = getenv("API_HASH", "26100c77cee02e5e34b2bbee58440f86")
 BOT_TOKEN = getenv("BOT_TOKEN")
 
-OWNER_ID = int(getenv("OWNER_ID", 7948719473))
-OWNER_USERNAME = getenv("OWNER_USERNAME", "ArchonCEO")
-BOT_USERNAME = getenv("BOT_USERNAME", "KavyaMusicBot")
+OWNER_ID = int(getenv("OWNER_ID", 8136018064))
+OWNER_USERNAME = getenv("OWNER_USERNAME", "FoxyPookie")
+BOT_USERNAME = getenv("BOT_USERNAME", "🦊 𝙁𝙤𝙭𝙮 ✘ 𝙈𝙪𝙨𝙞𝙘")
 BOT_NAME = getenv("BOT_NAME", "˹ʜɪηᴧ ꭙ мᴜsɪᴄ˼ ♪")
-ASSUSERNAME = getenv("ASSUSERNAME", "KavyaAssistant")
+ASSUSERNAME = getenv("ASSUSERNAME", "🦊 𝙁𝙤𝙭𝙮")
 
 # ── Database & logging ─────────────────────────────────────────────────────────
 MONGO_DB_URI = getenv("MONGO_DB_URI")
@@ -49,13 +49,13 @@ HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 # ── Git / updates ──────────────────────────────────────────────────────────────
-UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/notreallysrk/Kavya")
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/notreallysrk/FoxyMusic")
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN")  # needed if repo is private
 
 # ── Support links ──────────────────────────────────────────────────────────────
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/ArchonNetwork")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ArchonCare")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/FoxryHQ")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/FoxryChat")
 
 # ── Assistant auto-leave ───────────────────────────────────────────────────────
 AUTO_LEAVING_ASSISTANT = False
@@ -77,19 +77,19 @@ STRING5 = getenv("STRING_SESSION5")
 
 # ── Media assets ───────────────────────────────────────────────────────────────
 START_VIDS = [
-"https://graph.org/file/efde7476e17600a115a53-4cdd354b135eb821d2.jpg",
-"https://graph.org/file/02522fd2ceedc9501d3cb-2a5fae82d323ca8108.jpg",
-"https://graph.org/file/4b905c4bec37eb572c150-79979b8e6b73ae4eb7.jpg",
-"https://graph.org/file/561e78c3cea6f4ddba6c3-8a76966417c17d34db.jpg",
-"https://graph.org/file/2e580740f4979a0a9364d-2c819357fdc753fe2b.jpg",
+"https://graph.org/file/9b358d20a9c6319968104-e329c08db038997492.jpg",
+"https://graph.org/file/77bc3024a8d6303cd15cf-03c283f6c5c04c8fd9.jpg",
+"https://graph.org/file/606d64a407812f9e61fb3-b222b05fdf32b82b16.jpg",
+"https://graph.org/file/63a7943e45aa4922389b4-44b9448feb8e6805ed.jpg",
+"https://graph.org/file/ade9a647729e153a0e391-ddadb951ca7d06df50.jpg",
 ]
 STICKERS = [
     "CAACAgUAAxkBAAFOuWNqUMj28Rrfpr3APoGQH5oC2qGq7wACwyAAAh7UeVa0AcYt3xU9tzwE",
     "CAACAgUAAxkBAAFOzY5qUf7pqrHwL11t17WP478cstKPAQACOhsAAm8FeVa4Vkbih4qtXzwE",
 ]
-HELP_IMG_URL = "https://graph.org/file/6c24f444757f8e277e60f-fa9183e17f3c738f60.jpg"
-PING_VID_URL = "https://files.catbox.moe/qyoe2w.jpg"
-PLAYLIST_IMG_URL = "https://files.catbox.moe/9m0pys.jpg"
+HELP_IMG_URL = "https://graph.org/file/9c451f2be50e7fd464ea7-0c9ddd898379636a1d.jpg"
+PING_VID_URL = "https://graph.org/file/958c1d36d8dddaf57ce39-73ad6851386e5f84c8.jpg"
+PLAYLIST_IMG_URL = "https://graph.org/file/e239250a93e86e75549ba-b0acc4cdf6adf55e4b.jpg"
 STATS_VID_URL = "https://files.catbox.moe/gq4hkk.jpg"
 TELEGRAM_AUDIO_URL = "https://files.catbox.moe/p82vwn.jpg"
 TELEGRAM_VIDEO_URL = "https://files.catbox.moe/mmdz7d.jpg"
