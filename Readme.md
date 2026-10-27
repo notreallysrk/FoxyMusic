@@ -308,3 +308,19 @@ docker rmi vivaanxmusic      # Remove image
 
 * <b> *sᴩᴇᴄɪᴀʟ ᴛʜᴀɴᴋs ᴛᴏ <a href="https://github.com/AnonymousX1025">ᴀɴᴏɴʏ</a> ғᴏʀ <a href="https://github.com/AnonymousX1025/AnonXMusic">ᴀɴᴏɴxᴍᴜsɪᴄ</a>* </b>
 * <b> *ᴄʀᴀғᴛᴇᴅ ᴡɪᴛʜ ᴘᴀssɪᴏɴ ʙʏ <a href="https://github.com/SkyBotsDeveloper">ᴠɪᴠᴀᴀɴ ᴅᴇᴠs</a>* </b>
+
+
+## Clone bots
+
+The clone manager supports `/clone TOKEN`, `/unclone TOKEN`, `/clones`, and
+`/resetclones`. Clone records are stored in the configured MongoDB database
+(`clone_bots` collection), and saved clones are restored at startup. Each user
+can register up to five clones; the owner can inspect and reset all saved clones.
+
+**Runtime note:** FoxyMusic is a Pyrogram worker/polling application and does not
+currently expose Kust Music's HTTP webhook receiver. To keep the existing
+deployment and playback stack intact, clone bots use Telegram long polling in
+the same process and share the existing music/voice-chat services. The manager
+clears a previous webhook for a clone token before starting polling. MongoDB
+must be configured for clone registration and restoration. Send clone tokens
+only in private chat; treat them like passwords.
