@@ -49,6 +49,10 @@ BOT_COMMANDS = [
     BotCommand("decrypt", "PM-only one-time decrypt"),
     BotCommand("settings", "Open group settings"),
     BotCommand("ping", "Check bot status"),
+    BotCommand("clone", "Start your own clone bot"),
+    BotCommand("unclone", "Remove your clone bot"),
+    BotCommand("clones", "List registered clone bots (owner)"),
+    BotCommand("resetclones", "Restart saved clone bots (owner)"),
 ]
 
 
@@ -99,6 +103,10 @@ async def init():
         importlib.import_module("VIVAANXMUSIC.plugins" + all_module)
 
     LOGGER("VIVAANXMUSIC.plugins").info("Modules loaded.")
+
+    # Restore saved clone bots only after all plugin handlers have been loaded.
+    from VIVAANXMUSIC.core.clone import restore_clones
+    await restore_clones(app)
     LOGGER("FOXYMUSIC").info(
         "🦊 Foxy Music Robot Started Successfully..."
     )
@@ -114,6 +122,11 @@ async def init():
     except Exception:
         pass
     await close_lyrics_http_client()
+    try:
+        from VIVAANXMUSIC.core.clone import shutdown_clones
+        await shutdown_clones()
+    except Exception as exc:
+        LOGGER("VIVAANXMUSIC").warning(f"Clone shutdown issue: {type(exc).__name__}")
     await app.stop()
     await userbot.stop()
     LOGGER("VIVAANXMUSIC").info("Stopping music bot...")
